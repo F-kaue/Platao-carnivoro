@@ -51,10 +51,18 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           setFilteredProducts(mockProducts);
         } else if (supabaseProducts && supabaseProducts.length > 0) {
           // Converter os dados do Supabase para o formato esperado
-          const formattedProducts = supabaseProducts.map(product => ({
-            ...product,
-            addedAt: new Date(product.added_at)
-          })) as Product[];
+          const formattedProducts: Product[] = supabaseProducts.map(product => ({
+            id: product.id,
+            title: product.title,
+            originalPrice: product.original_price,
+            salePrice: product.sale_price,
+            marketplace: product.marketplace as Marketplace,
+            category: product.category as Category,
+            affiliateLink: product.affiliate_link,
+            images: product.images,
+            clicks: product.clicks || 0,
+            addedAt: new Date(product.added_at || new Date())
+          }));
           
           setProducts(formattedProducts);
           setFilteredProducts(formattedProducts);
@@ -70,10 +78,10 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           .select('*');
           
         if (!clicksError && supabaseClicks) {
-          const formattedClicks = supabaseClicks.map(click => ({
-            productId: click.product_id,
-            timestamp: new Date(click.timestamp)
-          })) as ClickData[];
+          const formattedClicks: ClickData[] = supabaseClicks.map(click => ({
+            productId: click.product_id || "",
+            timestamp: new Date(click.timestamp || new Date())
+          }));
           
           setClickData(formattedClicks);
         }
@@ -161,7 +169,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         // 2. Atualizar o contador de cliques no produto
         const { error: updateError } = await supabase
           .from('products')
-          .update({ clicks: supabase.rpc('increment', { x: 1, row_id: productId }) })
+          .update({ clicks: (products.find(p => p.id === productId)?.clicks || 0) + 1 })
           .eq('id', productId);
           
         if (updateError) {
@@ -253,8 +261,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           category: data[0].category as Category,
           affiliateLink: data[0].affiliate_link,
           images: data[0].images,
-          clicks: data[0].clicks,
-          addedAt: new Date(data[0].added_at),
+          clicks: data[0].clicks || 0,
+          addedAt: new Date(data[0].added_at || new Date()),
         };
         
         setProducts(prev => [...prev, newProduct]);
