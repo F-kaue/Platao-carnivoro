@@ -92,8 +92,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       .channel('products-changes')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'products' },
-        (payload) => {
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'products' 
+        },
+        (payload: any) => {
           console.log('Produto atualizado:', payload);
           setProducts(currentProducts => 
             currentProducts.map(product => 
@@ -114,8 +118,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       .channel('clicks-changes')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'clicks' },
-        (payload) => {
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'clicks' 
+        },
+        (payload: any) => {
           console.log('Novo clique registrado:', payload);
           const newClick: ClickData = {
             productId: payload.new.product_id,
@@ -189,9 +197,10 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       }
 
       // 2. Incrementar o contador de cliques do produto
-      const { error: updateError } = await supabase.rpc('increment_product_clicks', {
-        product_id: productId
-      });
+      const { error: updateError } = await supabase
+        .rpc('increment_product_clicks', {
+          product_id: productId
+        } as { product_id: string });
 
       if (updateError) {
         throw new Error(updateError.message);
