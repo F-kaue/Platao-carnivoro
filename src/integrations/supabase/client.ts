@@ -6,12 +6,12 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://wzsdjyhiomkxjzaruhsz.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6c2RqeWhpb21reGp6YXJ1aHN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5MTEzMzMsImV4cCI6MjA1ODQ4NzMzM30.bcTPNevS7R1Og6HtJp7bYRTbSJ2jIUq8TDEcYXyfclM";
 
-// Define the type for the RPC functions
-type RPCFunctions = {
-  increment_product_clicks(args: { product_id: string }): void;
-}
-
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database, "public", RPCFunctions>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+// Add type for RPC function
+export type IncrementProductClicksFn = {
+  increment_product_clicks(args: { product_id: string }): void;
+};

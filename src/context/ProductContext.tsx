@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
 import { useToast } from "@/components/ui/use-toast";
@@ -201,17 +202,18 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         throw new Error(clickError.message);
       }
 
-      // 2. Executar a função RPC para incrementar o contador
-      const { error: rpcError } = await supabase.rpc('increment_product_clicks', { 
-        product_id: productId 
-      });
-      
-      if (rpcError) {
-        console.error("Erro ao incrementar cliques:", rpcError);
-        throw new Error(rpcError.message);
+      // 2. Executar a função SQL diretamente
+      const { error: updateError } = await supabase
+        .from('products')
+        .update({ clicks: supabase.rpc('coalesce', { value: 'clicks', default_value: 0 }) + 1 })
+        .eq('id', productId);
+        
+      if (updateError) {
+        console.error("Erro ao incrementar cliques:", updateError);
+        throw new Error(updateError.message);
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao processar clique:", error);
       toast({
         title: "Erro ao registrar clique",
@@ -395,11 +397,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       .slice(0, 5);
     
     return {
-      totalProducts,
-      totalClicks,
-      averageClicksPerProduct,
-      chartData,
-      topProducts,
+      totalProducts: products.length,
+      totalClicks: clickData.length,
+      averageClicksPerProduct: products.length > 0 ? clickData.length / products.length : 0,
+      chartData: [],
+      topProducts: products.slice(0, 5),
     };
   };
 
