@@ -1,11 +1,17 @@
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-
-// Mock data for initial development
-import { mockProducts } from "../data/mockData";
+import { 
+  fetchProducts, 
+  fetchClickData, 
+  trackProductClick, 
+  addProduct as addProductService, 
+  updateProduct as updateProductService, 
+  deleteProduct as deleteProductService,
+  calculateAdminStats
+} from "@/services/productService";
+import { useProductFiltering, useRealtimeUpdates } from "@/hooks/useProductData";
 
 interface ProductContextType {
   products: Product[];
@@ -27,382 +33,165 @@ const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export function ProductProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [clickData, setClickData] = useState<ClickData[]>([]);
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [activeMarketplace, setActiveMarketplace] = useState<Marketplace | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  
+  // Use the filtering hook
+  const { 
+    filteredProducts, 
+    filterByCategory, 
+    filterByMarketplace, 
+    searchProducts, 
+    resetFilters 
+  } = useProductFiltering(products);
 
-  // Initialize with data and setup realtime
+  // Load initial data
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadData = async () => {
       try {
-        const { data: supabaseProducts, error } = await supabase
-          .from('products')
-          .select('*');
-
-        if (error) {
-          console.error("Erro ao buscar produtos:", error);
-          return;
-        }
-
-        if (!supabaseProducts) {
-          console.error("Nenhum produto retornado");
-          return;
-        }
-
-        // Converter dados do Supabase para o formato Product
-        const formattedProducts: Product[] = supabaseProducts.map(p => ({
-          id: p.id,
-          title: p.title,
-          originalPrice: p.original_price,
-          salePrice: p.sale_price,
-          marketplace: p.marketplace as Marketplace,
-          category: p.category as Category,
-          affiliateLink: p.affiliate_link,
-          images: p.images,
-          clicks: p.clicks || 0,
-          addedAt: new Date(p.added_at || new Date())
-        }));
-
-        setProducts(formattedProducts);
-        setFilteredProducts(formattedProducts);
+        setIsLoading(true);
         
-        // Carregar dados de cliques
-        const { data: clicks, error: clicksError } = await supabase
-          .from('clicks')
-          .select('*');
-
-        if (!clicksError && clicks) {
-          const formattedClicks: ClickData[] = clicks.map(click => ({
-            productId: click.product_id || "",
-            timestamp: new Date(click.timestamp || new Date())
-          }));
-          setClickData(formattedClicks);
-        }
-
+        // Load products
+        const productsData = await fetchProducts();
+        setProducts(productsData);
+        
+        // Load click data
+        const clicksData = await fetchClickData();
+        setClickData(clicksData);
       } catch (error) {
-        console.error("Erro ao carregar dados:", error);
+        console.error("Error loading data:", error);
+        toast({
+          title: "Error loading data",
+          description: "There was a problem loading products.",
+          duration: 3000,
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
-    // Carregar dados iniciais
-    loadProducts();
-
-    // Configurar canal realtime para produtos
-    const productChannel = supabase
-      .channel('products-changes')
-      .on(
-        'postgres_changes',
-        { 
-          event: 'UPDATE', 
-          schema: 'public', 
-          table: 'products' 
-        },
-        (payload: any) => {
-          console.log('Produto atualizado:', payload);
-          setProducts(currentProducts => 
-            currentProducts.map(product => 
-              product.id === payload.new.id
-                ? {
-                    ...product,
-                    clicks: payload.new.clicks,
-                  }
-                : product
-            )
-          );
-        }
+    loadData();
+  }, [toast]);
+  
+  // Handle product update from realtime
+  const handleProductUpdate = useCallback((payload: any) => {
+    setProducts(currentProducts => 
+      currentProducts.map(product => 
+        product.id === payload.new.id
+          ? {
+              ...product,
+              clicks: payload.new.clicks,
+            }
+          : product
       )
-      .subscribe();
-
-    // Configurar canal realtime para cliques
-    const clicksChannel = supabase
-      .channel('clicks-changes')
-      .on(
-        'postgres_changes',
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'clicks' 
-        },
-        (payload: any) => {
-          console.log('Novo clique registrado:', payload);
-          const newClick: ClickData = {
-            productId: payload.new.product_id || "",
-            timestamp: new Date(payload.new.timestamp || new Date())
-          };
-          setClickData(current => [...current, newClick]);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(productChannel);
-      supabase.removeChannel(clicksChannel);
-    };
+    );
   }, []);
 
-  // Apply filters whenever filter state changes
-  useEffect(() => {
-    let result = [...products];
-    
-    if (activeCategory) {
-      result = result.filter(product => product.category === activeCategory);
-    }
-    
-    if (activeMarketplace) {
-      result = result.filter(product => product.marketplace === activeMarketplace);
-    }
-    
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(product => 
-        product.title.toLowerCase().includes(query) ||
-        product.category.toLowerCase().includes(query) ||
-        product.marketplace.toLowerCase().includes(query)
-      );
-    }
-    
-    setFilteredProducts(result);
-  }, [products, activeCategory, activeMarketplace, searchQuery]);
+  // Handle new click from realtime
+  const handleNewClick = useCallback((payload: any) => {
+    const newClick: ClickData = {
+      productId: payload.new.product_id || "",
+      timestamp: new Date(payload.new.timestamp || new Date())
+    };
+    setClickData(current => [...current, newClick]);
+  }, []);
 
-  const filterByCategory = (category: Category | null) => {
-    setActiveCategory(category);
-  };
+  // Setup realtime updates
+  useRealtimeUpdates(handleProductUpdate, handleNewClick);
 
-  const filterByMarketplace = (marketplace: Marketplace | null) => {
-    setActiveMarketplace(marketplace);
-  };
-
-  const searchProducts = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const resetFilters = () => {
-    setActiveCategory(null);
-    setActiveMarketplace(null);
-    setSearchQuery("");
-  };
-
-  // Função de rastreamento de cliques atualizada
+  // Track product click
   const trackClick = async (productId: string) => {
     try {
-      console.log("Registrando clique para o produto:", productId);
-      
-      // 1. Registrar o clique na tabela clicks
-      const { error: clickError } = await supabase
-        .from('clicks')
-        .insert({ product_id: productId });
-
-      if (clickError) {
-        throw new Error(clickError.message);
-      }
-
-      // 2. Executar a função SQL diretamente
-      const { error: updateError } = await supabase
-        .from('products')
-        .update({ clicks: supabase.rpc('coalesce', { value: 'clicks', default_value: 0 }) + 1 })
-        .eq('id', productId);
-        
-      if (updateError) {
-        console.error("Erro ao incrementar cliques:", updateError);
-        throw new Error(updateError.message);
-      }
-
+      await trackProductClick(productId);
     } catch (error: any) {
-      console.error("Erro ao processar clique:", error);
       toast({
-        title: "Erro ao registrar clique",
-        description: "Ocorreu um erro ao registrar o clique no produto.",
+        title: "Error tracking click",
+        description: "There was a problem registering the click.",
         duration: 3000,
       });
     }
   };
 
+  // Get product by ID
   const getProductById = (id: string) => {
     return products.find(product => product.id === id);
   };
 
-  // Funções CRUD atualizadas para usar o Supabase
+  // Add a new product
   const addProduct = async (productData: Omit<Product, "id" | "clicks" | "addedAt">) => {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .insert({
-          title: productData.title,
-          original_price: productData.originalPrice,
-          sale_price: productData.salePrice,
-          marketplace: productData.marketplace,
-          category: productData.category,
-          affiliate_link: productData.affiliateLink,
-          images: productData.images,
-          clicks: 0
-        })
-        .select();
-        
-      if (error) {
-        console.error("Erro ao adicionar produto:", error);
-        toast({
-          title: "Erro ao adicionar produto",
-          description: error.message,
-        });
-        
-        // Fallback para comportamento anterior
-        const newProduct: Product = {
-          ...productData,
-          id: Date.now().toString(),
-          clicks: 0,
-          addedAt: new Date(),
-        };
-        
-        setProducts(prev => [...prev, newProduct]);
-      } else if (data && data[0]) {
-        // Converter o produto retornado para o formato esperado
-        const newProduct: Product = {
-          id: data[0].id,
-          title: data[0].title,
-          originalPrice: data[0].original_price,
-          salePrice: data[0].sale_price,
-          marketplace: data[0].marketplace as Marketplace,
-          category: data[0].category as Category,
-          affiliateLink: data[0].affiliate_link,
-          images: data[0].images,
-          clicks: data[0].clicks || 0,
-          addedAt: new Date(data[0].added_at || new Date()),
-        };
-        
-        setProducts(prev => [...prev, newProduct]);
-        toast({
-          title: "Produto adicionado",
-          description: "O produto foi adicionado com sucesso.",
-        });
-      }
-    } catch (error: any) {
-      console.error("Erro ao adicionar produto:", error);
+      const newProduct = await addProductService(productData);
+      setProducts(prev => [...prev, newProduct]);
+      
       toast({
-        title: "Erro ao adicionar produto",
+        title: "Product added",
+        description: "The product was added successfully.",
+        duration: 3000,
+      });
+    } catch (error: any) {
+      console.error("Error adding product:", error);
+      toast({
+        title: "Error adding product",
         description: error.message,
+        duration: 3000,
       });
     }
   };
 
+  // Update an existing product
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     try {
-      // Converter para o formato do banco de dados
-      const dbUpdates: any = {};
-      if (updates.title) dbUpdates.title = updates.title;
-      if (updates.originalPrice) dbUpdates.original_price = updates.originalPrice;
-      if (updates.salePrice) dbUpdates.sale_price = updates.salePrice;
-      if (updates.marketplace) dbUpdates.marketplace = updates.marketplace;
-      if (updates.category) dbUpdates.category = updates.category;
-      if (updates.affiliateLink) dbUpdates.affiliate_link = updates.affiliateLink;
-      if (updates.images) dbUpdates.images = updates.images;
+      await updateProductService(id, updates);
       
-      const { error } = await supabase
-        .from('products')
-        .update(dbUpdates)
-        .eq('id', id);
-        
-      if (error) {
-        console.error("Erro ao atualizar produto:", error);
-        toast({
-          title: "Erro ao atualizar produto",
-          description: error.message,
-        });
-      } else {
-        // Atualizar o estado local
-        setProducts(prev => 
-          prev.map(product => 
-            product.id === id 
-              ? { ...product, ...updates } 
-              : product
-          )
-        );
-        
-        toast({
-          title: "Produto atualizado",
-          description: "O produto foi atualizado com sucesso.",
-        });
-      }
-    } catch (error: any) {
-      console.error("Erro ao atualizar produto:", error);
+      // Update local state
+      setProducts(prev => 
+        prev.map(product => 
+          product.id === id 
+            ? { ...product, ...updates } 
+            : product
+        )
+      );
+      
       toast({
-        title: "Erro ao atualizar produto",
+        title: "Product updated",
+        description: "The product was updated successfully.",
+        duration: 3000,
+      });
+    } catch (error: any) {
+      console.error("Error updating product:", error);
+      toast({
+        title: "Error updating product",
         description: error.message,
+        duration: 3000,
       });
     }
   };
 
+  // Delete a product
   const deleteProduct = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', id);
-        
-      if (error) {
-        console.error("Erro ao remover produto:", error);
-        toast({
-          title: "Erro ao remover produto",
-          description: error.message,
-        });
-      } else {
-        setProducts(prev => prev.filter(product => product.id !== id));
-        toast({
-          title: "Produto removido",
-          description: "O produto foi removido com sucesso.",
-        });
-      }
-    } catch (error: any) {
-      console.error("Erro ao remover produto:", error);
+      await deleteProductService(id);
+      setProducts(prev => prev.filter(product => product.id !== id));
+      
       toast({
-        title: "Erro ao remover produto",
+        title: "Product removed",
+        description: "The product was removed successfully.",
+        duration: 3000,
+      });
+    } catch (error: any) {
+      console.error("Error removing product:", error);
+      toast({
+        title: "Error removing product",
         description: error.message,
+        duration: 3000,
       });
     }
   };
 
-  const getAdminStats = (): AdminStats => {
-    const totalProducts = products.length;
-    const totalClicks = clickData.length;
-    const averageClicksPerProduct = totalProducts > 0 
-      ? totalClicks / totalProducts 
-      : 0;
-    
-    // Generate chart data for the last 7 days
-    const last7Days = [...Array(7)].map((_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (6 - i));
-      return date.toISOString().split('T')[0];
-    });
-    
-    const chartData: ChartData[] = last7Days.map(dateStr => {
-      const clicksOnDay = clickData.filter(click => 
-        new Date(click.timestamp).toISOString().split('T')[0] === dateStr
-      ).length;
-      
-      return {
-        date: dateStr,
-        clicks: clicksOnDay,
-      };
-    });
-    
-    // Get top 5 products by clicks
-    const topProducts = [...products]
-      .sort((a, b) => b.clicks - a.clicks)
-      .slice(0, 5);
-    
-    return {
-      totalProducts: products.length,
-      totalClicks: clickData.length,
-      averageClicksPerProduct: products.length > 0 ? clickData.length / products.length : 0,
-      chartData: [],
-      topProducts: products.slice(0, 5),
-    };
+  // Get admin statistics
+  const getAdminStats = () => {
+    return calculateAdminStats(products, clickData);
   };
 
   return (
