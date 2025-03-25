@@ -92,11 +92,18 @@ const Admin = () => {
       setIsEditDialogOpen(false);
     } else {
       // Adding new product
-      addProduct({
-        ...data,
+      // Fix: Ensure all required properties are present when adding a new product
+      const newProductData = {
+        title: data.title,
+        originalPrice: data.originalPrice,
+        salePrice: data.salePrice,
         category: data.category as Category,
         marketplace: data.marketplace as Marketplace,
-      });
+        affiliateLink: data.affiliateLink,
+        images: data.images
+      };
+      
+      addProduct(newProductData);
       setIsAddDialogOpen(false);
     }
     // Reset form and image URLs
@@ -923,3 +930,4 @@ const Admin = () => {
 };
 
 export default Admin;
+
