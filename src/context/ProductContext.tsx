@@ -200,7 +200,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       const { error: updateError } = await supabase
         .rpc('increment_product_clicks', {
           product_id: productId
-        } as { product_id: string });
+        });
 
       if (updateError) {
         throw new Error(updateError.message);
