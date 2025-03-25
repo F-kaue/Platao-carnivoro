@@ -9,7 +9,71 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      clicks: {
+        Row: {
+          id: string
+          product_id: string | null
+          timestamp: string | null
+        }
+        Insert: {
+          id?: string
+          product_id?: string | null
+          timestamp?: string | null
+        }
+        Update: {
+          id?: string
+          product_id?: string | null
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          added_at: string | null
+          affiliate_link: string
+          category: string
+          clicks: number | null
+          id: string
+          images: string[]
+          marketplace: string
+          original_price: number
+          sale_price: number
+          title: string
+        }
+        Insert: {
+          added_at?: string | null
+          affiliate_link: string
+          category: string
+          clicks?: number | null
+          id?: string
+          images: string[]
+          marketplace: string
+          original_price: number
+          sale_price: number
+          title: string
+        }
+        Update: {
+          added_at?: string | null
+          affiliate_link?: string
+          category?: string
+          clicks?: number | null
+          id?: string
+          images?: string[]
+          marketplace?: string
+          original_price?: number
+          sale_price?: number
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

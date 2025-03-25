@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Mock data for initial development
 import { mockProducts } from "../data/mockData";
@@ -34,26 +35,56 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
-  // Initialize with mock data
+  // Initialize with data from Supabase or mock data
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        // In a real implementation, this would fetch from an API
-        setProducts(mockProducts);
-        setFilteredProducts(mockProducts);
+        // Tentar buscar produtos do Supabase
+        const { data: supabaseProducts, error } = await supabase
+          .from('products')
+          .select('*');
+
+        if (error) {
+          console.error("Erro ao buscar produtos do Supabase:", error);
+          // Fallback para dados mock
+          setProducts(mockProducts);
+          setFilteredProducts(mockProducts);
+        } else if (supabaseProducts && supabaseProducts.length > 0) {
+          // Converter os dados do Supabase para o formato esperado
+          const formattedProducts = supabaseProducts.map(product => ({
+            ...product,
+            addedAt: new Date(product.added_at)
+          })) as Product[];
+          
+          setProducts(formattedProducts);
+          setFilteredProducts(formattedProducts);
+        } else {
+          // Se não houver produtos no Supabase, usar dados mock
+          setProducts(mockProducts);
+          setFilteredProducts(mockProducts);
+        }
         
-        // Simulate loading
+        // Buscar dados de cliques do Supabase
+        const { data: supabaseClicks, error: clicksError } = await supabase
+          .from('clicks')
+          .select('*');
+          
+        if (!clicksError && supabaseClicks) {
+          const formattedClicks = supabaseClicks.map(click => ({
+            productId: click.product_id,
+            timestamp: new Date(click.timestamp)
+          })) as ClickData[];
+          
+          setClickData(formattedClicks);
+        }
+        
+        // Simular loading
         setTimeout(() => {
           setIsLoading(false);
         }, 1000);
         
-        // Load click data from localStorage
-        const savedClickData = localStorage.getItem("clickData");
-        if (savedClickData) {
-          setClickData(JSON.parse(savedClickData));
-        }
       } catch (error) {
-        console.error("Failed to load products:", error);
+        console.error("Falha ao carregar produtos:", error);
         setIsLoading(false);
       }
     };
@@ -85,11 +116,6 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     setFilteredProducts(result);
   }, [products, activeCategory, activeMarketplace, searchQuery]);
 
-  // Save click data to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("clickData", JSON.stringify(clickData));
-  }, [clickData]);
-
   const filterByCategory = (category: Category | null) => {
     setActiveCategory(category);
   };
@@ -108,64 +134,218 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     setSearchQuery("");
   };
 
-  const trackClick = (productId: string) => {
-    // Record the click
-    const newClickData: ClickData = {
-      productId,
-      timestamp: new Date(),
-    };
-    
-    setClickData(prev => [...prev, newClickData]);
-    
-    // Update product click count
-    setProducts(prev => 
-      prev.map(product => 
-        product.id === productId 
-          ? { ...product, clicks: product.clicks + 1 } 
-          : product
-      )
-    );
+  // Função de rastreamento de cliques atualizada para usar o Supabase
+  const trackClick = async (productId: string) => {
+    try {
+      // 1. Registrar o clique na tabela 'clicks'
+      const { error: clickInsertError } = await supabase
+        .from('clicks')
+        .insert([{ product_id: productId }]);
+        
+      if (clickInsertError) {
+        console.error("Erro ao registrar clique:", clickInsertError);
+        // Fallback para armazenamento local em caso de erro
+        const newClickData: ClickData = {
+          productId,
+          timestamp: new Date(),
+        };
+        setClickData(prev => [...prev, newClickData]);
+      } else {
+        // Adicionar à lista local se inserção for bem-sucedida
+        const newClickData: ClickData = {
+          productId,
+          timestamp: new Date(),
+        };
+        setClickData(prev => [...prev, newClickData]);
+        
+        // 2. Atualizar o contador de cliques no produto
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ clicks: supabase.rpc('increment', { x: 1, row_id: productId }) })
+          .eq('id', productId);
+          
+        if (updateError) {
+          console.error("Erro ao atualizar contador de cliques:", updateError);
+          // Atualizações locais em caso de erro
+          setProducts(prev => 
+            prev.map(product => 
+              product.id === productId 
+                ? { ...product, clicks: product.clicks + 1 } 
+                : product
+            )
+          );
+        } else {
+          // Atualizar também o estado local
+          setProducts(prev => 
+            prev.map(product => 
+              product.id === productId 
+                ? { ...product, clicks: product.clicks + 1 } 
+                : product
+            )
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao processar clique:", error);
+      
+      // Fallback para comportamento anterior
+      const newClickData: ClickData = {
+        productId,
+        timestamp: new Date(),
+      };
+      
+      setClickData(prev => [...prev, newClickData]);
+      setProducts(prev => 
+        prev.map(product => 
+          product.id === productId 
+            ? { ...product, clicks: product.clicks + 1 } 
+            : product
+        )
+      );
+    }
   };
 
   const getProductById = (id: string) => {
     return products.find(product => product.id === id);
   };
 
-  const addProduct = (productData: Omit<Product, "id" | "clicks" | "addedAt">) => {
-    const newProduct: Product = {
-      ...productData,
-      id: Date.now().toString(),
-      clicks: 0,
-      addedAt: new Date(),
-    };
-    
-    setProducts(prev => [...prev, newProduct]);
-    toast({
-      title: "Produto adicionado",
-      description: "O produto foi adicionado com sucesso.",
-    });
+  // Funções CRUD atualizadas para usar o Supabase
+  const addProduct = async (productData: Omit<Product, "id" | "clicks" | "addedAt">) => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .insert([{
+          title: productData.title,
+          original_price: productData.originalPrice,
+          sale_price: productData.salePrice,
+          marketplace: productData.marketplace,
+          category: productData.category,
+          affiliate_link: productData.affiliateLink,
+          images: productData.images,
+          clicks: 0
+        }])
+        .select();
+        
+      if (error) {
+        console.error("Erro ao adicionar produto:", error);
+        toast({
+          title: "Erro ao adicionar produto",
+          description: error.message,
+        });
+        
+        // Fallback para comportamento anterior
+        const newProduct: Product = {
+          ...productData,
+          id: Date.now().toString(),
+          clicks: 0,
+          addedAt: new Date(),
+        };
+        
+        setProducts(prev => [...prev, newProduct]);
+      } else if (data && data[0]) {
+        // Converter o produto retornado para o formato esperado
+        const newProduct: Product = {
+          id: data[0].id,
+          title: data[0].title,
+          originalPrice: data[0].original_price,
+          salePrice: data[0].sale_price,
+          marketplace: data[0].marketplace as Marketplace,
+          category: data[0].category as Category,
+          affiliateLink: data[0].affiliate_link,
+          images: data[0].images,
+          clicks: data[0].clicks,
+          addedAt: new Date(data[0].added_at),
+        };
+        
+        setProducts(prev => [...prev, newProduct]);
+        toast({
+          title: "Produto adicionado",
+          description: "O produto foi adicionado com sucesso.",
+        });
+      }
+    } catch (error: any) {
+      console.error("Erro ao adicionar produto:", error);
+      toast({
+        title: "Erro ao adicionar produto",
+        description: error.message,
+      });
+    }
   };
 
-  const updateProduct = (id: string, updates: Partial<Product>) => {
-    setProducts(prev => 
-      prev.map(product => 
-        product.id === id 
-          ? { ...product, ...updates } 
-          : product
-      )
-    );
-    toast({
-      title: "Produto atualizado",
-      description: "O produto foi atualizado com sucesso.",
-    });
+  const updateProduct = async (id: string, updates: Partial<Product>) => {
+    try {
+      // Converter para o formato do banco de dados
+      const dbUpdates: any = {};
+      if (updates.title) dbUpdates.title = updates.title;
+      if (updates.originalPrice) dbUpdates.original_price = updates.originalPrice;
+      if (updates.salePrice) dbUpdates.sale_price = updates.salePrice;
+      if (updates.marketplace) dbUpdates.marketplace = updates.marketplace;
+      if (updates.category) dbUpdates.category = updates.category;
+      if (updates.affiliateLink) dbUpdates.affiliate_link = updates.affiliateLink;
+      if (updates.images) dbUpdates.images = updates.images;
+      
+      const { error } = await supabase
+        .from('products')
+        .update(dbUpdates)
+        .eq('id', id);
+        
+      if (error) {
+        console.error("Erro ao atualizar produto:", error);
+        toast({
+          title: "Erro ao atualizar produto",
+          description: error.message,
+        });
+      } else {
+        // Atualizar o estado local
+        setProducts(prev => 
+          prev.map(product => 
+            product.id === id 
+              ? { ...product, ...updates } 
+              : product
+          )
+        );
+        
+        toast({
+          title: "Produto atualizado",
+          description: "O produto foi atualizado com sucesso.",
+        });
+      }
+    } catch (error: any) {
+      console.error("Erro ao atualizar produto:", error);
+      toast({
+        title: "Erro ao atualizar produto",
+        description: error.message,
+      });
+    }
   };
 
-  const deleteProduct = (id: string) => {
-    setProducts(prev => prev.filter(product => product.id !== id));
-    toast({
-      title: "Produto removido",
-      description: "O produto foi removido com sucesso.",
-    });
+  const deleteProduct = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+        
+      if (error) {
+        console.error("Erro ao remover produto:", error);
+        toast({
+          title: "Erro ao remover produto",
+          description: error.message,
+        });
+      } else {
+        setProducts(prev => prev.filter(product => product.id !== id));
+        toast({
+          title: "Produto removido",
+          description: "O produto foi removido com sucesso.",
+        });
+      }
+    } catch (error: any) {
+      console.error("Erro ao remover produto:", error);
+      toast({
+        title: "Erro ao remover produto",
+        description: error.message,
+      });
+    }
   };
 
   const getAdminStats = (): AdminStats => {

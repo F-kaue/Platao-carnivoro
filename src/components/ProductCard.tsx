@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useProducts } from "@/context/ProductContext";
+import { toast } from "@/components/ui/use-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -49,9 +50,25 @@ export function ProductCard({ product, className }: ProductCardProps) {
   };
 
   // Handle affiliate link click
-  const handleClick = () => {
-    trackClick(product.id);
-    window.open(product.affiliateLink, '_blank');
+  const handleClick = async () => {
+    try {
+      // Registro do clique
+      await trackClick(product.id);
+      
+      // Notificar o usuário
+      toast({
+        title: "Redirecionando para oferta",
+        description: "Você está sendo redirecionado para o site parceiro.",
+        duration: 3000,
+      });
+      
+      // Abrir o link de afiliado
+      window.open(product.affiliateLink, '_blank');
+    } catch (error) {
+      console.error("Erro ao processar clique:", error);
+      // Ainda abre o link mesmo em caso de erro
+      window.open(product.affiliateLink, '_blank');
+    }
   };
 
   // Get marketplace badge color
@@ -144,7 +161,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
                     "w-1.5 h-1.5 rounded-full transition-all",
                     index === currentImageIndex 
                       ? "bg-purple-500 w-3" 
-                      : "bg-white/70 dark:bg-white/40"
+                      : "bg
+
+-white/70 dark:bg-white/40"
                   )}
                 />
               ))}
