@@ -142,9 +142,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     setSearchQuery("");
   };
 
-  // Função de rastreamento de cliques atualizada para usar o Supabase
+  // Função de rastreamento de cliques corrigida
   const trackClick = async (productId: string) => {
     try {
+      console.log("Registrando clique para o produto:", productId);
+      
       // 1. Registrar o clique na tabela 'clicks'
       const { error: clickInsertError } = await supabase
         .from('clicks')
@@ -165,29 +167,37 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           timestamp: new Date(),
         };
         setClickData(prev => [...prev, newClickData]);
+      }
+      
+      // 2. Obter o contador atual de cliques do produto
+      const { data: productData, error: productError } = await supabase
+        .from('products')
+        .select('clicks')
+        .eq('id', productId)
+        .single();
         
-        // 2. Atualizar o contador de cliques no produto
+      if (productError) {
+        console.error("Erro ao obter produto:", productError);
+      } else {
+        // 3. Atualizar o contador de cliques no produto
+        const currentClicks = productData?.clicks || 0;
+        const newClicks = currentClicks + 1;
+        
         const { error: updateError } = await supabase
           .from('products')
-          .update({ clicks: (products.find(p => p.id === productId)?.clicks || 0) + 1 })
+          .update({ clicks: newClicks })
           .eq('id', productId);
           
         if (updateError) {
           console.error("Erro ao atualizar contador de cliques:", updateError);
-          // Atualizações locais em caso de erro
-          setProducts(prev => 
-            prev.map(product => 
-              product.id === productId 
-                ? { ...product, clicks: product.clicks + 1 } 
-                : product
-            )
-          );
         } else {
-          // Atualizar também o estado local
+          console.log("Contador de cliques atualizado com sucesso:", newClicks);
+          
+          // 4. Atualizar estado local
           setProducts(prev => 
             prev.map(product => 
               product.id === productId 
-                ? { ...product, clicks: product.clicks + 1 } 
+                ? { ...product, clicks: newClicks } 
                 : product
             )
           );

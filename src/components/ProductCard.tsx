@@ -52,8 +52,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
   // Handle affiliate link click
   const handleClick = async () => {
     try {
-      // Registro do clique
-      await trackClick(product.id);
+      console.log("Clique no produto:", product.id);
       
       // Notificar o usuário
       toast({
@@ -61,6 +60,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
         description: "Você está sendo redirecionado para o site parceiro.",
         duration: 3000,
       });
+      
+      // Registro do clique
+      await trackClick(product.id);
       
       // Abrir o link de afiliado
       window.open(product.affiliateLink, '_blank');
