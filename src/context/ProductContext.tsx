@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
 import { useToast } from "@/components/ui/use-toast";
@@ -196,14 +195,21 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       // 1. Registrar o clique na tabela clicks
       const { error: clickError } = await supabase
         .from('clicks')
-        .insert([{ product_id: productId }]);
+        .insert({ product_id: productId });
 
       if (clickError) {
         throw new Error(clickError.message);
       }
 
       // 2. Executar a função RPC para incrementar o contador
-      await supabase.rpc('increment_product_clicks', { product_id: productId });
+      const { error: rpcError } = await supabase.rpc('increment_product_clicks', { 
+        product_id: productId 
+      });
+      
+      if (rpcError) {
+        console.error("Erro ao incrementar cliques:", rpcError);
+        throw new Error(rpcError.message);
+      }
 
     } catch (error) {
       console.error("Erro ao processar clique:", error);
