@@ -161,9 +161,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
                     "w-1.5 h-1.5 rounded-full transition-all",
                     index === currentImageIndex 
                       ? "bg-purple-500 w-3" 
-                      : "bg
-
--white/70 dark:bg-white/40"
+                      : "bg-white/70 dark:bg-white/40"
                   )}
                 />
               ))}
