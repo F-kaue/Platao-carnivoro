@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
 import { useToast } from "@/components/ui/use-toast";
@@ -47,6 +48,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
+        if (!supabaseProducts) {
+          console.error("Nenhum produto retornado");
+          return;
+        }
+
         // Converter dados do Supabase para o formato Product
         const formattedProducts: Product[] = supabaseProducts.map(p => ({
           id: p.id,
@@ -71,8 +77,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
         if (!clicksError && clicks) {
           const formattedClicks: ClickData[] = clicks.map(click => ({
-            productId: click.product_id,
-            timestamp: new Date(click.timestamp)
+            productId: click.product_id || "",
+            timestamp: new Date(click.timestamp || new Date())
           }));
           setClickData(formattedClicks);
         }
@@ -126,8 +132,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         (payload: any) => {
           console.log('Novo clique registrado:', payload);
           const newClick: ClickData = {
-            productId: payload.new.product_id,
-            timestamp: new Date(payload.new.timestamp)
+            productId: payload.new.product_id || "",
+            timestamp: new Date(payload.new.timestamp || new Date())
           };
           setClickData(current => [...current, newClick]);
         }
@@ -196,15 +202,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         throw new Error(clickError.message);
       }
 
-      // 2. Incrementar o contador de cliques do produto
-      const { error: updateError } = await supabase
-        .rpc('increment_product_clicks', {
-          product_id: productId
-        });
-
-      if (updateError) {
-        throw new Error(updateError.message);
-      }
+      // 2. Executar a função RPC para incrementar o contador
+      await supabase.rpc('increment_product_clicks', { product_id: productId });
 
     } catch (error) {
       console.error("Erro ao processar clique:", error);
@@ -225,7 +224,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase
         .from('products')
-        .insert([{
+        .insert({
           title: productData.title,
           original_price: productData.originalPrice,
           sale_price: productData.salePrice,
@@ -234,7 +233,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           affiliate_link: productData.affiliateLink,
           images: productData.images,
           clicks: 0
-        }])
+        })
         .select();
         
       if (error) {
