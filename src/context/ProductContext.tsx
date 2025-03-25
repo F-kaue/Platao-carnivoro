@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
 import { useToast } from "@/components/ui/use-toast";
@@ -35,69 +34,102 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
-  // Initialize with data from Supabase or mock data
+  // Initialize with data and setup realtime
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        // Tentar buscar produtos do Supabase
         const { data: supabaseProducts, error } = await supabase
           .from('products')
           .select('*');
 
         if (error) {
-          console.error("Erro ao buscar produtos do Supabase:", error);
-          // Fallback para dados mock
-          setProducts(mockProducts);
-          setFilteredProducts(mockProducts);
-        } else if (supabaseProducts && supabaseProducts.length > 0) {
-          // Converter os dados do Supabase para o formato esperado
-          const formattedProducts: Product[] = supabaseProducts.map(product => ({
-            id: product.id,
-            title: product.title,
-            originalPrice: product.original_price,
-            salePrice: product.sale_price,
-            marketplace: product.marketplace as Marketplace,
-            category: product.category as Category,
-            affiliateLink: product.affiliate_link,
-            images: product.images,
-            clicks: product.clicks || 0,
-            addedAt: new Date(product.added_at || new Date())
-          }));
-          
-          setProducts(formattedProducts);
-          setFilteredProducts(formattedProducts);
-        } else {
-          // Se não houver produtos no Supabase, usar dados mock
-          setProducts(mockProducts);
-          setFilteredProducts(mockProducts);
+          console.error("Erro ao buscar produtos:", error);
+          return;
         }
+
+        // Converter dados do Supabase para o formato Product
+        const formattedProducts: Product[] = supabaseProducts.map(p => ({
+          id: p.id,
+          title: p.title,
+          originalPrice: p.original_price,
+          salePrice: p.sale_price,
+          marketplace: p.marketplace as Marketplace,
+          category: p.category as Category,
+          affiliateLink: p.affiliate_link,
+          images: p.images,
+          clicks: p.clicks || 0,
+          addedAt: new Date(p.added_at || new Date())
+        }));
+
+        setProducts(formattedProducts);
+        setFilteredProducts(formattedProducts);
         
-        // Buscar dados de cliques do Supabase
-        const { data: supabaseClicks, error: clicksError } = await supabase
+        // Carregar dados de cliques
+        const { data: clicks, error: clicksError } = await supabase
           .from('clicks')
           .select('*');
-          
-        if (!clicksError && supabaseClicks) {
-          const formattedClicks: ClickData[] = supabaseClicks.map(click => ({
-            productId: click.product_id || "",
-            timestamp: new Date(click.timestamp || new Date())
+
+        if (!clicksError && clicks) {
+          const formattedClicks: ClickData[] = clicks.map(click => ({
+            productId: click.product_id,
+            timestamp: new Date(click.timestamp)
           }));
-          
           setClickData(formattedClicks);
         }
-        
-        // Simular loading
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
-        
+
       } catch (error) {
-        console.error("Falha ao carregar produtos:", error);
+        console.error("Erro ao carregar dados:", error);
+      } finally {
         setIsLoading(false);
       }
     };
 
+    // Carregar dados iniciais
     loadProducts();
+
+    // Configurar canal realtime para produtos
+    const productChannel = supabase
+      .channel('products-changes')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'products' },
+        (payload) => {
+          console.log('Produto atualizado:', payload);
+          setProducts(currentProducts => 
+            currentProducts.map(product => 
+              product.id === payload.new.id
+                ? {
+                    ...product,
+                    clicks: payload.new.clicks,
+                  }
+                : product
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    // Configurar canal realtime para cliques
+    const clicksChannel = supabase
+      .channel('clicks-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'clicks' },
+        (payload) => {
+          console.log('Novo clique registrado:', payload);
+          const newClick: ClickData = {
+            productId: payload.new.product_id,
+            timestamp: new Date(payload.new.timestamp)
+          };
+          setClickData(current => [...current, newClick]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(productChannel);
+      supabase.removeChannel(clicksChannel);
+    };
   }, []);
 
   // Apply filters whenever filter state changes
@@ -142,84 +174,36 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     setSearchQuery("");
   };
 
-  // Função de rastreamento de cliques corrigida
+  // Função de rastreamento de cliques atualizada
   const trackClick = async (productId: string) => {
     try {
       console.log("Registrando clique para o produto:", productId);
       
-      // 1. Registrar o clique na tabela 'clicks'
-      const { error: clickInsertError } = await supabase
+      // 1. Registrar o clique na tabela clicks
+      const { error: clickError } = await supabase
         .from('clicks')
         .insert([{ product_id: productId }]);
-        
-      if (clickInsertError) {
-        console.error("Erro ao registrar clique:", clickInsertError);
-        // Fallback para armazenamento local em caso de erro
-        const newClickData: ClickData = {
-          productId,
-          timestamp: new Date(),
-        };
-        setClickData(prev => [...prev, newClickData]);
-      } else {
-        // Adicionar à lista local se inserção for bem-sucedida
-        const newClickData: ClickData = {
-          productId,
-          timestamp: new Date(),
-        };
-        setClickData(prev => [...prev, newClickData]);
+
+      if (clickError) {
+        throw new Error(clickError.message);
       }
-      
-      // 2. Obter o contador atual de cliques do produto
-      const { data: productData, error: productError } = await supabase
-        .from('products')
-        .select('clicks')
-        .eq('id', productId)
-        .single();
-        
-      if (productError) {
-        console.error("Erro ao obter produto:", productError);
-      } else {
-        // 3. Atualizar o contador de cliques no produto
-        const currentClicks = productData?.clicks || 0;
-        const newClicks = currentClicks + 1;
-        
-        const { error: updateError } = await supabase
-          .from('products')
-          .update({ clicks: newClicks })
-          .eq('id', productId);
-          
-        if (updateError) {
-          console.error("Erro ao atualizar contador de cliques:", updateError);
-        } else {
-          console.log("Contador de cliques atualizado com sucesso:", newClicks);
-          
-          // 4. Atualizar estado local
-          setProducts(prev => 
-            prev.map(product => 
-              product.id === productId 
-                ? { ...product, clicks: newClicks } 
-                : product
-            )
-          );
-        }
+
+      // 2. Incrementar o contador de cliques do produto
+      const { error: updateError } = await supabase.rpc('increment_product_clicks', {
+        product_id: productId
+      });
+
+      if (updateError) {
+        throw new Error(updateError.message);
       }
+
     } catch (error) {
       console.error("Erro ao processar clique:", error);
-      
-      // Fallback para comportamento anterior
-      const newClickData: ClickData = {
-        productId,
-        timestamp: new Date(),
-      };
-      
-      setClickData(prev => [...prev, newClickData]);
-      setProducts(prev => 
-        prev.map(product => 
-          product.id === productId 
-            ? { ...product, clicks: product.clicks + 1 } 
-            : product
-        )
-      );
+      toast({
+        title: "Erro ao registrar clique",
+        description: "Ocorreu um erro ao registrar o clique no produto.",
+        duration: 3000,
+      });
     }
   };
 

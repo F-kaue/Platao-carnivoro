@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/types";
@@ -49,10 +48,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
     setIsImageLoading(true);
   };
 
-  // Handle affiliate link click
   const handleClick = async () => {
     try {
-      console.log("Clique no produto:", product.id);
+      console.log("Registrando clique para o produto:", product.id);
+      
+      // Registrar o clique primeiro
+      await trackClick(product.id);
       
       // Notificar o usuário
       toast({
@@ -61,14 +62,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
         duration: 3000,
       });
       
-      // Registro do clique
-      await trackClick(product.id);
-      
-      // Abrir o link de afiliado
+      // Só redireciona após o registro do clique
       window.open(product.affiliateLink, '_blank');
     } catch (error) {
       console.error("Erro ao processar clique:", error);
-      // Ainda abre o link mesmo em caso de erro
+      // Em caso de erro, ainda permite o redirecionamento
       window.open(product.affiliateLink, '_blank');
     }
   };
