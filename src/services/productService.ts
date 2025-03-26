@@ -73,12 +73,23 @@ export async function trackProductClick(productId: string) {
       throw new Error(clickError.message);
     }
 
-    // 2. Update clicks count in products table
+    // 2. First get current click count
+    const { data: productData, error: getError } = await supabase
+      .from('products')
+      .select('clicks')
+      .eq('id', productId)
+      .single();
+      
+    if (getError) {
+      console.error("Error getting current click count:", getError);
+      throw new Error(getError.message);
+    }
+    
+    // 3. Update clicks count in products table
+    const currentClicks = productData?.clicks || 0;
     const { error: updateError } = await supabase
       .from('products')
-      .update({ 
-        clicks: supabase.sql`coalesce(clicks, 0) + 1` 
-      })
+      .update({ clicks: currentClicks + 1 })
       .eq('id', productId);
       
     if (updateError) {
