@@ -30,19 +30,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (!sessionData.session) {
           console.log("Sem sessão Supabase, tentando re-autenticar...");
-          // Tentar autenticar com Supabase
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: "achadinhos@admin.com",
-            password: "0956kaue",
-          });
           
-          if (error) {
-            console.error("Erro ao re-autenticar com Supabase:", error);
-            // Não atualizamos o estado de login pois o localStorage já está como true
-            return true; // Ainda retornamos true pois localStorage é nossa autenticação primária
-          }
-          
-          console.log("Re-autenticação Supabase bem-sucedida:", data.session ? "Sessão válida" : "Sem sessão");
+          // Definir o estado de login baseado apenas no localStorage
+          setIsLoggedIn(true);
+          return true;
         } else {
           console.log("Sessão Supabase existente encontrada");
         }
@@ -72,28 +63,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Validação básica de credenciais
     if (cpf === "07710027342" && password === "0956kaue") {
       try {
-        console.log("Credenciais corretas, tentando autenticar com Supabase...");
-        // Autenticar com Supabase
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: "achadinhos@admin.com",
-          password: "0956kaue",
-        });
+        console.log("Credenciais corretas, configurando autenticação local");
         
-        if (error) {
-          console.error("Erro ao autenticar com Supabase:", error);
-          toast({
-            title: "Erro de autenticação",
-            description: "Falha na autenticação com Supabase: " + error.message,
-            variant: "destructive",
-          });
-          return false;
-        }
-        
-        console.log("Autenticação Supabase bem-sucedida:", data.session ? "Sessão válida" : "Sem sessão");
-        
-        // Definir estado de login e armazenar no localStorage
+        // Apenas configurar o login local sem tentar autenticar no Supabase
         setIsLoggedIn(true);
         localStorage.setItem("isLoggedIn", "true");
+        
+        // Tentar autenticar com Supabase em segundo plano (não bloqueante)
+        supabase.auth.signInWithPassword({
+          email: "achadinhos@admin.com",
+          password: "0956kaue",
+        }).then(({ data, error }) => {
+          if (error) {
+            console.warn("Erro ao autenticar com Supabase (não crítico):", error);
+          } else {
+            console.log("Autenticação Supabase bem-sucedida em segundo plano");
+          }
+        }).catch(err => {
+          console.warn("Exceção ao autenticar com Supabase (não crítica):", err);
+        });
         
         toast({
           title: "Login realizado com sucesso",
@@ -122,7 +110,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       // Deslogar do Supabase
-      await supabase.auth.signOut();
+      await supabase.auth.signOut().catch(err => {
+        console.warn("Erro ao fazer logout do Supabase (não crítico):", err);
+      });
       
       // Atualizar estado local
       setIsLoggedIn(false);
