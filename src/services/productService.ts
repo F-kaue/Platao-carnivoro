@@ -129,41 +129,56 @@ export async function trackProductClick(productId: string) {
 }
 
 /**
- * Adds a new product to the database
+ * Adiciona um novo produto ao banco de dados
+ * Esta função foi reescrita para garantir que o usuário esteja autenticado
  */
 export async function addProduct(productData: Omit<Product, "id" | "clicks" | "addedAt">) {
   try {
-    console.log("Adding product with data:", productData);
+    console.log("Adicionando produto com dados:", productData);
     
-    // Verify authentication status
+    // Verificar se o usuário está autenticado
     const { data: sessionData } = await supabase.auth.getSession();
+    
+    // Se não houver sessão, tentar autenticar (se o localStorage indicar que estamos logados)
     if (!sessionData.session) {
-      console.error("No Supabase session found. Attempting to authenticate...");
+      console.log("Sem sessão Supabase, verificando localStorage...");
       
-      // Try to authenticate with Supabase if localStorage has isLoggedIn = true
       if (localStorage.getItem("isLoggedIn") === "true") {
+        console.log("localStorage indica login, tentando reautenticar...");
+        
         try {
-          const { error } = await supabase.auth.signInWithPassword({
+          const { data, error } = await supabase.auth.signInWithPassword({
             email: "achadinhos@admin.com",
             password: "0956kaue",
           });
           
           if (error) {
-            console.error("Error authenticating with Supabase:", error);
+            console.error("Erro ao autenticar com Supabase:", error);
             toast({
               title: "Erro de autenticação",
-              description: "Falha ao autenticar com o Supabase. Tente fazer logout e login novamente.",
+              description: "Não foi possível autenticar com o Supabase. Por favor, faça logout e login novamente.",
               variant: "destructive"
             });
-            throw new Error("Falha na autenticação");
+            throw new Error("Falha na autenticação com Supabase");
           }
           
-          console.log("Successfully authenticated with Supabase");
+          console.log("Reautenticação Supabase bem-sucedida:", data.session ? "Sessão válida" : "Sem sessão");
+          
+          // Verificar novamente se a sessão foi criada
+          if (!data.session) {
+            console.error("Falha ao obter sessão após autenticação");
+            toast({
+              title: "Erro de autenticação",
+              description: "Não foi possível criar uma sessão válida. Por favor, faça logout e login novamente.",
+              variant: "destructive"
+            });
+            throw new Error("Sessão não criada após autenticação");
+          }
         } catch (authError) {
-          console.error("Exception during Supabase authentication:", authError);
+          console.error("Exceção durante autenticação Supabase:", authError);
           toast({
             title: "Erro de autenticação",
-            description: "Não foi possível autenticar com o Supabase. Tente fazer logout e login novamente.",
+            description: "Ocorreu um erro ao tentar autenticar. Por favor, faça logout e login novamente.",
             variant: "destructive"
           });
           throw new Error("Falha na autenticação");
@@ -178,7 +193,21 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
       }
     }
     
-    // Proceed with adding the product
+    // Verificar se há uma sessão válida após todas as tentativas
+    const { data: finalSession } = await supabase.auth.getSession();
+    if (!finalSession.session) {
+      console.error("Sem sessão válida após todas as tentativas");
+      toast({
+        title: "Erro de autenticação",
+        description: "Não foi possível estabelecer uma sessão válida. Por favor, faça logout e login novamente.",
+        variant: "destructive"
+      });
+      throw new Error("Sem sessão válida");
+    }
+    
+    console.log("Sessão válida confirmada, prosseguindo com adição do produto");
+    
+    // Adicionar o produto ao banco de dados
     const { data, error } = await supabase
       .from('products')
       .insert({
@@ -194,15 +223,23 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
       .select();
       
     if (error) {
-      console.error("Error adding product:", error);
+      console.error("Erro ao adicionar produto:", error);
+      toast({
+        title: "Erro ao adicionar produto",
+        description: "Detalhes: " + error.message,
+        variant: "destructive"
+      });
       throw error;
     }
 
     if (!data || data.length === 0) {
+      console.error("Nenhum dado retornado após adicionar produto");
       throw new Error("Nenhum dado retornado após adicionar produto");
     }
     
-    // Convert to Product format
+    console.log("Produto adicionado com sucesso:", data[0]);
+    
+    // Converter para formato Product
     return {
       id: data[0].id,
       title: data[0].title,
@@ -216,7 +253,7 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
       addedAt: new Date(data[0].added_at || new Date()),
     };
   } catch (error: any) {
-    console.error("Error in addProduct:", error);
+    console.error("Erro em addProduct:", error);
     toast({
       title: "Erro ao adicionar produto",
       description: error.message || "Verifique se você está autenticado e tente novamente",

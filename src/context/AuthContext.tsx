@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   login: (cpf: string, password: string) => Promise<boolean>;
   logout: () => void;
+  checkAndRefreshAuth: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,63 +18,80 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Check for existing session on component mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authStatus = localStorage.getItem("isLoggedIn");
+  // Função para verificar e atualizar o estado de autenticação
+  const checkAndRefreshAuth = async (): Promise<boolean> => {
+    try {
+      // Verificar localStorage primeiro
+      const localAuth = localStorage.getItem("isLoggedIn") === "true";
       
-      if (authStatus === "true") {
-        try {
-          // Check if we already have a session
-          const { data: sessionData } = await supabase.auth.getSession();
+      if (localAuth) {
+        // Verificar se temos uma sessão Supabase
+        const { data: sessionData } = await supabase.auth.getSession();
+        
+        if (!sessionData.session) {
+          console.log("Sem sessão Supabase, tentando re-autenticar...");
+          // Tentar autenticar com Supabase
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: "achadinhos@admin.com",
+            password: "0956kaue",
+          });
           
-          if (!sessionData.session) {
-            // If no session exists, sign in with Supabase
-            const { error } = await supabase.auth.signInWithPassword({
-              email: "achadinhos@admin.com",
-              password: "0956kaue",
-            });
-            
-            if (error) {
-              console.error("Error signing in with Supabase:", error);
-              // Still set as logged in since localStorage is our primary auth mechanism
-            }
+          if (error) {
+            console.error("Erro ao re-autenticar com Supabase:", error);
+            // Não atualizamos o estado de login pois o localStorage já está como true
+            return true; // Ainda retornamos true pois localStorage é nossa autenticação primária
           }
           
-          setIsLoggedIn(true);
-        } catch (error) {
-          console.error("Error syncing Supabase auth:", error);
-          // Still set as logged in since localStorage is our primary auth mechanism
-          setIsLoggedIn(true);
+          console.log("Re-autenticação Supabase bem-sucedida:", data.session ? "Sessão válida" : "Sem sessão");
+        } else {
+          console.log("Sessão Supabase existente encontrada");
         }
+        
+        setIsLoggedIn(true);
+        return true;
+      } else {
+        console.log("Usuário não está logado de acordo com localStorage");
+        setIsLoggedIn(false);
+        return false;
       }
-    };
-    
-    checkAuth();
+    } catch (error) {
+      console.error("Erro ao verificar autenticação:", error);
+      // Consideramos o estado atual do localStorage
+      const currentLoginState = localStorage.getItem("isLoggedIn") === "true";
+      setIsLoggedIn(currentLoginState);
+      return currentLoginState;
+    }
+  };
+
+  // Verificar autenticação ao montar o componente
+  useEffect(() => {
+    checkAndRefreshAuth();
   }, []);
 
   const login = async (cpf: string, password: string): Promise<boolean> => {
-    // In a real implementation, this would be an API call
-    // For now, we'll hard-code the credentials as specified
+    // Validação básica de credenciais
     if (cpf === "07710027342" && password === "0956kaue") {
       try {
-        // Sign in with Supabase first to ensure we have a session
-        const { error } = await supabase.auth.signInWithPassword({
+        console.log("Credenciais corretas, tentando autenticar com Supabase...");
+        // Autenticar com Supabase
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: "achadinhos@admin.com",
           password: "0956kaue",
         });
         
         if (error) {
-          console.error("Error signing in with Supabase:", error);
+          console.error("Erro ao autenticar com Supabase:", error);
           toast({
             title: "Erro de autenticação",
-            description: "Não foi possível autenticar com o Supabase: " + error.message,
+            description: "Falha na autenticação com Supabase: " + error.message,
             variant: "destructive",
           });
           return false;
         }
         
-        // Set logged in state and store in localStorage
+        console.log("Autenticação Supabase bem-sucedida:", data.session ? "Sessão válida" : "Sem sessão");
+        
+        // Definir estado de login e armazenar no localStorage
         setIsLoggedIn(true);
         localStorage.setItem("isLoggedIn", "true");
         
@@ -83,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         return true;
       } catch (error: any) {
-        console.error("Error during login process:", error);
+        console.error("Erro durante processo de login:", error);
         toast({
           title: "Erro de autenticação",
           description: "Ocorreu um erro durante o processo de login.",
@@ -103,10 +121,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      // Sign out from Supabase
+      // Deslogar do Supabase
       await supabase.auth.signOut();
       
-      // Update local state
+      // Atualizar estado local
       setIsLoggedIn(false);
       localStorage.removeItem("isLoggedIn");
       
@@ -117,7 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "Você foi desconectado com sucesso.",
       });
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Erro ao fazer logout:", error);
       toast({
         title: "Erro ao fazer logout",
         description: "Ocorreu um erro ao tentar desconectar.",
@@ -127,7 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout, checkAndRefreshAuth }}>
       {children}
     </AuthContext.Provider>
   );
