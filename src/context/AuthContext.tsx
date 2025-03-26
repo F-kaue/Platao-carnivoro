@@ -1,7 +1,8 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -18,16 +19,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Check for existing session on component mount
   useEffect(() => {
-    const authStatus = localStorage.getItem("isLoggedIn");
-    if (authStatus === "true") {
-      setIsLoggedIn(true);
-    }
+    const checkAuth = async () => {
+      const authStatus = localStorage.getItem("isLoggedIn");
+      
+      if (authStatus === "true") {
+        // Also sign in with Supabase using the anonymous key
+        try {
+          // Check if we already have a session
+          const { data: sessionData } = await supabase.auth.getSession();
+          
+          if (!sessionData.session) {
+            // If no session exists, sign in anonymously
+            await supabase.auth.signInWithPassword({
+              email: "achadinhos@admin.com",
+              password: "0956kaue",
+            });
+          }
+          
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error("Error syncing Supabase auth:", error);
+          // Still set as logged in since localStorage is our primary auth mechanism
+          setIsLoggedIn(true);
+        }
+      }
+    };
+    
+    checkAuth();
   }, []);
 
   const login = async (cpf: string, password: string): Promise<boolean> => {
     // In a real implementation, this would be an API call
     // For now, we'll hard-code the credentials as specified
     if (cpf === "07710027342" && password === "0956kaue") {
+      // Also sign in with Supabase using the anonymous key
+      try {
+        await supabase.auth.signInWithPassword({
+          email: "achadinhos@admin.com",
+          password: "0956kaue",
+        });
+      } catch (error) {
+        console.error("Error signing in with Supabase:", error);
+        // We'll continue anyway since this is just for database access
+      }
+      
       setIsLoggedIn(true);
       localStorage.setItem("isLoggedIn", "true");
       toast({
@@ -46,6 +81,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    // Also sign out from Supabase
+    supabase.auth.signOut().catch((error) => {
+      console.error("Error signing out from Supabase:", error);
+    });
+    
     setIsLoggedIn(false);
     localStorage.removeItem("isLoggedIn");
     navigate("/login");

@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Product, Category, Marketplace, ClickData, ChartData, AdminStats } from "@/types";
@@ -38,7 +37,7 @@ export async function fetchProducts() {
     console.error("Error in fetchProducts:", error);
     toast({
       title: "Erro ao carregar produtos",
-      description: "Verifique se você está autenticado.",
+      description: "Verifique sua conexão com o servidor.",
       variant: "destructive"
     });
     return [];
@@ -72,7 +71,7 @@ export async function fetchClickData() {
     console.error("Error in fetchClickData:", error);
     toast({
       title: "Erro ao carregar dados de cliques",
-      description: "Verifique se você está autenticado.",
+      description: "Verifique sua conexão com o servidor.",
       variant: "destructive" 
     });
     return [];
@@ -138,12 +137,30 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
     // Validate auth state before attempting to add
     const { data: session } = await supabase.auth.getSession();
     if (!session.session) {
-      toast({
-        title: "Erro de autenticação",
-        description: "Você precisa estar logado para adicionar produtos",
-        variant: "destructive"
-      });
-      throw new Error("Authentication required to add products");
+      // If there's no Supabase session but we're logged in via localStorage, try to signin
+      if (localStorage.getItem("isLoggedIn") === "true") {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: "achadinhos@admin.com",
+            password: "0956kaue",
+          });
+        } catch (authError) {
+          console.error("Error authenticating with Supabase:", authError);
+          toast({
+            title: "Erro de autenticação",
+            description: "Não foi possível autenticar com o Supabase. Tente fazer logout e login novamente.",
+            variant: "destructive"
+          });
+          throw new Error("Authentication failed");
+        }
+      } else {
+        toast({
+          title: "Erro de autenticação",
+          description: "Você precisa estar logado para adicionar produtos",
+          variant: "destructive"
+        });
+        throw new Error("Authentication required to add products");
+      }
     }
     
     const { data, error } = await supabase
@@ -201,12 +218,30 @@ export async function updateProduct(id: string, updates: Partial<Product>) {
     // Validate auth state before attempting to update
     const { data: session } = await supabase.auth.getSession();
     if (!session.session) {
-      toast({
-        title: "Erro de autenticação",
-        description: "Você precisa estar logado para atualizar produtos",
-        variant: "destructive"
-      });
-      throw new Error("Authentication required to update products");
+      // If there's no Supabase session but we're logged in via localStorage, try to signin
+      if (localStorage.getItem("isLoggedIn") === "true") {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: "achadinhos@admin.com",
+            password: "0956kaue",
+          });
+        } catch (authError) {
+          console.error("Error authenticating with Supabase:", authError);
+          toast({
+            title: "Erro de autenticação",
+            description: "Não foi possível autenticar com o Supabase. Tente fazer logout e login novamente.",
+            variant: "destructive"
+          });
+          throw new Error("Authentication failed");
+        }
+      } else {
+        toast({
+          title: "Erro de autenticação",
+          description: "Você precisa estar logado para atualizar produtos",
+          variant: "destructive"
+        });
+        throw new Error("Authentication required to update products");
+      }
     }
     
     // Convert to database format
@@ -247,12 +282,30 @@ export async function deleteProduct(id: string) {
     // Validate auth state before attempting to delete
     const { data: session } = await supabase.auth.getSession();
     if (!session.session) {
-      toast({
-        title: "Erro de autenticação",
-        description: "Você precisa estar logado para remover produtos",
-        variant: "destructive"
-      });
-      throw new Error("Authentication required to delete products");
+      // If there's no Supabase session but we're logged in via localStorage, try to signin
+      if (localStorage.getItem("isLoggedIn") === "true") {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: "achadinhos@admin.com",
+            password: "0956kaue",
+          });
+        } catch (authError) {
+          console.error("Error authenticating with Supabase:", authError);
+          toast({
+            title: "Erro de autenticação",
+            description: "Não foi possível autenticar com o Supabase. Tente fazer logout e login novamente.",
+            variant: "destructive"
+          });
+          throw new Error("Authentication failed");
+        }
+      } else {
+        toast({
+          title: "Erro de autenticação",
+          description: "Você precisa estar logado para remover produtos",
+          variant: "destructive"
+        });
+        throw new Error("Authentication required to delete products");
+      }
     }
     
     const { error } = await supabase

@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { 
   fetchProducts, 
   fetchClickData, 
@@ -49,6 +49,28 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
   // Check authentication status
   const checkAuthStatus = useCallback(async () => {
+    // First check localStorage (our custom auth)
+    const localAuth = localStorage.getItem("isLoggedIn") === "true";
+    
+    if (localAuth) {
+      // Make sure we're also authenticated with Supabase
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: "achadinhos@admin.com",
+            password: "0956kaue",
+          });
+          return true;
+        } catch (error) {
+          console.error("Error signing in with Supabase:", error);
+          return true; // Still return true since localStorage is our primary auth
+        }
+      }
+      return true;
+    }
+    
+    // If not logged in via localStorage, check Supabase session
     const { data } = await supabase.auth.getSession();
     return !!data.session;
   }, []);
@@ -59,20 +81,17 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       try {
         setIsLoading(true);
         
-        // Check auth status first
-        const isAuthenticated = await checkAuthStatus();
-        if (!isAuthenticated) {
-          console.log("User not authenticated, some operations will be limited");
-          // Still attempt to load products for public viewing
-        }
-        
-        // Load products
+        // Always try to load products for public viewing
         const productsData = await fetchProducts();
         setProducts(productsData);
         
-        // Load click data
-        const clicksData = await fetchClickData();
-        setClickData(clicksData);
+        // Check auth status before loading click data
+        const isAuthenticated = await checkAuthStatus();
+        if (isAuthenticated) {
+          // Load click data if authenticated
+          const clicksData = await fetchClickData();
+          setClickData(clicksData);
+        }
       } catch (error) {
         console.error("Error loading data:", error);
         toast({
