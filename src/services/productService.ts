@@ -1,3 +1,4 @@
+
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Product, Category, Marketplace, ClickData, ChartData, AdminStats } from "@/types";
@@ -134,24 +135,38 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
   try {
     console.log("Adding product with data:", productData);
     
-    // Validate auth state before attempting to add
-    const { data: session } = await supabase.auth.getSession();
-    if (!session.session) {
-      // If there's no Supabase session but we're logged in via localStorage, try to signin
+    // Verify authentication status
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      console.error("No Supabase session found. Attempting to authenticate...");
+      
+      // Try to authenticate with Supabase if localStorage has isLoggedIn = true
       if (localStorage.getItem("isLoggedIn") === "true") {
         try {
-          await supabase.auth.signInWithPassword({
+          const { error } = await supabase.auth.signInWithPassword({
             email: "achadinhos@admin.com",
             password: "0956kaue",
           });
+          
+          if (error) {
+            console.error("Error authenticating with Supabase:", error);
+            toast({
+              title: "Erro de autenticação",
+              description: "Falha ao autenticar com o Supabase. Tente fazer logout e login novamente.",
+              variant: "destructive"
+            });
+            throw new Error("Falha na autenticação");
+          }
+          
+          console.log("Successfully authenticated with Supabase");
         } catch (authError) {
-          console.error("Error authenticating with Supabase:", authError);
+          console.error("Exception during Supabase authentication:", authError);
           toast({
             title: "Erro de autenticação",
             description: "Não foi possível autenticar com o Supabase. Tente fazer logout e login novamente.",
             variant: "destructive"
           });
-          throw new Error("Authentication failed");
+          throw new Error("Falha na autenticação");
         }
       } else {
         toast({
@@ -159,10 +174,11 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
           description: "Você precisa estar logado para adicionar produtos",
           variant: "destructive"
         });
-        throw new Error("Authentication required to add products");
+        throw new Error("Autenticação necessária para adicionar produtos");
       }
     }
     
+    // Proceed with adding the product
     const { data, error } = await supabase
       .from('products')
       .insert({
@@ -183,7 +199,7 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
     }
 
     if (!data || data.length === 0) {
-      throw new Error("No data returned after adding product");
+      throw new Error("Nenhum dado retornado após adicionar produto");
     }
     
     // Convert to Product format
