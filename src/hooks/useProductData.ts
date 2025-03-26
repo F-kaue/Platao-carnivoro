@@ -1,7 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Product, ClickData, Category, Marketplace } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "./use-toast";
 
 /**
  * Hook to manage product data filtering
@@ -61,6 +62,54 @@ export function useProductFiltering(products: Product[]) {
     searchProducts,
     resetFilters
   };
+}
+
+/**
+ * Hook to check and monitor authentication status
+ */
+export function useAuthCheck() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    // Check current auth status
+    const checkAuth = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        setIsAuthenticated(!!data.session);
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        setIsAuthenticated(false);
+      }
+    };
+    
+    checkAuth();
+    
+    // Listen for auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setIsAuthenticated(!!session);
+        
+        if (event === 'SIGNED_IN') {
+          toast({
+            title: "Autenticado com sucesso",
+            description: "Você agora está conectado.",
+          });
+        } else if (event === 'SIGNED_OUT') {
+          toast({
+            title: "Desconectado",
+            description: "Você foi desconectado do sistema.",
+          });
+        }
+      }
+    );
+    
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [toast]);
+  
+  return { isAuthenticated };
 }
 
 /**

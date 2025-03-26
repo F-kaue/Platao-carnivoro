@@ -7,56 +7,76 @@ import { Product, Category, Marketplace, ClickData, ChartData, AdminStats } from
  * Fetches all products from the database
  */
 export async function fetchProducts() {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*');
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*');
 
-  if (error) {
-    console.error("Error fetching products:", error);
-    throw error;
-  }
+    if (error) {
+      console.error("Error fetching products:", error);
+      throw error;
+    }
 
-  if (!data) {
+    if (!data) {
+      return [];
+    }
+
+    // Convert Supabase data to Product format
+    return data.map(p => ({
+      id: p.id,
+      title: p.title,
+      originalPrice: p.original_price,
+      salePrice: p.sale_price,
+      marketplace: p.marketplace as Marketplace,
+      category: p.category as Category,
+      affiliateLink: p.affiliate_link,
+      images: p.images,
+      clicks: p.clicks || 0,
+      addedAt: new Date(p.added_at || new Date())
+    }));
+  } catch (error) {
+    console.error("Error in fetchProducts:", error);
+    toast({
+      title: "Erro ao carregar produtos",
+      description: "Verifique se você está autenticado.",
+      variant: "destructive"
+    });
     return [];
   }
-
-  // Convert Supabase data to Product format
-  return data.map(p => ({
-    id: p.id,
-    title: p.title,
-    originalPrice: p.original_price,
-    salePrice: p.sale_price,
-    marketplace: p.marketplace as Marketplace,
-    category: p.category as Category,
-    affiliateLink: p.affiliate_link,
-    images: p.images,
-    clicks: p.clicks || 0,
-    addedAt: new Date(p.added_at || new Date())
-  }));
 }
 
 /**
  * Fetches all click data from the database
  */
 export async function fetchClickData() {
-  const { data, error } = await supabase
-    .from('clicks')
-    .select('*');
+  try {
+    const { data, error } = await supabase
+      .from('clicks')
+      .select('*');
 
-  if (error) {
-    console.error("Error fetching click data:", error);
-    throw error;
-  }
+    if (error) {
+      console.error("Error fetching click data:", error);
+      throw error;
+    }
 
-  if (!data) {
+    if (!data) {
+      return [];
+    }
+
+    // Convert to ClickData format
+    return data.map(click => ({
+      productId: click.product_id || "",
+      timestamp: new Date(click.timestamp || new Date())
+    }));
+  } catch (error) {
+    console.error("Error in fetchClickData:", error);
+    toast({
+      title: "Erro ao carregar dados de cliques",
+      description: "Verifique se você está autenticado.",
+      variant: "destructive" 
+    });
     return [];
   }
-
-  // Convert to ClickData format
-  return data.map(click => ({
-    productId: click.product_id || "",
-    timestamp: new Date(click.timestamp || new Date())
-  }));
 }
 
 /**
@@ -99,6 +119,11 @@ export async function trackProductClick(productId: string) {
 
   } catch (error: any) {
     console.error("Error processing click:", error);
+    toast({
+      title: "Erro ao registrar clique",
+      description: error.message || "Verifique sua conexão com o servidor",
+      variant: "destructive"
+    });
     throw error;
   }
 }
@@ -107,65 +132,109 @@ export async function trackProductClick(productId: string) {
  * Adds a new product to the database
  */
 export async function addProduct(productData: Omit<Product, "id" | "clicks" | "addedAt">) {
-  const { data, error } = await supabase
-    .from('products')
-    .insert({
-      title: productData.title,
-      original_price: productData.originalPrice,
-      sale_price: productData.salePrice,
-      marketplace: productData.marketplace,
-      category: productData.category,
-      affiliate_link: productData.affiliateLink,
-      images: productData.images,
-      clicks: 0
-    })
-    .select();
+  try {
+    console.log("Adding product with data:", productData);
     
-  if (error) {
-    console.error("Error adding product:", error);
+    // Validate auth state before attempting to add
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) {
+      toast({
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para adicionar produtos",
+        variant: "destructive"
+      });
+      throw new Error("Authentication required to add products");
+    }
+    
+    const { data, error } = await supabase
+      .from('products')
+      .insert({
+        title: productData.title,
+        original_price: productData.originalPrice,
+        sale_price: productData.salePrice,
+        marketplace: productData.marketplace,
+        category: productData.category,
+        affiliate_link: productData.affiliateLink,
+        images: productData.images,
+        clicks: 0
+      })
+      .select();
+      
+    if (error) {
+      console.error("Error adding product:", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error("No data returned after adding product");
+    }
+    
+    // Convert to Product format
+    return {
+      id: data[0].id,
+      title: data[0].title,
+      originalPrice: data[0].original_price,
+      salePrice: data[0].sale_price,
+      marketplace: data[0].marketplace as Marketplace,
+      category: data[0].category as Category,
+      affiliateLink: data[0].affiliate_link,
+      images: data[0].images,
+      clicks: data[0].clicks || 0,
+      addedAt: new Date(data[0].added_at || new Date()),
+    };
+  } catch (error: any) {
+    console.error("Error in addProduct:", error);
+    toast({
+      title: "Erro ao adicionar produto",
+      description: error.message || "Verifique se você está autenticado e tente novamente",
+      variant: "destructive"
+    });
     throw error;
   }
-
-  if (!data || data.length === 0) {
-    throw new Error("No data returned after adding product");
-  }
-  
-  // Convert to Product format
-  return {
-    id: data[0].id,
-    title: data[0].title,
-    originalPrice: data[0].original_price,
-    salePrice: data[0].sale_price,
-    marketplace: data[0].marketplace as Marketplace,
-    category: data[0].category as Category,
-    affiliateLink: data[0].affiliate_link,
-    images: data[0].images,
-    clicks: data[0].clicks || 0,
-    addedAt: new Date(data[0].added_at || new Date()),
-  };
 }
 
 /**
  * Updates an existing product
  */
 export async function updateProduct(id: string, updates: Partial<Product>) {
-  // Convert to database format
-  const dbUpdates: any = {};
-  if (updates.title) dbUpdates.title = updates.title;
-  if (updates.originalPrice !== undefined) dbUpdates.original_price = updates.originalPrice;
-  if (updates.salePrice !== undefined) dbUpdates.sale_price = updates.salePrice;
-  if (updates.marketplace) dbUpdates.marketplace = updates.marketplace;
-  if (updates.category) dbUpdates.category = updates.category;
-  if (updates.affiliateLink) dbUpdates.affiliate_link = updates.affiliateLink;
-  if (updates.images) dbUpdates.images = updates.images;
-  
-  const { error } = await supabase
-    .from('products')
-    .update(dbUpdates)
-    .eq('id', id);
+  try {
+    // Validate auth state before attempting to update
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) {
+      toast({
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para atualizar produtos",
+        variant: "destructive"
+      });
+      throw new Error("Authentication required to update products");
+    }
     
-  if (error) {
-    console.error("Error updating product:", error);
+    // Convert to database format
+    const dbUpdates: any = {};
+    if (updates.title) dbUpdates.title = updates.title;
+    if (updates.originalPrice !== undefined) dbUpdates.original_price = updates.originalPrice;
+    if (updates.salePrice !== undefined) dbUpdates.sale_price = updates.salePrice;
+    if (updates.marketplace) dbUpdates.marketplace = updates.marketplace;
+    if (updates.category) dbUpdates.category = updates.category;
+    if (updates.affiliateLink) dbUpdates.affiliate_link = updates.affiliateLink;
+    if (updates.images) dbUpdates.images = updates.images;
+    
+    const { error } = await supabase
+      .from('products')
+      .update(dbUpdates)
+      .eq('id', id);
+      
+    if (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
+  } catch (error: any) {
+    console.error("Error in updateProduct:", error);
+    toast({
+      title: "Erro ao atualizar produto",
+      description: error.message || "Verifique se você está autenticado e tente novamente",
+      variant: "destructive"
+    });
     throw error;
   }
 }
@@ -174,13 +243,34 @@ export async function updateProduct(id: string, updates: Partial<Product>) {
  * Deletes a product by ID
  */
 export async function deleteProduct(id: string) {
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', id);
+  try {
+    // Validate auth state before attempting to delete
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) {
+      toast({
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para remover produtos",
+        variant: "destructive"
+      });
+      throw new Error("Authentication required to delete products");
+    }
     
-  if (error) {
-    console.error("Error removing product:", error);
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+      
+    if (error) {
+      console.error("Error removing product:", error);
+      throw error;
+    }
+  } catch (error: any) {
+    console.error("Error in deleteProduct:", error);
+    toast({
+      title: "Erro ao remover produto",
+      description: error.message || "Verifique se você está autenticado e tente novamente",
+      variant: "destructive"
+    });
     throw error;
   }
 }

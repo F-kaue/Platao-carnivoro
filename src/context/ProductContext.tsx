@@ -12,6 +12,7 @@ import {
   calculateAdminStats
 } from "@/services/productService";
 import { useProductFiltering, useRealtimeUpdates } from "@/hooks/useProductData";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProductContextType {
   products: Product[];
@@ -46,11 +47,24 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     resetFilters 
   } = useProductFiltering(products);
 
+  // Check authentication status
+  const checkAuthStatus = useCallback(async () => {
+    const { data } = await supabase.auth.getSession();
+    return !!data.session;
+  }, []);
+
   // Load initial data
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
+        
+        // Check auth status first
+        const isAuthenticated = await checkAuthStatus();
+        if (!isAuthenticated) {
+          console.log("User not authenticated, some operations will be limited");
+          // Still attempt to load products for public viewing
+        }
         
         // Load products
         const productsData = await fetchProducts();
@@ -62,9 +76,9 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error("Error loading data:", error);
         toast({
-          title: "Error loading data",
-          description: "There was a problem loading products.",
-          duration: 3000,
+          title: "Erro ao carregar dados",
+          description: "Houve um problema ao carregar os produtos.",
+          variant: "destructive",
         });
       } finally {
         setIsLoading(false);
@@ -72,7 +86,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadData();
-  }, [toast]);
+  }, [toast, checkAuthStatus]);
   
   // Handle product update from realtime
   const handleProductUpdate = useCallback((payload: any) => {
@@ -105,11 +119,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       await trackProductClick(productId);
     } catch (error: any) {
-      toast({
-        title: "Error tracking click",
-        description: "There was a problem registering the click.",
-        duration: 3000,
-      });
+      // Error is already handled in the service
+      console.error("Error in trackClick:", error);
     }
   };
 
@@ -121,27 +132,45 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   // Add a new product
   const addProduct = async (productData: Omit<Product, "id" | "clicks" | "addedAt">) => {
     try {
+      // Check auth first
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        toast({
+          title: "Autenticação necessária",
+          description: "Você precisa estar logado para adicionar produtos.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const newProduct = await addProductService(productData);
       setProducts(prev => [...prev, newProduct]);
       
       toast({
-        title: "Product added",
-        description: "The product was added successfully.",
+        title: "Produto adicionado",
+        description: "O produto foi adicionado com sucesso.",
         duration: 3000,
       });
     } catch (error: any) {
-      console.error("Error adding product:", error);
-      toast({
-        title: "Error adding product",
-        description: error.message,
-        duration: 3000,
-      });
+      // Error is already handled in the service
+      console.error("Error in addProduct context:", error);
     }
   };
 
   // Update an existing product
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     try {
+      // Check auth first
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        toast({
+          title: "Autenticação necessária",
+          description: "Você precisa estar logado para atualizar produtos.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       await updateProductService(id, updates);
       
       // Update local state
@@ -154,38 +183,41 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       );
       
       toast({
-        title: "Product updated",
-        description: "The product was updated successfully.",
+        title: "Produto atualizado",
+        description: "O produto foi atualizado com sucesso.",
         duration: 3000,
       });
     } catch (error: any) {
-      console.error("Error updating product:", error);
-      toast({
-        title: "Error updating product",
-        description: error.message,
-        duration: 3000,
-      });
+      // Error is already handled in the service
+      console.error("Error in updateProduct context:", error);
     }
   };
 
   // Delete a product
   const deleteProduct = async (id: string) => {
     try {
+      // Check auth first
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        toast({
+          title: "Autenticação necessária",
+          description: "Você precisa estar logado para remover produtos.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       await deleteProductService(id);
       setProducts(prev => prev.filter(product => product.id !== id));
       
       toast({
-        title: "Product removed",
-        description: "The product was removed successfully.",
+        title: "Produto removido",
+        description: "O produto foi removido com sucesso.",
         duration: 3000,
       });
     } catch (error: any) {
-      console.error("Error removing product:", error);
-      toast({
-        title: "Error removing product",
-        description: error.message,
-        duration: 3000,
-      });
+      // Error is already handled in the service
+      console.error("Error in deleteProduct context:", error);
     }
   };
 
