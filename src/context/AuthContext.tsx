@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast({
           title: "Login realizado com sucesso",
           description: "Bem-vindo ao painel de administração.",
+          variant: "success", // Changed from default to success for better visual feedback
         });
         return true;
       } catch (error: any) {

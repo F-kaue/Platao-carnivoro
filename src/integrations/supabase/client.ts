@@ -27,6 +27,8 @@ export const uploadProductImage = async (file: File): Promise<string | null> => 
     const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
     const filePath = `products/${fileName}`;
     
+    console.log("Uploading file to Supabase storage:", filePath);
+    
     // Upload the file to Supabase storage
     const { data, error } = await supabase.storage
       .from('products')
@@ -45,6 +47,7 @@ export const uploadProductImage = async (file: File): Promise<string | null> => 
       .from('products')
       .getPublicUrl(filePath);
     
+    console.log("Imagem carregada com sucesso:", publicUrl);
     return publicUrl;
   } catch (error) {
     console.error("Erro no processo de upload:", error);
