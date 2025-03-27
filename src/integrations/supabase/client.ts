@@ -12,9 +12,9 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Create client with anonymous permissions for public data access
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    // We'll still use localStorage for persistence but won't rely on it for authentication
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
+    // We're using localStorage for local authentication only now
+    // Supabase credentials aren't used for authentication
+    autoRefreshToken: false,
+    persistSession: false
   }
 });

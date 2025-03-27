@@ -150,8 +150,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         duration: 3000,
       });
     } catch (error: any) {
-      // Error is already handled in the service
       console.error("Erro em addProduct context:", error);
+      toast({
+        title: "Erro ao adicionar produto",
+        description: error.message || "Ocorreu um erro ao adicionar o produto.",
+        variant: "destructive",
+      });
     }
   };
 

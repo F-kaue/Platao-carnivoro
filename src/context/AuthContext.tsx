@@ -2,7 +2,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -18,7 +17,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Simplified function to check authentication (only local)
+  // Simple function to check localStorage authentication
   const checkAndRefreshAuth = async (): Promise<boolean> => {
     try {
       // Only check localStorage for authentication status
@@ -38,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAndRefreshAuth();
   }, []);
 
-  // Simplified login function (local authentication only)
+  // Local authentication only
   const login = async (cpf: string, password: string): Promise<boolean> => {
     // Basic credential validation
     if (cpf === "07710027342" && password === "0956kaue") {
@@ -73,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Simplified logout function (local only)
+  // Local logout function
   const logout = () => {
     try {
       // Update local state

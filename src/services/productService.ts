@@ -1,3 +1,4 @@
+
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Product, Category, Marketplace, ClickData, ChartData, AdminStats } from "@/types";
@@ -83,12 +84,13 @@ export async function fetchClickData() {
  */
 export async function trackProductClick(productId: string) {
   try {
-    // 1. Register click in clicks table
+    // 1. Register click in clicks table - no auth required now
     const { error: clickError } = await supabase
       .from('clicks')
       .insert({ product_id: productId });
 
     if (clickError) {
+      console.error("Error registering click:", clickError);
       throw new Error(clickError.message);
     }
 
@@ -129,14 +131,15 @@ export async function trackProductClick(productId: string) {
 
 /**
  * Adds a new product to the database
- * This function has been simplified to work without authentication requirements
+ * This function now works without Supabase authentication requirements
  */
 export async function addProduct(productData: Omit<Product, "id" | "clicks" | "addedAt">) {
   try {
     console.log("Adicionando produto com dados:", productData);
     
-    // Check if user is logged in via localStorage (our only auth method now)
+    // Check local authentication only
     if (localStorage.getItem("isLoggedIn") !== "true") {
+      console.error("Autenticação local necessária para adicionar produtos");
       toast({
         title: "Erro de autenticação",
         description: "Você precisa estar logado para adicionar produtos",
@@ -145,9 +148,9 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
       throw new Error("Autenticação necessária para adicionar produtos");
     }
     
-    console.log("Autenticação local confirmada, adicionando produto");
+    console.log("Autenticação local confirmada, adicionando produto ao Supabase");
     
-    // Add product to database
+    // Add product to database - without Supabase auth
     const { data, error } = await supabase
       .from('products')
       .insert({
@@ -205,18 +208,19 @@ export async function addProduct(productData: Omit<Product, "id" | "clicks" | "a
 
 /**
  * Updates an existing product
- * This function has been simplified to work without authentication requirements
+ * This function now works without Supabase authentication requirements
  */
 export async function updateProduct(id: string, updates: Partial<Product>) {
   try {
-    // Check if user is logged in via localStorage (our only auth method now)
+    // Check local authentication only
     if (localStorage.getItem("isLoggedIn") !== "true") {
+      console.error("Autenticação local necessária para atualizar produtos");
       toast({
         title: "Erro de autenticação",
         description: "Você precisa estar logado para atualizar produtos",
         variant: "destructive"
       });
-      throw new Error("Authentication required to update products");
+      throw new Error("Autenticação necessária para atualizar produtos");
     }
     
     // Convert to database format
@@ -251,18 +255,19 @@ export async function updateProduct(id: string, updates: Partial<Product>) {
 
 /**
  * Deletes a product by ID
- * This function has been simplified to work without authentication requirements
+ * This function now works without Supabase authentication requirements
  */
 export async function deleteProduct(id: string) {
   try {
-    // Check if user is logged in via localStorage (our only auth method now)
+    // Check local authentication only
     if (localStorage.getItem("isLoggedIn") !== "true") {
+      console.error("Autenticação local necessária para remover produtos");
       toast({
         title: "Erro de autenticação",
         description: "Você precisa estar logado para remover produtos",
         variant: "destructive"
       });
-      throw new Error("Authentication required to delete products");
+      throw new Error("Autenticação necessária para excluir produtos");
     }
     
     const { error } = await supabase
