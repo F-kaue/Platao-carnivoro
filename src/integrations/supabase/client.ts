@@ -18,3 +18,36 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: false
   }
 });
+
+// Helper function to upload files to Supabase storage
+export const uploadProductImage = async (file: File): Promise<string | null> => {
+  try {
+    // Create a unique file name
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+    const filePath = `products/${fileName}`;
+    
+    // Upload the file to Supabase storage
+    const { data, error } = await supabase.storage
+      .from('products')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+    
+    if (error) {
+      console.error("Erro ao fazer upload da imagem:", error);
+      return null;
+    }
+    
+    // Get the public URL for the uploaded file
+    const { data: { publicUrl } } = supabase.storage
+      .from('products')
+      .getPublicUrl(filePath);
+    
+    return publicUrl;
+  } catch (error) {
+    console.error("Erro no processo de upload:", error);
+    return null;
+  }
+};

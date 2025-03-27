@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useProducts } from "@/context/ProductContext";
@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { 
   Package, Users, BarChart, LogOut, Plus, Trash2, Edit, 
-  ShoppingBag, RefreshCw, Image, Link as LinkIcon, ExternalLink
+  ShoppingBag, RefreshCw, Image, Link as LinkIcon, ExternalLink, Upload, X
 } from "lucide-react";
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -31,6 +31,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { uploadProductImage } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 // Product form schema
 const productFormSchema = z.object({
@@ -49,6 +51,7 @@ const Admin = () => {
   const { isLoggedIn, logout } = useAuth();
   const { products, getAdminStats, addProduct, updateProduct, deleteProduct } = useProducts();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // States
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -57,6 +60,8 @@ const Admin = () => {
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get admin stats
   const stats = getAdminStats();
@@ -118,6 +123,66 @@ const Admin = () => {
       setImageUrls(updatedUrls);
       form.setValue("images", updatedUrls);
       setNewImageUrl("");
+    }
+  };
+
+  // Handle file selection for image upload
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    setIsUploading(true);
+    
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // Check if file is an image
+        if (!file.type.startsWith('image/')) {
+          toast({
+            title: "Tipo de arquivo inválido",
+            description: "Por favor, selecione apenas arquivos de imagem.",
+            variant: "destructive",
+          });
+          continue;
+        }
+        
+        // Check file size (limit to 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          toast({
+            title: "Arquivo muito grande",
+            description: "O tamanho máximo permitido é 5MB.",
+            variant: "destructive",
+          });
+          continue;
+        }
+        
+        // Upload file to Supabase
+        const imageUrl = await uploadProductImage(file);
+        
+        if (imageUrl) {
+          const updatedUrls = [...imageUrls, imageUrl];
+          setImageUrls(updatedUrls);
+          form.setValue("images", updatedUrls);
+          
+          toast({
+            title: "Upload concluído",
+            description: "A imagem foi adicionada com sucesso.",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao processar arquivo:", error);
+      toast({
+        title: "Erro no upload",
+        description: "Ocorreu um erro ao fazer o upload da imagem.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -184,6 +249,122 @@ const Admin = () => {
   const marketplaces: Marketplace[] = [
     'Amazon', 'Shopee', 'Mercado Livre', 'AliExpress', 'Magalu', 'Americanas', 'Outros'
   ];
+
+  // Product image upload component
+  const ProductImageUpload = () => {
+    return (
+      <FormField
+        control={form.control}
+        name="images"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Imagens do Produto</FormLabel>
+            <div className="space-y-4">
+              {/* Preview of uploaded images */}
+              {imageUrls.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {imageUrls.map((url, index) => (
+                    <div key={index} className="relative group aspect-square rounded-md overflow-hidden border bg-muted">
+                      <img 
+                        src={url} 
+                        alt="" 
+                        className="w-full h-full object-cover transition-all group-hover:opacity-80" 
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleRemoveImageUrl(index)}
+                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-4 w-4" />
+                        <span className="sr-only">Remover imagem</span>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Options to add images */}
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Upload from device option */}
+                  <div className="border rounded-md p-4">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Upload className="h-8 w-8 text-muted-foreground" />
+                      <h3 className="text-sm font-medium">Upload da Galeria</h3>
+                      <p className="text-xs text-muted-foreground text-center">
+                        Selecione imagens do seu dispositivo
+                      </p>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="mt-2"
+                      >
+                        {isUploading ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <Image className="h-4 w-4 mr-2" />
+                            Selecionar Arquivos
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* URL option */}
+                  <div className="border rounded-md p-4">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <LinkIcon className="h-8 w-8 text-muted-foreground" />
+                      <h3 className="text-sm font-medium">Adicionar por URL</h3>
+                      <p className="text-xs text-muted-foreground text-center">
+                        Cole o endereço da imagem na web
+                      </p>
+                      <div className="flex w-full gap-2 mt-2">
+                        <Input 
+                          type="url"
+                          placeholder="https://..."
+                          value={newImageUrl}
+                          onChange={(e) => setNewImageUrl(e.target.value)}
+                          className="flex-grow text-xs"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleAddImageUrl}
+                          disabled={!newImageUrl}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <FormMessage />
+              </div>
+            </div>
+          </FormItem>
+        )}
+      />
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -599,64 +780,8 @@ const Admin = () => {
                 )}
               />
               
-              {/* Product Images */}
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Imagens do Produto</FormLabel>
-                    <div className="space-y-4">
-                      {/* Image URLs list */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {imageUrls.map((url, index) => (
-                          <div key={index} className="flex items-center gap-2 group">
-                            <div className="w-12 h-12 border rounded overflow-hidden bg-muted flex-shrink-0">
-                              <img src={url} alt="" className="w-full h-full object-cover" />
-                            </div>
-                            <Input 
-                              readOnly 
-                              value={url} 
-                              className="flex-grow text-xs"
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleRemoveImageUrl(index)}
-                              className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              <span className="sr-only">Remover imagem</span>
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* Add new image URL */}
-                      <div className="flex gap-2">
-                        <Input 
-                          type="url"
-                          placeholder="URL da imagem (https://...)"
-                          value={newImageUrl}
-                          onChange={(e) => setNewImageUrl(e.target.value)}
-                          className="flex-grow"
-                        />
-                        <Button
-                          type="button"
-                          onClick={handleAddImageUrl}
-                          variant="outline"
-                        >
-                          <Plus className="h-4 w-4 mr-1" />
-                          Adicionar
-                        </Button>
-                      </div>
-                      
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
+              {/* Product Images - New component */}
+              <ProductImageUpload />
               
               <DialogFooter>
                 <Button 
@@ -688,7 +813,6 @@ const Admin = () => {
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Same form fields as Add Product Dialog */}
               {/* Product Title */}
               <FormField
                 control={form.control}
@@ -809,64 +933,8 @@ const Admin = () => {
                 )}
               />
               
-              {/* Product Images */}
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Imagens do Produto</FormLabel>
-                    <div className="space-y-4">
-                      {/* Image URLs list */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {imageUrls.map((url, index) => (
-                          <div key={index} className="flex items-center gap-2 group">
-                            <div className="w-12 h-12 border rounded overflow-hidden bg-muted flex-shrink-0">
-                              <img src={url} alt="" className="w-full h-full object-cover" />
-                            </div>
-                            <Input 
-                              readOnly 
-                              value={url} 
-                              className="flex-grow text-xs"
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleRemoveImageUrl(index)}
-                              className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              <span className="sr-only">Remover imagem</span>
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* Add new image URL */}
-                      <div className="flex gap-2">
-                        <Input 
-                          type="url"
-                          placeholder="URL da imagem (https://...)"
-                          value={newImageUrl}
-                          onChange={(e) => setNewImageUrl(e.target.value)}
-                          className="flex-grow"
-                        />
-                        <Button
-                          type="button"
-                          onClick={handleAddImageUrl}
-                          variant="outline"
-                        >
-                          <Plus className="h-4 w-4 mr-1" />
-                          Adicionar
-                        </Button>
-                      </div>
-                      
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
+              {/* Product Images - New component */}
+              <ProductImageUpload />
               
               <DialogFooter>
                 <Button 
@@ -930,4 +998,3 @@ const Admin = () => {
 };
 
 export default Admin;
-
