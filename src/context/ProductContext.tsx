@@ -37,9 +37,9 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [clickData, setClickData] = useState<ClickData[]>([]);
   const { toast } = useToast();
-  const { isLoggedIn, checkAndRefreshAuth } = useAuth();
+  const { isLoggedIn } = useAuth();
   
-  // Use o hook de filtragem
+  // Use the filtering hook
   const { 
     filteredProducts, 
     filterByCategory, 
@@ -48,38 +48,25 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     resetFilters 
   } = useProductFiltering(products);
 
-  // Verificar estado de autenticação
+  // Simplified authentication check (only localStorage)
   const ensureAuthenticated = useCallback(async () => {
-    // Primeiro verificar com o AuthContext
-    if (isLoggedIn) {
-      // Verificar também se temos uma sessão válida no Supabase
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        // Se não tiver sessão Supabase, mas estiver logado pelo AuthContext, sincronizar
-        return await checkAndRefreshAuth();
-      }
-      return true;
-    }
-    
-    // Se não estiver logado via AuthContext, verificar Supabase
-    const { data } = await supabase.auth.getSession();
-    return !!data.session;
-  }, [isLoggedIn, checkAndRefreshAuth]);
+    return localStorage.getItem("isLoggedIn") === "true";
+  }, []);
 
-  // Carregar dados iniciais
+  // Load initial data
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
         
-        // Sempre tentar carregar produtos para visualização pública
+        // Always try to load products for public viewing
         const productsData = await fetchProducts();
         setProducts(productsData);
         
-        // Verificar autenticação antes de carregar dados de cliques
+        // Check authentication before loading click data
         const isAuthenticated = await ensureAuthenticated();
         if (isAuthenticated) {
-          // Carregar dados de cliques se autenticado
+          // Load click data if authenticated
           const clicksData = await fetchClickData();
           setClickData(clicksData);
         }
@@ -124,26 +111,26 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   // Configurar atualizações em tempo real
   useRealtimeUpdates(handleProductUpdate, handleNewClick);
 
-  // Rastrear clique em produto
+  // Track product click
   const trackClick = async (productId: string) => {
     try {
       await trackProductClick(productId);
     } catch (error: any) {
-      // Erro já é tratado no serviço
+      // Error is already handled in the service
       console.error("Erro em trackClick:", error);
     }
   };
 
-  // Obter produto por ID
+  // Get product by ID
   const getProductById = (id: string) => {
     return products.find(product => product.id === id);
   };
 
-  // Adicionar um novo produto
+  // Add a new product (simplified authentication check)
   const addProduct = async (productData: Omit<Product, "id" | "clicks" | "addedAt">) => {
     try {
-      // Verificar autenticação primeiro
-      const isAuthenticated = await ensureAuthenticated();
+      // Check authentication first (via localStorage only)
+      const isAuthenticated = localStorage.getItem("isLoggedIn") === "true";
       if (!isAuthenticated) {
         toast({
           title: "Autenticação necessária",
@@ -153,7 +140,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       
-      console.log("Autenticação confirmada, adicionando produto:", productData);
+      console.log("Autenticação local confirmada, adicionando produto:", productData);
       const newProduct = await addProductService(productData);
       setProducts(prev => [...prev, newProduct]);
       
@@ -163,16 +150,16 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         duration: 3000,
       });
     } catch (error: any) {
-      // Erro já é tratado no serviço
+      // Error is already handled in the service
       console.error("Erro em addProduct context:", error);
     }
   };
 
-  // Update an existing product
+  // Update an existing product (simplified authentication check)
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     try {
-      // Check auth first
-      const isAuthenticated = await ensureAuthenticated();
+      // Check auth first (via localStorage only)
+      const isAuthenticated = localStorage.getItem("isLoggedIn") === "true";
       if (!isAuthenticated) {
         toast({
           title: "Autenticação necessária",
@@ -200,15 +187,15 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
     } catch (error: any) {
       // Error is already handled in the service
-      console.error("Error in updateProduct context:", error);
+      console.error("Erro em updateProduct context:", error);
     }
   };
 
-  // Delete a product
+  // Delete a product (simplified authentication check)
   const deleteProduct = async (id: string) => {
     try {
-      // Check auth first
-      const isAuthenticated = await ensureAuthenticated();
+      // Check auth first (via localStorage only)
+      const isAuthenticated = localStorage.getItem("isLoggedIn") === "true";
       if (!isAuthenticated) {
         toast({
           title: "Autenticação necessária",
@@ -228,7 +215,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
     } catch (error: any) {
       // Error is already handled in the service
-      console.error("Error in deleteProduct context:", error);
+      console.error("Erro em deleteProduct context:", error);
     }
   };
 

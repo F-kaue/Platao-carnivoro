@@ -64,40 +64,18 @@ export function useProductFiltering(products: Product[]) {
 }
 
 /**
- * Hook to check and monitor authentication status
+ * Hook to check and monitor authentication status (simplified to use only localStorage)
  */
 export function useAuthCheck() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
-    // Check both localStorage and Supabase auth
-    const checkAuth = async () => {
+    // Check only localStorage for auth
+    const checkAuth = () => {
       try {
-        // First check localStorage (our custom auth)
         const localAuth = localStorage.getItem("isLoggedIn") === "true";
-        
-        // Then check Supabase auth
-        const { data } = await supabase.auth.getSession();
-        const supabaseAuth = !!data.session;
-        
-        // If local auth is true but Supabase auth is false, we need to sign in to Supabase
-        if (localAuth && !supabaseAuth) {
-          try {
-            await supabase.auth.signInWithPassword({
-              email: "achadinhos@admin.com",
-              password: "0956kaue",
-            });
-            setIsAuthenticated(true);
-          } catch (error) {
-            console.error("Error signing in with Supabase:", error);
-            // Still consider authenticated since localStorage is our primary auth mechanism
-            setIsAuthenticated(true);
-          }
-        } else {
-          // Otherwise, consider authenticated if either auth method is valid
-          setIsAuthenticated(localAuth || supabaseAuth);
-        }
+        setIsAuthenticated(localAuth);
       } catch (error) {
         console.error("Error checking authentication:", error);
         setIsAuthenticated(false);
@@ -106,45 +84,17 @@ export function useAuthCheck() {
     
     checkAuth();
     
-    // Listen for Supabase auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        // Update auth state based on Supabase event
-        if (event === 'SIGNED_IN') {
-          setIsAuthenticated(true);
-          
-          // Only show toast if not already authenticated in localStorage
-          if (localStorage.getItem("isLoggedIn") !== "true") {
-            toast({
-              title: "Autenticado com sucesso",
-              description: "Você agora está conectado.",
-            });
-          }
-        } else if (event === 'SIGNED_OUT') {
-          // Only change authenticated state if localStorage also says not logged in
-          if (localStorage.getItem("isLoggedIn") !== "true") {
-            setIsAuthenticated(false);
-            toast({
-              title: "Desconectado",
-              description: "Você foi desconectado do sistema.",
-            });
-          } else {
-            // If localStorage still says logged in, re-authenticate with Supabase
-            try {
-              await supabase.auth.signInWithPassword({
-                email: "achadinhos@admin.com",
-                password: "0956kaue",
-              });
-            } catch (error) {
-              console.error("Error re-authenticating with Supabase:", error);
-            }
-          }
-        }
+    // Set up a listener for storage changes (for cross-tab synchronization)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "isLoggedIn") {
+        setIsAuthenticated(e.newValue === "true");
       }
-    );
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
     
     return () => {
-      authListener.subscription.unsubscribe();
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [toast]);
   

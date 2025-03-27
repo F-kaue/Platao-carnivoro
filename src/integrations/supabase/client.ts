@@ -9,8 +9,10 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
+// Create client with anonymous permissions for public data access
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
+    // We'll still use localStorage for persistence but won't rely on it for authentication
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
