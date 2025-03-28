@@ -112,12 +112,13 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   useRealtimeUpdates(handleProductUpdate, handleNewClick);
 
   // Track product click
-  const trackClick = async (productId: string) => {
+  const trackClick = async (productId: string): Promise<void> => {
     try {
       await trackProductClick(productId);
     } catch (error: any) {
       // Error is already handled in the service
       console.error("Erro em trackClick:", error);
+      throw error; // Re-throw the error so it can be caught by callers
     }
   };
 

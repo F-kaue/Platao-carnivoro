@@ -82,7 +82,7 @@ export async function fetchClickData() {
 /**
  * Tracks a click on a product
  */
-export async function trackProductClick(productId: string) {
+export async function trackProductClick(productId: string): Promise<void> {
   try {
     // 1. Register click in clicks table - no auth required now
     const { error: clickError } = await supabase
