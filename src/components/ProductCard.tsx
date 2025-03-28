@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/types";

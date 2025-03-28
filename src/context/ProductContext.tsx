@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { Product, ClickData, ChartData, AdminStats, Category, Marketplace } from "../types";
 import { useToast } from "@/hooks/use-toast";
@@ -21,7 +22,7 @@ interface ProductContextType {
   filterByCategory: (category: Category | null) => void;
   filterByMarketplace: (marketplace: Marketplace | null) => void;
   searchProducts: (query: string) => void;
-  trackClick: (productId: string) => void;
+  trackClick: (productId: string) => Promise<void>;  // Updated to return Promise<void>
   getProductById: (id: string) => Product | undefined;
   addProduct: (product: Omit<Product, "id" | "clicks" | "addedAt">) => void;
   updateProduct: (id: string, updates: Partial<Product>) => void;
