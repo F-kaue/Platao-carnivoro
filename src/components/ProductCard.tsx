@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/types";
@@ -48,25 +49,43 @@ export function ProductCard({ product, className }: ProductCardProps) {
     setIsImageLoading(true);
   };
 
-  const handleClick = async () => {
+  // Modificando o manipulador de eventos para resolver o problema no iOS
+  const handleClick = () => {
+    console.log("Botão clicado para o produto:", product.id);
+    
     try {
-      console.log("Registrando clique para o produto:", product.id);
-      
-      // Registrar o clique primeiro
-      await trackClick(product.id);
-      
-      // Notificar o usuário
+      // Mostrar toast antes de qualquer operação assíncrona
       toast({
         title: "Redirecionando para oferta",
         description: "Você está sendo redirecionado para o site parceiro.",
         duration: 3000,
       });
       
-      // Só redireciona após o registro do clique
-      window.open(product.affiliateLink, '_blank');
+      // Abrir link em uma nova janela imediatamente
+      const newWindow = window.open('', '_blank');
+      
+      if (newWindow) {
+        // Garantir que a janela esteja aberta antes de tentar registrar o clique
+        trackClick(product.id)
+          .then(() => {
+            console.log("Clique registrado com sucesso");
+            // Redirecionar a janela apenas após confirmação do registro
+            newWindow.location.href = product.affiliateLink;
+          })
+          .catch((error) => {
+            console.error("Erro ao processar clique:", error);
+            // Em caso de erro, ainda permite o redirecionamento
+            newWindow.location.href = product.affiliateLink;
+          });
+      } else {
+        // Se não conseguiu abrir a janela (bloqueio de popup), tenta abrir diretamente
+        console.warn("Não foi possível abrir uma nova janela. Tentando método alternativo.");
+        trackClick(product.id).catch(console.error); // Registra o clique de qualquer forma
+        window.open(product.affiliateLink, '_blank');
+      }
     } catch (error) {
       console.error("Erro ao processar clique:", error);
-      // Em caso de erro, ainda permite o redirecionamento
+      // Fallback para método direto em caso de erro
       window.open(product.affiliateLink, '_blank');
     }
   };
@@ -191,7 +210,8 @@ export function ProductCard({ product, className }: ProductCardProps) {
         {/* Affiliate Link Button */}
         <Button 
           onClick={handleClick}
-          className="mt-4 w-full bg-purple-500 hover:bg-purple-600 text-white"
+          type="button"
+          className="mt-4 w-full bg-purple-500 hover:bg-purple-600 text-white cursor-pointer"
         >
           Ver Oferta
           <ExternalLink className="ml-2 h-4 w-4" />
