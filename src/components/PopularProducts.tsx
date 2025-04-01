@@ -5,7 +5,7 @@ import { Product } from "@/types";
 import { ProductCard } from "./ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Fire } from "lucide-react";
+import { TrendingUp, Flame } from "lucide-react";
 
 export function PopularProducts() {
   const { products, isLoading } = useProducts();
@@ -45,7 +45,7 @@ export function PopularProducts() {
       <div className="flex items-center gap-2 mb-6">
         <h2 className="text-2xl md:text-3xl font-bold">Produtos Populares</h2>
         <Badge className="bg-amber-500 text-white">
-          <Fire className="w-4 h-4 mr-1" />
+          <Flame className="w-4 h-4 mr-1" />
           Mais Procurados
         </Badge>
       </div>
