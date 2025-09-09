@@ -14,7 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clicks: {
+        Row: {
+          id: string
+          product_id: string | null
+          timestamp: string
+        }
+        Insert: {
+          id?: string
+          product_id?: string | null
+          timestamp?: string
+        }
+        Update: {
+          id?: string
+          product_id?: string | null
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          added_at: string
+          affiliate_link: string
+          category: string
+          clicks: number | null
+          id: string
+          images: string[] | null
+          marketplace: string
+          original_price: number
+          sale_price: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          added_at?: string
+          affiliate_link: string
+          category: string
+          clicks?: number | null
+          id?: string
+          images?: string[] | null
+          marketplace: string
+          original_price: number
+          sale_price: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          added_at?: string
+          affiliate_link?: string
+          category?: string
+          clicks?: number | null
+          id?: string
+          images?: string[] | null
+          marketplace?: string
+          original_price?: number
+          sale_price?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
