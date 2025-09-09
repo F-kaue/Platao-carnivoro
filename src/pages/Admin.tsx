@@ -31,7 +31,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { uploadProductImage } from "@/integrations/supabase/client";
+import { uploadProductImage } from "@/services/imageUpload";
 import { useToast } from "@/hooks/use-toast";
 
 // Product form schema
