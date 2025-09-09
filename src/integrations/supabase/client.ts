@@ -16,17 +16,13 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   }
 });
 
-/**
- * Upload product image to Supabase Storage
- */
+// Upload product image to Supabase storage
 export async function uploadProductImage(file: File): Promise<string> {
   try {
-    // Create a unique filename
     const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
     const filePath = `products/${fileName}`;
 
-    // Upload file to storage bucket
     const { data, error } = await supabase.storage
       .from('product-images')
       .upload(filePath, file, {
@@ -39,7 +35,7 @@ export async function uploadProductImage(file: File): Promise<string> {
       throw new Error(`Upload failed: ${error.message}`);
     }
 
-    // Get public URL
+    // Get the public URL
     const { data: { publicUrl } } = supabase.storage
       .from('product-images')
       .getPublicUrl(filePath);
