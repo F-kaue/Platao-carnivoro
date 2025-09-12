@@ -5,15 +5,15 @@
 
 @layer base {
   :root {
-    /* Platão Carnívoro Brand Colors */
-    --brand-lilac: 254 30% 89%;        /* #CFCFEA */
-    --brand-gray-rose: 23 16% 65%;     /* #A8998D */
-    --brand-brown: 22 17% 42%;         /* #876C61 */
-    --brand-green-gray: 63 10% 32%;    /* #575A4B */
-    --brand-dark: 120 8% 15%;          /* #242C24 */
+    /* Platão Carnívoro Brand Colors - Adjusted for better contrast */
+    --brand-lilac: 254 30% 92%;        /* #CFCFEA - Slightly adjusted for better contrast */
+    --brand-gray-rose: 23 16% 60%;     /* #A8998D - Darkened for better readability */
+    --brand-brown: 22 20% 40%;         /* #876C61 - Enhanced saturation */
+    --brand-green-gray: 63 12% 30%;    /* #575A4B - Improved contrast */
+    --brand-dark: 120 10% 12%;         /* #242C24 - Enhanced for better contrast */
     
-    /* Semantic color mapping */
-    --background: var(--brand-lilac);
+    /* Semantic color mapping with enhanced contrast */
+    --background: 0 0% 100%;
     --foreground: var(--brand-dark);
 
     --card: 0 0% 100%;
@@ -31,8 +31,8 @@
     --muted: var(--brand-lilac);
     --muted-foreground: var(--brand-green-gray);
 
-    --accent: var(--brand-gray-rose);
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--brand-lilac);
+    --accent-foreground: var(--brand-dark);
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -48,10 +48,10 @@
     --background: var(--brand-dark);
     --foreground: var(--brand-lilac);
 
-    --card: var(--brand-green-gray);
+    --card: 120 8% 18%;
     --card-foreground: var(--brand-lilac);
 
-    --popover: var(--brand-green-gray);
+    --popover: 120 8% 18%;
     --popover-foreground: var(--brand-lilac);
 
     --primary: var(--brand-brown);
@@ -60,7 +60,7 @@
     --secondary: var(--brand-green-gray);
     --secondary-foreground: var(--brand-lilac);
 
-    --muted: var(--brand-green-gray);
+    --muted: 120 8% 20%;
     --muted-foreground: var(--brand-gray-rose);
 
     --accent: var(--brand-brown);
@@ -70,7 +70,7 @@
     --destructive-foreground: 0 0% 98%;
 
     --border: var(--brand-gray-rose);
-    --input: var(--brand-green-gray);
+    --input: 120 8% 20%;
     --ring: var(--brand-brown);
   }
 }
@@ -81,7 +81,7 @@
   }
   
   body {
-    @apply bg-background text-foreground antialiased min-h-screen font-carnivoro;
+    @apply bg-background text-foreground antialiased min-h-screen font-body;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
   }
 
@@ -89,17 +89,34 @@
     @apply scroll-smooth;
   }
 
-  /* Typography Scale */
+  /* Typography Scale - Enhanced readability */
   h1 {
     @apply font-diogenes font-bold tracking-tight text-foreground;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   h2, h3, h4 {
     @apply font-augustus font-semibold tracking-tight text-foreground;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   h5, h6 {
-    @apply font-carnivoro font-medium text-foreground;
+    @apply font-body font-medium text-foreground;
+  }
+
+  /* Enhanced contrast for better readability */
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .text-shadow-md {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Ensure minimum contrast ratios */
+  .text-contrast {
+    @apply text-foreground;
+    filter: contrast(1.1);
   }
 }
 

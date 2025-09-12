@@ -105,16 +105,16 @@ export function ProductCard({ product, className }: ProductCardProps) {
   return (
     <Card 
       className={cn(
-        "overflow-hidden transition-all duration-300 hover:shadow-md group h-full flex flex-col",
+        "overflow-hidden transition-all duration-300 hover:shadow-xl group h-full flex flex-col border-brand-gray-rose/30 hover:border-primary/50 bg-card/80 backdrop-blur-sm",
         className
       )}
     >
       {/* Product Image Carousel */}
-      <div className="relative aspect-square overflow-hidden bg-muted">
+      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-brand-lilac/20 to-brand-gray-rose/10">
         {/* Loading Indicator */}
         {isImageLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/40 z-10">
-            <div className="w-8 h-8 rounded-full border-2 border-purple-500 border-t-transparent animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           </div>
         )}
         
@@ -123,25 +123,25 @@ export function ProductCard({ product, className }: ProductCardProps) {
           src={product.images[currentImageIndex]}
           alt={product.title}
           className={cn(
-            "object-cover w-full h-full transition-all duration-500",
+            "object-cover w-full h-full transition-all duration-500 group-hover:scale-110",
             isImageLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
           )}
           onLoad={() => setIsImageLoading(false)}
         />
         
-        {/* Discount Badge */}
+        {/* Discount Badge - More elegant */}
         {discountPercentage > 0 && (
           <Badge 
-            className="absolute top-2 right-2 bg-purple-500 text-white font-medium"
+            className="absolute top-3 right-3 bg-primary/90 text-white font-augustus font-medium border-none shadow-lg"
           >
             -{discountPercentage}%
           </Badge>
         )}
         
-        {/* Marketplace Badge */}
+        {/* Marketplace Badge - More refined */}
         <Badge 
           className={cn(
-            "absolute top-2 left-2 text-white font-medium",
+            "absolute top-3 left-3 text-white font-augustus font-medium border-none shadow-lg backdrop-blur-sm",
             getMarketplaceColor()
           )}
         >
@@ -154,32 +154,32 @@ export function ProductCard({ product, className }: ProductCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white dark:bg-black/60 dark:hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/90 hover:bg-background border border-brand-gray-rose/30 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm"
               onClick={prevImage}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 text-foreground" />
               <span className="sr-only">Imagem anterior</span>
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white dark:bg-black/60 dark:hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/90 hover:bg-background border border-brand-gray-rose/30 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm"
               onClick={nextImage}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 text-foreground" />
               <span className="sr-only">Próxima imagem</span>
             </Button>
             
             {/* Carousel Indicators */}
-            <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
               {product.images.map((_, index) => (
                 <div 
                   key={index}
                   className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-all",
+                    "w-2 h-2 rounded-full transition-all shadow-sm",
                     index === currentImageIndex 
-                      ? "bg-purple-500 w-3" 
-                      : "bg-white/70 dark:bg-white/40"
+                      ? "bg-primary w-4" 
+                      : "bg-background/70 border border-brand-gray-rose/30"
                   )}
                 />
               ))}
@@ -189,20 +189,32 @@ export function ProductCard({ product, className }: ProductCardProps) {
       </div>
       
       {/* Product Details */}
-      <CardContent className="p-4 flex-grow flex flex-col">
+      <CardContent className="p-6 flex-grow flex flex-col">
         <div className="flex-grow">
-          <h3 className="font-medium line-clamp-2 h-12">{product.title}</h3>
+          <h3 className="font-augustus font-semibold line-clamp-2 h-12 text-foreground leading-tight">
+            {product.title}
+          </h3>
           
-          <div className="mt-2 space-y-1">
+          <div className="mt-4 space-y-2">
             {/* Original Price (crossed out) */}
-            <p className="text-sm text-muted-foreground line-through">
-              {formatPrice(product.originalPrice)}
+            <p className="text-sm text-muted-foreground line-through font-body">
+              De {formatPrice(product.originalPrice)}
             </p>
             
             {/* Sale Price */}
-            <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
-              {formatPrice(product.salePrice)}
-            </p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-2xl font-bold text-primary font-augustus">
+                {formatPrice(product.salePrice)}
+              </p>
+              <span className="text-xs text-muted-foreground font-body">
+                à vista
+              </span>
+            </div>
+            
+            {/* Economy Badge */}
+            <div className="text-sm text-brand-green-gray font-body">
+              Economia de {formatPrice(product.originalPrice - product.salePrice)}
+            </div>
           </div>
         </div>
         
@@ -210,9 +222,10 @@ export function ProductCard({ product, className }: ProductCardProps) {
         <Button 
           onClick={handleClick}
           type="button"
-          className="mt-4 w-full bg-purple-500 hover:bg-purple-600 text-white cursor-pointer"
+          variant="carnivoro"
+          className="mt-6 w-full shadow-md hover:shadow-lg transition-all duration-300 font-augustus font-semibold"
         >
-          Ver Oferta
+          Obter Oferta
           <ExternalLink className="ml-2 h-4 w-4" />
         </Button>
       </CardContent>

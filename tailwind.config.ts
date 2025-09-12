@@ -22,7 +22,7 @@ export default {
 			fontFamily: {
 				'diogenes': ['Cinzel', 'serif'],           // Títulos principais
 				'augustus': ['Playfair Display', 'serif'], // Subtítulos e menus  
-				'carnivoro': ['Cormorant Garamond', 'serif'], // Textos de apoio
+				'body': ['Roboto', 'sans-serif'],         // Textos corridos
 			},
 			colors: {
 				border: 'hsl(var(--border))',
