@@ -19,6 +19,11 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'diogenes': ['Cinzel', 'serif'],           // Títulos principais
+				'augustus': ['Playfair Display', 'serif'], // Subtítulos e menus  
+				'carnivoro': ['Cormorant Garamond', 'serif'], // Textos de apoio
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -53,15 +58,12 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				purple: {
-					100: '#E5DEFF',
-					200: '#D6BCFA',
-					300: '#B39DDB',
-					400: '#9B87F5',
-					500: '#7E69AB',
-					600: '#6E59A5',
-					700: '#5D4994',
-					800: '#1A1F2C',
+				brand: {
+					lilac: 'hsl(var(--brand-lilac))',
+					'gray-rose': 'hsl(var(--brand-gray-rose))', 
+					brown: 'hsl(var(--brand-brown))',
+					'green-gray': 'hsl(var(--brand-green-gray))',
+					dark: 'hsl(var(--brand-dark))',
 				},
 			},
 			borderRadius: {

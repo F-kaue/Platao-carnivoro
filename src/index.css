@@ -5,90 +5,111 @@
 
 @layer base {
   :root {
-    --background: 260 30% 99%;
-    --foreground: 240 10% 3.9%;
+    /* Platão Carnívoro Brand Colors */
+    --brand-lilac: 254 30% 89%;        /* #CFCFEA */
+    --brand-gray-rose: 23 16% 65%;     /* #A8998D */
+    --brand-brown: 22 17% 42%;         /* #876C61 */
+    --brand-green-gray: 63 10% 32%;    /* #575A4B */
+    --brand-dark: 120 8% 15%;          /* #242C24 */
+    
+    /* Semantic color mapping */
+    --background: var(--brand-lilac);
+    --foreground: var(--brand-dark);
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: var(--brand-dark);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: var(--brand-dark);
 
-    --primary: 260 73% 75%;
+    --primary: var(--brand-brown);
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 260 30% 96%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: var(--brand-gray-rose);
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: var(--brand-lilac);
+    --muted-foreground: var(--brand-green-gray);
 
-    --accent: 260 40% 96%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: var(--brand-gray-rose);
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 260 73% 75%;
+    --border: var(--brand-gray-rose);
+    --input: var(--brand-lilac);
+    --ring: var(--brand-brown);
     
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 98%;
+    --background: var(--brand-dark);
+    --foreground: var(--brand-lilac);
 
-    --card: 240 10% 7%;
-    --card-foreground: 0 0% 98%;
+    --card: var(--brand-green-gray);
+    --card-foreground: var(--brand-lilac);
 
-    --popover: 240 10% 7%;
-    --popover-foreground: 0 0% 98%;
+    --popover: var(--brand-green-gray);
+    --popover-foreground: var(--brand-lilac);
 
-    --primary: 260 73% 70%;
+    --primary: var(--brand-brown);
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 4% 16%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: var(--brand-green-gray);
+    --secondary-foreground: var(--brand-lilac);
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: var(--brand-green-gray);
+    --muted-foreground: var(--brand-gray-rose);
 
-    --accent: 240 4% 16%;
-    --accent-foreground: 0 0% 98%;
+    --accent: var(--brand-brown);
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 260 73% 70%;
+    --border: var(--brand-gray-rose);
+    --input: var(--brand-green-gray);
+    --ring: var(--brand-brown);
   }
 }
 
 @layer base {
   * {
-    @apply border-border selection:bg-purple-400/20 selection:text-purple-700 dark:selection:bg-purple-400/10 dark:selection:text-purple-300;
+    @apply border-border selection:bg-brand-lilac/20 selection:text-brand-brown dark:selection:bg-brand-brown/20 dark:selection:text-brand-lilac;
   }
   
   body {
-    @apply bg-background text-foreground antialiased min-h-screen;
+    @apply bg-background text-foreground antialiased min-h-screen font-carnivoro;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
   }
 
   html {
     @apply scroll-smooth;
   }
+
+  /* Typography Scale */
+  h1 {
+    @apply font-diogenes font-bold tracking-tight text-foreground;
+  }
+
+  h2, h3, h4 {
+    @apply font-augustus font-semibold tracking-tight text-foreground;
+  }
+
+  h5, h6 {
+    @apply font-carnivoro font-medium text-foreground;
+  }
 }
 
 @layer utilities {
   .glass {
-    @apply backdrop-blur-md bg-white/60 dark:bg-black/40 border border-white/20 dark:border-white/10 shadow-sm;
+    @apply backdrop-blur-md bg-background/60 dark:bg-brand-dark/40 border border-brand-gray-rose/20 dark:border-brand-lilac/10 shadow-sm;
   }
   
   .glass-card {
-    @apply bg-white/70 dark:bg-black/50 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-md;
+    @apply bg-background/70 dark:bg-brand-dark/50 backdrop-blur-lg border border-brand-gray-rose/20 dark:border-brand-lilac/10 shadow-md;
   }
   
   .hide-scrollbar {
@@ -101,7 +122,7 @@
   }
   
   .loading-shimmer {
-    @apply bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%] animate-shimmer;
+    @apply bg-gradient-to-r from-transparent via-brand-lilac/20 to-transparent bg-[length:200%_100%] animate-shimmer;
   }
   
   .text-balance {

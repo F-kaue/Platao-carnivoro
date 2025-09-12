@@ -18,6 +18,10 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // Platão Carnívoro specific variants
+        carnivoro: "bg-brand-brown text-white hover:bg-brand-gray-rose transition-colors font-augustus",
+        admin: "bg-brand-green-gray text-white hover:bg-brand-brown transition-colors font-augustus",
+        lilac: "bg-brand-lilac text-brand-dark hover:bg-brand-gray-rose hover:text-white transition-colors font-augustus",
       },
       size: {
         default: "h-10 px-4 py-2",

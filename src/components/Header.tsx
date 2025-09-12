@@ -62,14 +62,14 @@ export function Header() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled 
-          ? "bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b shadow-sm" 
+          ? "bg-background/80 backdrop-blur-lg border-b border-brand-gray-rose/30 shadow-sm" 
           : "bg-transparent"
       )}
     >
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex-shrink-0" onClick={handleResetFilters}>
-          <Logo />
+          <Logo size="md" variant="image" />
         </Link>
 
         {/* Desktop Navigation */}
@@ -78,7 +78,7 @@ export function Header() {
             <button
               key={category}
               onClick={() => handleCategoryClick(category)}
-              className="text-sm text-foreground/80 hover:text-purple-500 transition-colors"
+              className="text-sm text-foreground/80 hover:text-primary transition-colors font-augustus"
             >
               {category}
             </button>
@@ -90,7 +90,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full transition-all hover:bg-purple-100 dark:hover:bg-purple-400/10"
+            className="rounded-full transition-all hover:bg-accent/50"
             onClick={() => setShowSearch(!showSearch)}
           >
             <Search className="h-5 w-5 text-foreground/80" />
@@ -103,7 +103,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden rounded-full transition-all hover:bg-purple-100 dark:hover:bg-purple-400/10"
+            className="md:hidden rounded-full transition-all hover:bg-accent/50"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
           >
             {showMobileMenu ? (
@@ -118,7 +118,7 @@ export function Header() {
 
       {/* Search Panel */}
       {showSearch && (
-        <div className="bg-white dark:bg-gray-900 p-4 border-b shadow-sm animate-slide-down">
+        <div className="bg-background border-b border-brand-gray-rose/30 p-4 shadow-sm animate-slide-down">
           <form 
             onSubmit={handleSearch}
             className="container mx-auto flex items-center gap-2"
@@ -126,12 +126,12 @@ export function Header() {
             <Input
               type="text"
               placeholder="Pesquisar produtos..."
-              className="flex-grow"
+              className="flex-grow bg-input border-brand-gray-rose/30 focus-visible:ring-primary"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               autoFocus
             />
-            <Button type="submit">
+            <Button type="submit" className="bg-primary hover:bg-secondary font-augustus">
               <Search className="h-4 w-4 mr-2" />
               Buscar
             </Button>
@@ -141,13 +141,13 @@ export function Header() {
 
       {/* Mobile Menu */}
       {showMobileMenu && (
-        <div className="md:hidden bg-white dark:bg-gray-900 p-4 border-b shadow-sm animate-slide-down">
+        <div className="md:hidden bg-background border-b border-brand-gray-rose/30 p-4 shadow-sm animate-slide-down">
           <nav className="flex flex-col space-y-3">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => handleCategoryClick(category)}
-                className="text-left px-4 py-2 hover:bg-purple-50 dark:hover:bg-purple-900/10 rounded-md transition-colors"
+                className="text-left px-4 py-2 hover:bg-accent/50 rounded-md transition-colors font-augustus"
               >
                 {category}
               </button>

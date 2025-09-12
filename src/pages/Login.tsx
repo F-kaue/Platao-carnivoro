@@ -60,13 +60,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-purple-50 to-white dark:from-gray-900 dark:to-gray-800">
-      {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-200/30 dark:bg-purple-800/10 blur-3xl transform -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-300/20 dark:bg-purple-600/10 blur-3xl transform translate-x-1/2 translate-y-1/2" />
-      </div>
-      
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-brand-dark">
       {/* Theme Toggle (Top Right) */}
       <div className="absolute top-4 right-4">
         <ThemeToggle />
@@ -75,17 +69,22 @@ const Login = () => {
       {/* Home Link (Top Left) */}
       <div className="absolute top-4 left-4">
         <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <Logo textSize="sm" />
+          <Logo size="sm" variant="text" className="text-brand-lilac" />
         </a>
       </div>
       
+      {/* Centered Logo */}
+      <div className="mb-8">
+        <Logo size="lg" variant="image" />
+      </div>
+      
       {/* Login Card */}
-      <Card className="w-full max-w-md glass-card animate-scale-in">
+      <Card className="w-full max-w-md bg-brand-green-gray/50 border-brand-gray-rose/30 animate-scale-in">
         <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-2xl">
+          <CardTitle className="text-2xl font-augustus text-brand-lilac">
             Painel Administrativo
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-brand-gray-rose">
             Faça login para acessar o painel administrativo
           </CardDescription>
         </CardHeader>
@@ -93,7 +92,7 @@ const Login = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="cpf" className="text-sm font-medium">
+              <label htmlFor="cpf" className="text-sm font-medium text-brand-lilac font-augustus">
                 CPF
               </label>
               <Input
@@ -103,13 +102,13 @@ const Login = () => {
                 onChange={handleCpfChange}
                 placeholder="xxx.xxx.xxx-xx"
                 disabled={isLoading}
-                className="transition-all focus-visible:ring-purple-500"
+                className="bg-brand-lilac/10 border-brand-gray-rose/30 text-brand-lilac placeholder:text-brand-gray-rose/70 focus-visible:ring-brand-brown"
                 required
               />
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
+              <label htmlFor="password" className="text-sm font-medium text-brand-lilac font-augustus">
                 Senha
               </label>
               <div className="relative">
@@ -120,14 +119,14 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   disabled={isLoading}
-                  className="transition-all focus-visible:ring-purple-500 pr-10"
+                  className="bg-brand-lilac/10 border-brand-gray-rose/30 text-brand-lilac placeholder:text-brand-gray-rose/70 focus-visible:ring-brand-brown pr-10"
                   required
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 top-0 h-full px-3 text-muted-foreground"
+                  className="absolute right-0 top-0 h-full px-3 text-brand-gray-rose hover:text-brand-lilac hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -145,7 +144,7 @@ const Login = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white transition-colors mt-6"
+              className="w-full bg-brand-brown hover:bg-brand-gray-rose text-white font-augustus transition-colors mt-6"
             >
               {isLoading ? (
                 <span className="flex items-center">

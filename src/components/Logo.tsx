@@ -1,27 +1,41 @@
 
 import { cn } from "@/lib/utils";
+import logoPrincipal from "@/assets/logo-principal.png";
 
 interface LogoProps {
   className?: string;
-  textSize?: "sm" | "md" | "lg";
+  variant?: "image" | "text";
+  size?: "sm" | "md" | "lg";
 }
 
-export function Logo({ className, textSize = "md" }: LogoProps) {
-  const textClasses = {
-    sm: "text-lg",
-    md: "text-xl",
-    lg: "text-2xl"
+export function Logo({ className, variant = "image", size = "md" }: LogoProps) {
+  const sizeClasses = {
+    sm: variant === "image" ? "h-8" : "text-lg",
+    md: variant === "image" ? "h-12" : "text-xl", 
+    lg: variant === "image" ? "h-16" : "text-2xl"
   };
 
+  if (variant === "image") {
+    return (
+      <div className={cn("flex items-center", className)}>
+        <img 
+          src={logoPrincipal}
+          alt="Platão Carnívoro"
+          className={cn("object-contain", sizeClasses[size])}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex items-center", className)}>
       <span 
         className={cn(
-          "font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-400",
-          textClasses[textSize]
+          "font-diogenes font-bold tracking-tight text-foreground",
+          sizeClasses[size]
         )}
       >
-        Achadinhos
+        PLATÃO CARNÍVORO
       </span>
     </div>
   );
