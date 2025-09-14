@@ -108,7 +108,7 @@ const Testo1k = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20 pt-20 sm:pt-24">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20 pt-16 sm:pt-20 lg:pt-24">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <img 
@@ -118,10 +118,10 @@ const Testo1k = () => {
           />
         </div>
 
-        <div className="container mx-auto px-6 sm:px-6 py-4 sm:py-8 lg:py-16 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
+        <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-4 lg:py-8 relative z-10">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center min-h-[calc(100vh-6rem)]">
             {/* Left Side - Content */}
-            <div className="space-y-1 sm:space-y-2 lg:space-y-3">
+            <div className="flex flex-col justify-center space-y-1 sm:space-y-2 lg:space-y-3 w-full lg:w-auto">
               {/* Logo */}
               <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3 mb-1 sm:mb-2 lg:mb-3">
                 <img 
@@ -131,9 +131,13 @@ const Testo1k = () => {
                 />
               </div>
 
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-diogenes font-bold leading-none sm:leading-tight text-shadow-lg text-center lg:text-left">
-                <span className="block text-brand-dark dark:text-brand-lilac">TESTOSTERONA</span>
-                <span className="block text-brand-brown">1K</span>
+              <h1 className="font-diogenes font-bold leading-none text-shadow-lg text-center lg:text-left">
+                <span className="block text-brand-dark dark:text-brand-lilac" style={{ fontSize: 'clamp(1rem, 3.5vw, 2.5rem)' }}>
+                  TESTOSTERONA
+                </span>
+                <span className="block text-brand-brown" style={{ fontSize: 'clamp(1.25rem, 4vw, 3rem)' }}>
+                  1K
+                </span>
               </h1>
 
               <div className="space-y-1 sm:space-y-2 text-center lg:text-left">
@@ -154,7 +158,7 @@ const Testo1k = () => {
                 >
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-2 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-xs sm:text-sm lg:text-base w-full sm:w-auto"
+                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-3 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-xs sm:text-sm lg:text-base w-full sm:w-auto"
                   >
                     Quero aumentar minha testosterona agora
                     <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
@@ -180,8 +184,8 @@ const Testo1k = () => {
             </div>
 
             {/* Right Side - Product Visual */}
-            <div className="relative flex justify-center lg:justify-end mt-6 lg:mt-0">
-              <div className="relative z-10 max-w-xs sm:max-w-sm lg:max-w-md">
+            <div className="relative flex justify-center lg:justify-end mt-4 lg:mt-0 flex-shrink-0">
+              <div className="relative z-10 w-full max-w-[180px] sm:max-w-[250px] lg:max-w-[300px]">
                 <img 
                   src="/testo1k/ebook_mock-867x1024.png" 
                   alt="Testosterona 1k - Ebook" 
