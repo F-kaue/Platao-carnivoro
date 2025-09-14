@@ -112,20 +112,20 @@ export function ProductCard({ product, className }: ProductCardProps) {
         
         {/* Image Container */}
         <div className="relative w-full h-full flex items-center justify-center bg-white">
-          <img
-            src={product.images[currentImageIndex]}
-            alt={product.title}
-            className={cn(
+        <img
+          src={product.images[currentImageIndex]}
+          alt={product.title}
+          className={cn(
               "max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-105",
-              isImageLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
-            )}
-            onLoad={() => setIsImageLoading(false)}
+            isImageLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
+          )}
+          onLoad={() => setIsImageLoading(false)}
             style={{
               maxWidth: '100%',
               maxHeight: '100%',
               objectFit: 'contain'
             }}
-          />
+        />
         </div>
         
         {/* Discount Badge - More elegant */}

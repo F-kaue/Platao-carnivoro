@@ -14,7 +14,7 @@ const Testo1kHome = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20 pt-16 sm:pt-20">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <img 
@@ -24,40 +24,44 @@ const Testo1kHome = () => {
           />
         </div>
 
-        <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="container mx-auto px-4 py-4 sm:py-8 lg:py-16 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             {/* Logo */}
-            <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-6 lg:mb-8">
               <img 
                 src="/testo1k/testo1k-logo.png" 
                 alt="Testosterona 1k" 
-                className="h-20 w-auto"
+                className="h-8 sm:h-12 lg:h-16 xl:h-20 w-auto"
               />
             </div>
 
-            <h1 className="text-6xl md:text-8xl font-diogenes font-bold leading-tight text-shadow-lg mb-8">
-              <span className="block text-brand-dark dark:text-brand-lilac">TESTOSTERONA</span>
-              <span className="block text-brand-brown">1K</span>
+            <h1 className="font-diogenes font-bold leading-none text-shadow-lg mb-4 sm:mb-6 lg:mb-8">
+              <span className="block text-brand-dark dark:text-brand-lilac" style={{ fontSize: 'clamp(1.5rem, 8vw, 6rem)' }}>
+                TESTOSTERONA
+              </span>
+              <span className="block text-brand-brown" style={{ fontSize: 'clamp(2rem, 10vw, 8rem)' }}>
+                1K
+              </span>
             </h1>
 
-            <div className="space-y-6 mb-12">
-              <h2 className="text-2xl md:text-3xl font-augustus font-semibold text-brand-green-gray dark:text-brand-gray-rose">
+            <div className="space-y-3 sm:space-y-4 lg:space-y-6 mb-6 sm:mb-8 lg:mb-12">
+              <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-augustus font-semibold text-brand-green-gray dark:text-brand-gray-rose">
                 Transforme sua energia, força e vitalidade
               </h2>
-              <p className="text-xl md:text-2xl font-body text-foreground/80 leading-relaxed max-w-3xl mx-auto">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-body text-foreground/80 leading-relaxed max-w-3xl mx-auto">
                 Descubra como aumentar naturalmente seus níveis de testosterona através de estratégias comprovadas e um plano diário simples.
               </p>
             </div>
 
             {/* CTA Button */}
-            <div className="mb-16">
+            <div className="mb-8 sm:mb-12 lg:mb-16">
               <Link to="/testo1k/landing">
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-12 py-6 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-xl"
+                  className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-4 sm:px-8 lg:px-12 py-3 sm:py-4 lg:py-6 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-sm sm:text-base lg:text-xl w-full sm:w-auto"
                 >
                   Descobrir o Método Completo
-                  <ArrowRight className="ml-3 h-6 w-6" />
+                  <ArrowRight className="ml-2 sm:ml-3 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                 </Button>
               </Link>
             </div>
@@ -67,7 +71,7 @@ const Testo1kHome = () => {
               <img 
                 src="/testo1k/ebook_mock-867x1024.png" 
                 alt="Testosterona 1k - Ebook" 
-                className="w-full max-w-sm mx-auto drop-shadow-2xl animate-float"
+                className="w-full max-w-[200px] sm:max-w-[300px] lg:max-w-sm mx-auto drop-shadow-2xl animate-float"
               />
             </div>
           </div>
