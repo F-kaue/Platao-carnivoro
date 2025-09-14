@@ -118,29 +118,29 @@ const Testo1k = () => {
           />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 relative z-10">
+        <div className="container mx-auto px-6 sm:px-6 py-8 sm:py-16 relative z-10">
           <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
             {/* Left Side - Content */}
-            <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+            <div className="space-y-3 sm:space-y-4 lg:space-y-6">
               {/* Logo */}
-              <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-3 sm:mb-4 lg:mb-6">
+              <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-2 sm:mb-3 lg:mb-4">
                 <img 
                   src="/testo1k/testo1k-logo.png" 
                   alt="Testosterona 1k" 
-                  className="h-10 sm:h-12 lg:h-16 w-auto"
+                  className="h-8 sm:h-10 lg:h-12 w-auto"
                 />
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-diogenes font-bold leading-tight text-shadow-lg text-center lg:text-left">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-diogenes font-bold leading-tight text-shadow-lg text-center lg:text-left">
                 <span className="block text-brand-dark dark:text-brand-lilac">TESTOSTERONA</span>
                 <span className="block text-brand-brown">1K</span>
               </h1>
 
-              <div className="space-y-2 sm:space-y-3 lg:space-y-4 text-center lg:text-left">
-                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-augustus font-semibold text-brand-green-gray dark:text-brand-gray-rose">
+              <div className="space-y-2 sm:space-y-3 text-center lg:text-left">
+                <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-augustus font-semibold text-brand-green-gray dark:text-brand-gray-rose">
                   Eleve seus níveis de testosterona de forma 100% natural
                 </h2>
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl font-body text-foreground/80 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg font-body text-foreground/80 leading-relaxed max-w-xl mx-auto lg:mx-0">
                   Transforme sua <strong>energia</strong>, <strong>força</strong> e <strong>vitalidade</strong> através de estratégias comprovadas e passos simples.
                 </p>
               </div>
@@ -154,27 +154,27 @@ const Testo1k = () => {
                 >
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-sm sm:text-base lg:text-lg w-full sm:w-auto"
+                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-3 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-xs sm:text-sm lg:text-base w-full sm:w-auto"
                   >
                     Quero aumentar minha testosterona agora
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
                   </Button>
                 </a>
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 lg:gap-6 pt-3 sm:pt-4">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-brand-brown" />
-                  <span className="text-xs sm:text-sm font-augustus text-brand-green-gray">100% Natural</span>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2 sm:gap-3 lg:gap-4 pt-2 sm:pt-3">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-brand-brown" />
+                  <span className="text-xs font-augustus text-brand-green-gray">100% Natural</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-brand-brown" />
-                  <span className="text-xs sm:text-sm font-augustus text-brand-green-gray">Método Comprovado</span>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Award className="w-3 h-3 sm:w-4 sm:h-4 text-brand-brown" />
+                  <span className="text-xs font-augustus text-brand-green-gray">Método Comprovado</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-brand-brown" />
-                  <span className="text-xs sm:text-sm font-augustus text-brand-green-gray">Garantia Total</span>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-brand-brown" />
+                  <span className="text-xs font-augustus text-brand-green-gray">Garantia Total</span>
                 </div>
               </div>
             </div>
