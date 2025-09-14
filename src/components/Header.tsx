@@ -39,7 +39,7 @@ export function Header() {
       )}
     >
       <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 sm:h-18">
+        <div className="flex items-center justify-between h-16 sm:h-18 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
             <Logo size="md" variant="text" className="scale-90 sm:scale-100" />
