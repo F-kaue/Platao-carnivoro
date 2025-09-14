@@ -16,7 +16,7 @@ export function HeroSection() {
       
       {/* Background Character Image */}
       <div 
-        className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 opacity-20 sm:opacity-15 dark:opacity-12 sm:dark:opacity-10"
+        className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 opacity-25 sm:opacity-15 dark:opacity-15 sm:dark:opacity-10"
         style={{
           backgroundImage: `url(${logoPersonagem})`,
           backgroundPosition: 'center center',
@@ -79,19 +79,19 @@ export function HeroSection() {
           </div>
 
           {/* Mobile Visual Element - Overlay Badge */}
-          <div className="lg:hidden flex items-center justify-center mt-4">
-            <div className="w-48 h-48 relative">
+          <div className="lg:hidden flex items-center justify-center mt-3">
+            <div className="w-40 h-40 relative">
               {/* Badge/Seal with stronger background for visibility over image */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-white/85 dark:bg-background/90 backdrop-blur-sm border-2 border-brand-brown/40 rounded-full w-36 h-36 flex items-center justify-center shadow-xl">
+                <div className="bg-white/80 dark:bg-background/85 backdrop-blur-sm border-2 border-brand-brown/30 rounded-full w-32 h-32 flex items-center justify-center shadow-lg">
                   <div className="text-center">
-                    <div className="text-lg font-diogenes font-bold text-brand-brown mb-1">
+                    <div className="text-base font-diogenes font-bold text-brand-brown mb-1">
                       CURADORIA
                     </div>
                     <div className="text-xs font-augustus text-brand-green-gray">
                       CARNÍVORA
                     </div>
-                    <div className="w-12 h-0.5 bg-brand-brown mx-auto mt-1"></div>
+                    <div className="w-10 h-0.5 bg-brand-brown mx-auto mt-1"></div>
                   </div>
                 </div>
               </div>

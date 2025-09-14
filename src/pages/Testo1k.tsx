@@ -108,7 +108,7 @@ const Testo1k = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20 pt-20 sm:pt-24">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <img 
@@ -118,35 +118,35 @@ const Testo1k = () => {
           />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
             {/* Left Side - Content */}
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-4 sm:space-y-6 lg:space-y-8">
               {/* Logo */}
-              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-3 sm:mb-4 lg:mb-6">
                 <img 
                   src="/testo1k/testo1k-logo.png" 
                   alt="Testosterona 1k" 
-                  className="h-12 sm:h-16 w-auto"
+                  className="h-10 sm:h-12 lg:h-16 w-auto"
                 />
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-diogenes font-bold leading-tight text-shadow-lg">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-diogenes font-bold leading-tight text-shadow-lg text-center lg:text-left">
                 <span className="block text-brand-dark dark:text-brand-lilac">TESTOSTERONA</span>
                 <span className="block text-brand-brown">1K</span>
               </h1>
 
-              <div className="space-y-3 sm:space-y-4">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-augustus font-semibold text-brand-green-gray dark:text-brand-gray-rose">
+              <div className="space-y-2 sm:space-y-3 lg:space-y-4 text-center lg:text-left">
+                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-augustus font-semibold text-brand-green-gray dark:text-brand-gray-rose">
                   Eleve seus níveis de testosterona de forma 100% natural
                 </h2>
-                <p className="text-base sm:text-lg md:text-xl font-body text-foreground/80 leading-relaxed max-w-xl">
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl font-body text-foreground/80 leading-relaxed max-w-xl mx-auto lg:mx-0">
                   Transforme sua <strong>energia</strong>, <strong>força</strong> e <strong>vitalidade</strong> através de estratégias comprovadas e passos simples.
                 </p>
               </div>
 
               {/* CTA Button */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex justify-center lg:justify-start">
                 <a 
                   href="https://chk.eduzz.com/Z0BBQ1360A?a=35814376" 
                   target="_blank" 
@@ -154,7 +154,7 @@ const Testo1k = () => {
                 >
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-6 sm:px-8 py-3 sm:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-base sm:text-lg w-full sm:w-auto"
+                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-sm sm:text-base lg:text-lg w-full sm:w-auto"
                   >
                     Quero aumentar minha testosterona agora
                     <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -163,39 +163,39 @@ const Testo1k = () => {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex items-center gap-6 pt-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 lg:gap-6 pt-3 sm:pt-4">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-brand-brown" />
-                  <span className="text-sm font-augustus text-brand-green-gray">100% Natural</span>
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-brand-brown" />
+                  <span className="text-xs sm:text-sm font-augustus text-brand-green-gray">100% Natural</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-brand-brown" />
-                  <span className="text-sm font-augustus text-brand-green-gray">Método Comprovado</span>
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-brand-brown" />
+                  <span className="text-xs sm:text-sm font-augustus text-brand-green-gray">Método Comprovado</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-brand-brown" />
-                  <span className="text-sm font-augustus text-brand-green-gray">Garantia Total</span>
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-brand-brown" />
+                  <span className="text-xs sm:text-sm font-augustus text-brand-green-gray">Garantia Total</span>
                 </div>
               </div>
             </div>
 
             {/* Right Side - Product Visual */}
-            <div className="relative">
-              <div className="relative z-10">
+            <div className="relative flex justify-center lg:justify-end mt-6 lg:mt-0">
+              <div className="relative z-10 max-w-xs sm:max-w-sm lg:max-w-md">
                 <img 
                   src="/testo1k/ebook_mock-867x1024.png" 
                   alt="Testosterona 1k - Ebook" 
-                  className="w-full max-w-md mx-auto drop-shadow-2xl animate-float"
+                  className="w-full h-auto drop-shadow-2xl animate-float"
                 />
               </div>
               
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-r from-brand-brown to-brand-green-gray rounded-full flex items-center justify-center shadow-xl animate-pulse">
-                <Zap className="w-10 h-10 text-white" />
+              {/* Floating Elements - Hidden on mobile for cleaner look */}
+              <div className="hidden sm:block absolute -top-4 -right-4 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-brand-brown to-brand-green-gray rounded-full flex items-center justify-center shadow-xl animate-pulse">
+                <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
               </div>
               
-              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-r from-brand-green-gray to-brand-brown rounded-full flex items-center justify-center shadow-xl animate-bounce">
-                <TrendingUp className="w-8 h-8 text-white" />
+              <div className="hidden sm:block absolute -bottom-4 -left-4 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-brand-green-gray to-brand-brown rounded-full flex items-center justify-center shadow-xl animate-bounce">
+                <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
           </div>
@@ -203,14 +203,14 @@ const Testo1k = () => {
       </section>
 
       {/* About Product Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 lg:py-20 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-diogenes font-bold mb-8 text-foreground">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-diogenes font-bold mb-6 sm:mb-8 text-foreground">
               Sobre o <span className="text-brand-brown">Produto</span>
             </h2>
             
-            <div className="space-y-6 text-lg font-body text-foreground/80 leading-relaxed">
+            <div className="space-y-4 sm:space-y-6 text-sm sm:text-base lg:text-lg font-body text-foreground/80 leading-relaxed">
               <p>
                 O <strong>Testosterona 1k</strong> foi elaborado para fornecer tudo o que você precisa saber sobre como aumentar naturalmente seus níveis de testosterona. Através de estratégias comprovadas e passos simples, você aprenderá a otimizar sua alimentação, rotina de exercícios e hábitos diários para elevar sua energia, força e vitalidade.
               </p>
@@ -224,28 +224,28 @@ const Testo1k = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-br from-brand-lilac/10 via-brand-gray-rose/5 to-brand-brown/10">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-diogenes font-bold mb-6 text-foreground">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-brand-lilac/10 via-brand-gray-rose/5 to-brand-brown/10">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-diogenes font-bold mb-4 sm:mb-6 text-foreground">
               Benefícios <span className="text-brand-brown">Principais</span>
             </h2>
-            <p className="text-xl text-foreground/70 max-w-2xl mx-auto font-body">
+            <p className="text-base sm:text-lg lg:text-xl text-foreground/70 max-w-2xl mx-auto font-body">
               Descubra como transformar sua vida através de estratégias naturais e comprovadas
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {benefits.map((benefit, index) => (
               <Card key={index} className="bg-background/95 backdrop-blur-sm border-brand-gray-rose/30 hover:shadow-xl transition-all duration-300 hover:scale-105">
-                <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-2xl flex items-center justify-center mx-auto mb-6 text-white">
+                <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 text-white">
                     {benefit.icon}
                   </div>
-                  <h3 className="text-xl font-augustus font-bold mb-4 text-foreground">
+                  <h3 className="text-base sm:text-lg lg:text-xl font-augustus font-bold mb-3 sm:mb-4 text-foreground">
                     {benefit.title}
                   </h3>
-                  <p className="text-brand-green-gray/70 font-body leading-relaxed">
+                  <p className="text-xs sm:text-sm lg:text-base text-brand-green-gray/70 font-body leading-relaxed">
                     {benefit.description}
                   </p>
                 </CardContent>
