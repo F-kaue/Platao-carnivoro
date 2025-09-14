@@ -60,17 +60,20 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       try {
         setIsLoading(true);
         
-        // Always try to load products for public viewing
-        const productsData = await fetchProducts();
-        setProducts(productsData);
+        // Always load products and click data for public viewing
+        const [productsData, clicksData] = await Promise.all([
+          fetchProducts(),
+          fetchClickData()
+        ]);
         
-        // Check authentication before loading click data
-        const isAuthenticated = await ensureAuthenticated();
-        if (isAuthenticated) {
-          // Load click data if authenticated
-          const clicksData = await fetchClickData();
-          setClickData(clicksData);
-        }
+        console.log("Dados carregados:", { 
+          products: productsData.length, 
+          clicks: clicksData.length,
+          clicksData: clicksData 
+        });
+        
+        setProducts(productsData);
+        setClickData(clicksData);
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
         toast({
@@ -84,7 +87,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadData();
-  }, [toast, ensureAuthenticated]);
+  }, [toast]);
   
   // Lidar com atualização de produto em tempo real
   const handleProductUpdate = useCallback((payload: any) => {
@@ -227,6 +230,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
   // Get admin statistics
   const getAdminStats = () => {
+    console.log("Calculando estatísticas:", { 
+      productsCount: products.length, 
+      clickDataCount: clickData.length,
+      clickData: clickData 
+    });
     return calculateAdminStats(products, clickData);
   };
 

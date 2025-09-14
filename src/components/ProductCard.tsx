@@ -89,28 +89,20 @@ export function ProductCard({ product, className }: ProductCardProps) {
     }
   };
 
-  // Get marketplace badge color
-  const getMarketplaceColor = () => {
-    switch(product.marketplace) {
-      case 'Amazon': return 'bg-amber-500';
-      case 'Shopee': return 'bg-orange-500';
-      case 'Mercado Livre': return 'bg-yellow-500';
-      case 'AliExpress': return 'bg-red-500';
-      case 'Magalu': return 'bg-blue-500';
-      case 'Americanas': return 'bg-red-600';
-      default: return 'bg-gray-500';
-    }
+  // Amazon badge styling
+  const getAmazonBadgeStyle = () => {
+    return 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg';
   };
 
   return (
     <Card 
       className={cn(
-        "overflow-hidden transition-all duration-300 hover:shadow-xl group h-full flex flex-col border-brand-gray-rose/30 hover:border-primary/50 bg-card/80 backdrop-blur-sm",
+        "overflow-hidden transition-all duration-300 hover:shadow-2xl group h-full flex flex-col border-brand-gray-rose/30 hover:border-primary/50 bg-white dark:bg-card/80 backdrop-blur-sm hover:scale-105",
         className
       )}
     >
       {/* Product Image Carousel */}
-      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-brand-lilac/20 to-brand-gray-rose/10">
+      <div className="relative aspect-square overflow-hidden bg-white dark:bg-gradient-to-br dark:from-brand-lilac/20 dark:to-brand-gray-rose/10">
         {/* Loading Indicator */}
         {isImageLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/40 z-10">
@@ -118,34 +110,46 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </div>
         )}
         
-        {/* Image */}
-        <img
-          src={product.images[currentImageIndex]}
-          alt={product.title}
-          className={cn(
-            "object-cover w-full h-full transition-all duration-500 group-hover:scale-110",
-            isImageLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
-          )}
-          onLoad={() => setIsImageLoading(false)}
-        />
+        {/* Image Container */}
+        <div className="relative w-full h-full flex items-center justify-center bg-white">
+          <img
+            src={product.images[currentImageIndex]}
+            alt={product.title}
+            className={cn(
+              "max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-105",
+              isImageLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
+            )}
+            onLoad={() => setIsImageLoading(false)}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
         
         {/* Discount Badge - More elegant */}
         {discountPercentage > 0 && (
           <Badge 
-            className="absolute top-3 right-3 bg-primary/90 text-white font-augustus font-medium border-none shadow-lg"
+            className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-augustus font-bold border-none shadow-xl backdrop-blur-sm px-3 py-1"
           >
             -{discountPercentage}%
           </Badge>
         )}
         
-        {/* Marketplace Badge - More refined */}
+        {/* Amazon Badge - Elegant design */}
         <Badge 
           className={cn(
-            "absolute top-3 left-3 text-white font-augustus font-medium border-none shadow-lg backdrop-blur-sm",
-            getMarketplaceColor()
+            "absolute top-3 left-3 text-white font-augustus font-bold border-none shadow-xl backdrop-blur-sm px-3 py-1",
+            getAmazonBadgeStyle()
           )}
         >
-          {product.marketplace}
+          <div className="flex items-center gap-1.5">
+            <div className="w-4 h-4 bg-white rounded-sm flex items-center justify-center">
+              <span className="text-orange-600 text-xs font-bold">A</span>
+            </div>
+            <span className="text-sm">AMAZON</span>
+          </div>
         </Badge>
         
         {/* Carousel Controls (only show if more than one image) */}
@@ -171,15 +175,15 @@ export function ProductCard({ product, className }: ProductCardProps) {
             </Button>
             
             {/* Carousel Indicators */}
-            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
               {product.images.map((_, index) => (
                 <div 
                   key={index}
                   className={cn(
-                    "w-2 h-2 rounded-full transition-all shadow-sm",
+                    "w-2 h-2 rounded-full transition-all duration-300 shadow-lg",
                     index === currentImageIndex 
-                      ? "bg-primary w-4" 
-                      : "bg-background/70 border border-brand-gray-rose/30"
+                      ? "bg-white w-6 shadow-xl" 
+                      : "bg-white/60 border border-white/30"
                   )}
                 />
               ))}
@@ -223,10 +227,13 @@ export function ProductCard({ product, className }: ProductCardProps) {
           onClick={handleClick}
           type="button"
           variant="carnivoro"
-          className="mt-6 w-full shadow-md hover:shadow-lg transition-all duration-300 font-augustus font-semibold"
+          className="mt-6 w-full shadow-md hover:shadow-lg transition-all duration-300 font-augustus font-semibold group relative overflow-hidden"
         >
-          Obter Oferta
-          <ExternalLink className="ml-2 h-4 w-4" />
+          <div className="flex items-center justify-center gap-2">
+            <span>Ver na Amazon</span>
+            <ExternalLink className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-orange-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </Button>
       </CardContent>
     </Card>

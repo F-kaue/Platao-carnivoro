@@ -3,14 +3,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom animations for Testo1k landing page */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Font Face Declarations */
+@font-face {
+  font-family: 'Diogenes';
+  src: url('/fonts/DIOGENES.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Augustus';
+  src: url('/fonts/AUGUSTUS.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    /* Platão Carnívoro Brand Colors - Adjusted for better contrast */
-    --brand-lilac: 254 30% 92%;        /* #CFCFEA - Slightly adjusted for better contrast */
-    --brand-gray-rose: 23 16% 60%;     /* #A8998D - Darkened for better readability */
-    --brand-brown: 22 20% 40%;         /* #876C61 - Enhanced saturation */
-    --brand-green-gray: 63 12% 30%;    /* #575A4B - Improved contrast */
-    --brand-dark: 120 10% 12%;         /* #242C24 - Enhanced for better contrast */
+    /* Platão Carnívoro Brand Colors - Exact from brand guide */
+    --brand-lilac: 240 30% 90%;        /* #CFCFEA - Light Lavender/Grey */
+    --brand-gray-rose: 340 10% 65%;    /* #A89B9D - Muted Mauve/Grey */
+    --brand-brown: 20 15% 45%;         /* #816C61 - Warm Brown/Grey */
+    --brand-green-gray: 75 8% 35%;     /* #575A4B - Dark Olive Green/Grey */
+    --brand-dark: 60 5% 15%;           /* #2A2C24 - Very Dark Grey/Black */
     
     /* Semantic color mapping with enhanced contrast */
     --background: 0 0% 100%;

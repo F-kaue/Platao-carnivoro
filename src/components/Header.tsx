@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
+import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Logo } from "./Logo";
@@ -26,7 +26,6 @@ export function Header() {
   const menuItems = [
     { label: "Produtos", href: "#produtos" },
     { label: "Filosofia", href: "#filosofia" },
-    { label: "Comunidade", href: "#comunidade" },
     { label: "Contato", href: "#contato" },
   ];
 
@@ -35,15 +34,15 @@ export function Header() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-md",
         isScrolled 
-          ? "bg-background/95 border-b border-brand-gray-rose/30 shadow-lg" 
-          : "bg-background/80"
+          ? "bg-background/95 border-b border-brand-gray-rose/30 shadow-xl" 
+          : "bg-gradient-to-r from-brand-lilac/20 via-background/90 to-brand-gray-rose/20"
       )}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-16 sm:h-18">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
-            <Logo size="md" variant="image" />
+            <Logo size="md" variant="text" className="scale-90 sm:scale-100" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -60,43 +59,20 @@ export function Header() {
           </nav>
 
           {/* Action Icons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Search Button */}
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setShowSearch(!showSearch)}
-              className="rounded-full transition-all hover:bg-accent/50"
+              className="rounded-full transition-all hover:bg-accent/50 h-10 w-10 sm:h-11 sm:w-11"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="sr-only">Buscar</span>
             </Button>
 
-            {/* Cart Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full transition-all hover:bg-accent/50 relative"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                0
-              </span>
-              <span className="sr-only">Carrinho</span>
-            </Button>
-
-            {/* User/Login Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full transition-all hover:bg-accent/50"
-            >
-              <User className="h-5 w-5" />
-              <span className="sr-only">Minha Conta</span>
-            </Button>
-
             {/* Theme Toggle - Hidden on mobile */}
-            <div className="hidden md:block">
+            <div className="hidden sm:block">
               <ThemeToggle />
             </div>
 
@@ -104,10 +80,10 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden rounded-full transition-all hover:bg-accent/50"
+              className="lg:hidden rounded-full transition-all hover:bg-accent/50 h-10 w-10 sm:h-11 sm:w-11"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
-              {showMobileMenu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {showMobileMenu ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Menu className="h-4 w-4 sm:h-5 sm:w-5" />}
               <span className="sr-only">Menu</span>
             </Button>
           </div>
@@ -116,15 +92,15 @@ export function Header() {
 
       {/* Search Panel */}
       {showSearch && (
-        <div className="bg-background/95 border-b border-brand-gray-rose/30 p-4 backdrop-blur-md animate-slide-down">
-          <div className="container mx-auto flex items-center gap-3 max-w-md">
+        <div className="bg-background/95 border-b border-brand-gray-rose/30 p-3 sm:p-4 backdrop-blur-md animate-slide-down">
+          <div className="container mx-auto flex items-center gap-2 sm:gap-3 max-w-md">
             <Input
               type="text"
               placeholder="Buscar produtos..."
-              className="flex-grow bg-card border-brand-gray-rose/30 focus-visible:ring-primary font-body"
+              className="flex-grow bg-card border-brand-gray-rose/30 focus-visible:ring-primary font-body h-9 sm:h-10 text-sm sm:text-base"
               autoFocus
             />
-            <Button variant="carnivoro" size="sm">
+            <Button variant="carnivoro" size="sm" className="h-9 sm:h-10 px-3 sm:px-4 text-sm sm:text-base">
               Buscar
             </Button>
           </div>
@@ -134,18 +110,18 @@ export function Header() {
       {/* Mobile Menu */}
       {showMobileMenu && (
         <div className="lg:hidden bg-background/95 border-b border-brand-gray-rose/30 backdrop-blur-md animate-slide-down">
-          <nav className="container mx-auto p-4 flex flex-col space-y-4">
+          <nav className="container mx-auto p-3 sm:p-4 flex flex-col space-y-3 sm:space-y-4">
             {menuItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="text-foreground/80 hover:text-primary transition-colors font-augustus font-medium py-2"
+                className="text-foreground/80 hover:text-primary transition-colors font-augustus font-medium py-2 text-base sm:text-lg"
                 onClick={() => setShowMobileMenu(false)}
               >
                 {item.label}
               </a>
             ))}
-            <div className="pt-4 border-t border-brand-gray-rose/30">
+            <div className="pt-3 sm:pt-4 border-t border-brand-gray-rose/30">
               <ThemeToggle />
             </div>
           </nav>

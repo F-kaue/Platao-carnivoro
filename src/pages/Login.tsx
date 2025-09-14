@@ -10,7 +10,7 @@ import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Login = () => {
-  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -23,22 +23,9 @@ const Login = () => {
     return null;
   }
 
-  // Format CPF while typing (XXX.XXX.XXX-XX)
-  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters
-    
-    if (value.length <= 11) {
-      // Format with dots and dash
-      if (value.length > 9) {
-        value = value.replace(/(\d{3})(\d{3})(\d{3})(\d+)/, "$1.$2.$3-$4");
-      } else if (value.length > 6) {
-        value = value.replace(/(\d{3})(\d{3})(\d+)/, "$1.$2.$3");
-      } else if (value.length > 3) {
-        value = value.replace(/(\d{3})(\d+)/, "$1.$2");
-      }
-      
-      setCpf(value);
-    }
+  // Handle email change
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
   };
 
   // Handle login form submission
@@ -47,10 +34,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Clean CPF before submission (remove formatting)
-      const cleanCpf = cpf.replace(/\D/g, "");
-      
-      const success = await login(cleanCpf, password);
+      const success = await login(email, password);
       if (success) {
         navigate("/admin");
       }
@@ -92,15 +76,15 @@ const Login = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="cpf" className="text-sm font-medium text-brand-lilac font-augustus">
-                CPF
+              <label htmlFor="email" className="text-sm font-medium text-brand-lilac font-augustus">
+                Email
               </label>
               <Input
-                id="cpf"
-                type="text"
-                value={cpf}
-                onChange={handleCpfChange}
-                placeholder="xxx.xxx.xxx-xx"
+                id="email"
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="seu@email.com"
                 disabled={isLoading}
                 className="bg-brand-lilac/10 border-brand-gray-rose/30 text-brand-lilac placeholder:text-brand-gray-rose/70 focus-visible:ring-brand-brown"
                 required

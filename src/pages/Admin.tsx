@@ -5,10 +5,11 @@ import { useAuth } from "@/context/AuthContext";
 import { useProducts } from "@/context/ProductContext";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CategorySelector } from "@/components/CategorySelector";
 import { Button } from "@/components/ui/button";
 import { 
   Package, Users, BarChart, LogOut, Plus, Trash2, Edit, 
-  ShoppingBag, RefreshCw, Image, Link as LinkIcon, ExternalLink, Upload, X
+  ShoppingBag, RefreshCw, Image, Link as LinkIcon, ExternalLink, Upload, X, TrendingUp, ChevronDown
 } from "lucide-react";
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -240,11 +241,11 @@ const Admin = () => {
     setIsAddDialogOpen(true);
   };
 
+  // Get unique categories from products
+  const availableCategories = Array.from(new Set(products.map(product => product.category))).sort();
+  
   // Category and marketplace options
-  const categories: Category[] = [
-    'Eletrônicos', 'Casa e Decoração', 'Moda', 'Beleza', 'Cozinha', 
-    'Brinquedos', 'Esportes', 'Livros', 'Pets', 'Outros'
-  ];
+  const categories: Category[] = availableCategories;
   
   const marketplaces: Marketplace[] = [
     'Amazon', 'Shopee', 'Mercado Livre', 'AliExpress', 'Magalu', 'Americanas', 'Outros'
@@ -370,7 +371,7 @@ const Admin = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="border-b bg-white dark:bg-gray-800 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
           <Logo />
           
           <div className="flex items-center gap-2">
@@ -390,69 +391,85 @@ const Admin = () => {
       </header>
       
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">Painel Administrativo</h1>
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4 sm:gap-0">
+          <h1 className="text-xl sm:text-2xl font-bold">Painel Administrativo</h1>
           
           <Button 
             onClick={handleAddNewProduct}
-            className="bg-purple-500 hover:bg-purple-600 text-white"
+            className="bg-purple-500 hover:bg-purple-600 text-white w-full sm:w-auto"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Adicionar Produto
+            <span className="hidden sm:inline">Adicionar Produto</span>
+            <span className="sm:hidden">Adicionar</span>
           </Button>
         </div>
         
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto">
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="products">Produtos</TabsTrigger>
+            <TabsTrigger value="overview" className="text-xs sm:text-sm">Visão Geral</TabsTrigger>
+            <TabsTrigger value="products" className="text-xs sm:text-sm">Produtos</TabsTrigger>
           </TabsList>
           
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <Card className="border-brand-gray-rose/30 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="pb-2 bg-gradient-to-r from-brand-lilac/10 to-brand-gray-rose/10">
+                  <CardTitle className="text-sm font-augustus font-medium text-brand-green-gray">
                     Total de Produtos
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Package className="h-5 w-5 text-purple-500 mr-2" />
-                    <span className="text-2xl font-bold">{stats.totalProducts}</span>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-3xl font-diogenes font-bold text-brand-brown">{stats.totalProducts}</span>
+                      <p className="text-sm text-brand-green-gray/70 font-body mt-1">Produtos cadastrados</p>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-2xl flex items-center justify-center">
+                      <Package className="h-6 w-6 text-white" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <Card className="border-brand-gray-rose/30 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="pb-2 bg-gradient-to-r from-brand-lilac/10 to-brand-gray-rose/10">
+                  <CardTitle className="text-sm font-augustus font-medium text-brand-green-gray">
                     Total de Cliques
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Users className="h-5 w-5 text-purple-500 mr-2" />
-                    <span className="text-2xl font-bold">{stats.totalClicks}</span>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-3xl font-diogenes font-bold text-brand-brown">{stats.totalClicks}</span>
+                      <p className="text-sm text-brand-green-gray/70 font-body mt-1">Cliques registrados</p>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-brand-green-gray to-brand-brown rounded-2xl flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-white" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <Card className="border-brand-gray-rose/30 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="pb-2 bg-gradient-to-r from-brand-lilac/10 to-brand-gray-rose/10">
+                  <CardTitle className="text-sm font-augustus font-medium text-brand-green-gray">
                     Média de Cliques
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <BarChart className="h-5 w-5 text-purple-500 mr-2" />
-                    <span className="text-2xl font-bold">
-                      {stats.averageClicksPerProduct.toFixed(1)}
-                    </span>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-3xl font-diogenes font-bold text-brand-brown">
+                        {stats.averageClicksPerProduct.toFixed(1)}
+                      </span>
+                      <p className="text-sm text-brand-green-gray/70 font-body mt-1">Cliques por produto</p>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-2xl flex items-center justify-center">
+                      <BarChart className="h-6 w-6 text-white" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -502,54 +519,84 @@ const Admin = () => {
             </Card>
             
             {/* Top Products */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Produtos Mais Populares</CardTitle>
-                <CardDescription>
-                  Os 5 produtos com mais cliques
+            <Card className="border-brand-gray-rose/30">
+              <CardHeader className="bg-gradient-to-r from-brand-lilac/10 to-brand-gray-rose/10">
+                <CardTitle className="flex items-center gap-2 text-brand-green-gray">
+                  <TrendingUp className="w-5 h-5 text-brand-brown" />
+                  Produtos Mais Populares
+                </CardTitle>
+                <CardDescription className="text-brand-green-gray/70">
+                  Os 5 produtos com mais cliques - validados pela comunidade
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produto</TableHead>
-                      <TableHead>Loja</TableHead>
-                      <TableHead>Cliques</TableHead>
-                      <TableHead className="text-right">Preço</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {stats.topProducts.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 rounded overflow-hidden mr-3 bg-muted flex-shrink-0">
-                              {product.images.length > 0 && (
-                                <img 
-                                  src={product.images[0]} 
-                                  alt={product.title} 
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
-                            </div>
-                            <span className="line-clamp-1">{product.title}</span>
+              <CardContent className="p-0">
+                <div className="space-y-0">
+                  {stats.topProducts.map((product, index) => (
+                    <div key={product.id} className="flex items-center p-4 hover:bg-brand-lilac/5 transition-colors border-b border-brand-gray-rose/20 last:border-b-0">
+                      {/* Ranking Badge */}
+                      <div className="flex-shrink-0 mr-4">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-augustus font-bold text-sm ${
+                          index === 0 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                          index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-500' :
+                          index === 2 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                          'bg-gradient-to-r from-brand-brown to-brand-green-gray'
+                        }`}>
+                          {index + 1}
+                        </div>
+                      </div>
+                      
+                      {/* Product Image */}
+                      <div className="w-12 h-12 rounded-lg overflow-hidden mr-4 bg-muted flex-shrink-0">
+                        {product.images.length > 0 ? (
+                          <img 
+                            src={product.images[0]} 
+                            alt={product.title} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-brand-lilac/20 flex items-center justify-center">
+                            <Package className="w-6 h-6 text-brand-green-gray/50" />
                           </div>
-                        </TableCell>
-                        <TableCell>{product.marketplace}</TableCell>
-                        <TableCell className="font-semibold text-purple-600 dark:text-purple-400">
-                          {product.clicks}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {product.salePrice.toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                          })}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                        )}
+                      </div>
+                      
+                      {/* Product Info */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-augustus font-semibold text-foreground truncate">
+                          {product.title}
+                        </h4>
+                        <div className="flex items-center gap-4 mt-1">
+                          <span className="text-sm text-brand-green-gray/70 font-body">
+                            {product.marketplace}
+                          </span>
+                          <span className="text-sm font-augustus text-brand-brown">
+                            {product.salePrice.toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Clicks Counter */}
+                      <div className="flex-shrink-0 ml-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-gradient-to-r from-brand-brown to-brand-green-gray rounded-full flex items-center justify-center">
+                            <TrendingUp className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="text-right">
+                            <div className="font-augustus font-bold text-brand-brown text-lg">
+                              {product.clicks}
+                            </div>
+                            <div className="text-xs text-brand-green-gray/70 font-body">
+                              cliques
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -714,23 +761,14 @@ const Admin = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Categoria</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecionar categoria" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <CategorySelector
+                          value={field.value}
+                          onChange={field.onChange}
+                          categories={categories}
+                          placeholder="Selecionar categoria"
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -867,23 +905,14 @@ const Admin = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Categoria</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecionar categoria" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <CategorySelector
+                          value={field.value}
+                          onChange={field.onChange}
+                          categories={categories}
+                          placeholder="Selecionar categoria"
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

@@ -1,38 +1,21 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Category, Marketplace } from "@/types";
+import { Category } from "@/types";
 import { useProducts } from "@/context/ProductContext";
-import { X } from "lucide-react";
+import { X, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function FilterSection() {
-  const { filterByCategory, filterByMarketplace, resetFilters } = useProducts();
+  const { filterByCategory, resetFilters, products } = useProducts();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [activeMarketplace, setActiveMarketplace] = useState<Marketplace | null>(null);
+  const [availableCategories, setAvailableCategories] = useState<Category[]>([]);
 
-  const categories: Category[] = [
-    'Eletrônicos', 
-    'Casa e Decoração', 
-    'Moda', 
-    'Beleza', 
-    'Cozinha', 
-    'Brinquedos', 
-    'Esportes', 
-    'Livros', 
-    'Pets', 
-    'Outros'
-  ];
-  
-  const marketplaces: Marketplace[] = [
-    'Amazon', 
-    'Shopee', 
-    'Mercado Livre', 
-    'AliExpress', 
-    'Magalu', 
-    'Americanas', 
-    'Outros'
-  ];
+  // Get unique categories from products
+  useEffect(() => {
+    const uniqueCategories = Array.from(new Set(products.map(product => product.category)));
+    setAvailableCategories(uniqueCategories.sort());
+  }, [products]);
 
   // Handle category filter
   const handleCategoryFilter = (category: Category) => {
@@ -45,26 +28,14 @@ export function FilterSection() {
     }
   };
 
-  // Handle marketplace filter
-  const handleMarketplaceFilter = (marketplace: Marketplace) => {
-    if (activeMarketplace === marketplace) {
-      setActiveMarketplace(null);
-      filterByMarketplace(null);
-    } else {
-      setActiveMarketplace(marketplace);
-      filterByMarketplace(marketplace);
-    }
-  };
-
   // Reset all filters
   const handleResetFilters = () => {
     setActiveCategory(null);
-    setActiveMarketplace(null);
     resetFilters();
   };
 
   // Check if any filter is active
-  const isFilterActive = activeCategory !== null || activeMarketplace !== null;
+  const isFilterActive = activeCategory !== null;
 
   return (
     <div className="w-full py-6 overflow-hidden animate-fade-in">
@@ -76,7 +47,7 @@ export function FilterSection() {
               Categorias de Produtos
             </h3>
             <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
+              {availableCategories.map((category) => (
                 <Button
                   key={category}
                   variant="outline"
@@ -95,28 +66,28 @@ export function FilterSection() {
             </div>
           </div>
           
-          {/* Marketplaces */}
-          <div>
-            <h3 className="text-sm font-augustus font-semibold mb-3 text-foreground/80 tracking-wide uppercase">
-              Plataformas Parceiras
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {marketplaces.map((marketplace) => (
-                <Button
-                  key={marketplace}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleMarketplaceFilter(marketplace)}
-                  className={cn(
-                    "rounded-full border transition-all font-body text-sm hover:scale-105",
-                    activeMarketplace === marketplace 
-                      ? "bg-secondary text-white border-secondary shadow-md"
-                      : "border-brand-gray-rose/40 hover:bg-secondary/10 hover:border-secondary/50"
-                  )}
-                >
-                  {marketplace}
-                </Button>
-              ))}
+          {/* Amazon Partnership */}
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg p-4 border border-orange-200/50 dark:border-orange-700/30">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                <ShoppingBag className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-sm font-augustus font-semibold text-orange-800 dark:text-orange-200 tracking-wide uppercase">
+                  Parceria Exclusiva
+                </h3>
+                <p className="text-xs text-orange-700 dark:text-orange-300 font-body">
+                  Produtos selecionados da Amazon
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-1 bg-orange-200 dark:bg-orange-800 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full w-3/4"></div>
+              </div>
+              <span className="text-xs font-augustus font-medium text-orange-700 dark:text-orange-300">
+                Qualidade Garantida
+              </span>
             </div>
           </div>
           

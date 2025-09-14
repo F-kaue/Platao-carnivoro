@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  login: (cpf: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   checkAndRefreshAuth: () => Promise<boolean>;
 }
@@ -38,20 +38,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Local authentication only
-  const login = async (cpf: string, password: string): Promise<boolean> => {
-    // Basic credential validation
-    if (cpf === "07710027342" && password === "0956kaue") {
+  const login = async (email: string, password: string): Promise<boolean> => {
+    // Valid credentials
+    const validCredentials = [
+      { email: "plataocarnivoro@gmail.com", password: "Platao@1997" },
+      { email: "f_kaue@hotmail.com", password: "0956kaue" }
+    ];
+
+    // Check if credentials match any valid user
+    const isValidUser = validCredentials.some(
+      cred => cred.email === email && cred.password === password
+    );
+
+    if (isValidUser) {
       try {
         console.log("Credenciais corretas, configurando autenticação local");
         
         // Set local login state
         setIsLoggedIn(true);
         localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userEmail", email);
         
         toast({
           title: "Login realizado com sucesso",
           description: "Bem-vindo ao painel de administração.",
-          variant: "default", // Changed from "success" to "default" as only "default" and "destructive" are supported
+          variant: "default",
         });
         return true;
       } catch (error: any) {
@@ -66,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       toast({
         title: "Erro de autenticação",
-        description: "CPF ou senha incorretos.",
+        description: "Email ou senha incorretos.",
         variant: "destructive",
       });
       return false;
@@ -79,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Update local state
       setIsLoggedIn(false);
       localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userEmail");
       
       navigate("/login");
       

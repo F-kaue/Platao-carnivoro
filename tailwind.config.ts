@@ -20,9 +20,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'diogenes': ['Cinzel', 'serif'],           // Títulos principais
-				'augustus': ['Playfair Display', 'serif'], // Subtítulos e menus  
-				'body': ['Roboto', 'sans-serif'],         // Textos corridos
+				'diogenes': ['Diogenes', 'serif'],           // Títulos principais
+				'augustus': ['Augustus', 'sans-serif'],      // Subtítulos e menus  
+				'body': ['Inter', 'system-ui', 'sans-serif'], // Textos corridos
 			},
 			colors: {
 				border: 'hsl(var(--border))',

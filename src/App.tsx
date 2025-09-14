@@ -10,6 +10,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import Testo1k from "./pages/Testo1k";
+import Testo1kHome from "./pages/Testo1kHome";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +29,8 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/testo1k" element={<Testo1kHome />} />
+                <Route path="/testo1k/landing" element={<Testo1k />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </ProductProvider>
