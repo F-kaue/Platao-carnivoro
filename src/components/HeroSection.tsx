@@ -12,11 +12,11 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/40 via-brand-gray-rose/20 to-brand-brown/30 pt-20 sm:pt-20 lg:pt-24">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 sm:from-brand-lilac/40 via-brand-gray-rose/10 sm:via-brand-gray-rose/20 to-brand-brown/15 sm:to-brand-brown/30 pt-20 sm:pt-20 lg:pt-24">
       
       {/* Background Character Image */}
       <div 
-        className="absolute right-0 top-0 bottom-0 w-1/2 opacity-15 dark:opacity-10 hidden sm:block"
+        className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 opacity-15 sm:opacity-15 dark:opacity-8 sm:dark:opacity-10"
         style={{
           backgroundImage: `url(${logoPersonagem})`,
           backgroundPosition: 'center right',
@@ -78,24 +78,20 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Mobile Visual Element */}
-          <div className="lg:hidden flex items-center justify-center mt-8">
-            <div className="w-64 h-64 relative">
-              {/* Decorative Elements */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-2xl"></div>
-              <div className="absolute inset-4 bg-gradient-to-tl from-brand-brown/30 to-transparent rounded-full blur-xl"></div>
-              
-              {/* Badge/Seal */}
+          {/* Mobile Visual Element - Overlay Badge */}
+          <div className="lg:hidden flex items-center justify-center mt-6">
+            <div className="w-56 h-56 relative">
+              {/* Badge/Seal with stronger background for visibility over image */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-background/95 backdrop-blur-md border-2 border-brand-brown/40 rounded-full w-48 h-48 flex items-center justify-center shadow-2xl">
+                <div className="bg-white/90 dark:bg-background/95 backdrop-blur-md border-2 border-brand-brown/50 rounded-full w-44 h-44 flex items-center justify-center shadow-2xl">
                   <div className="text-center">
-                    <div className="text-2xl font-diogenes font-bold text-brand-brown mb-2">
+                    <div className="text-xl font-diogenes font-bold text-brand-brown mb-1">
                       CURADORIA
                     </div>
-                    <div className="text-sm font-augustus text-brand-green-gray">
+                    <div className="text-xs font-augustus text-brand-green-gray">
                       CARNÍVORA
                     </div>
-                    <div className="w-16 h-0.5 bg-brand-brown mx-auto mt-3"></div>
+                    <div className="w-14 h-0.5 bg-brand-brown mx-auto mt-2"></div>
                   </div>
                 </div>
               </div>
