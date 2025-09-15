@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CollaborationSection } from "@/components/CollaborationSection";
 import { 
   CheckCircle, 
   Star, 
@@ -10,6 +11,7 @@ import {
   Zap, 
   TrendingUp,
   ArrowRight,
+  ArrowUp,
   Play,
   Award,
   Target,
@@ -195,12 +197,9 @@ const Testo1k = () => {
               
               {/* Floating Elements - Hidden on mobile for cleaner look */}
               <div className="hidden sm:block absolute -top-4 -right-4 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-brand-brown to-brand-green-gray rounded-full flex items-center justify-center shadow-xl animate-pulse">
-                <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+                <Zap className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
               </div>
               
-              <div className="hidden sm:block absolute -bottom-4 -left-4 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-brand-green-gray to-brand-brown rounded-full flex items-center justify-center shadow-xl animate-bounce">
-                <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-              </div>
             </div>
           </div>
         </div>
@@ -258,6 +257,9 @@ const Testo1k = () => {
           </div>
         </div>
       </section>
+
+      {/* Collaboration Section */}
+      <CollaborationSection />
 
       {/* Testimonials Section */}
       <section className="py-20 bg-background">

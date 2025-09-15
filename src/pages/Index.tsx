@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { ProductGrid } from "@/components/ProductGrid";
 import { FilterSection } from "@/components/FilterSection";
 import { PopularProducts } from "@/components/PopularProducts";
+import { NewsletterSection } from "@/components/NewsletterSection";
 
 const Index = () => {
   return (
@@ -85,6 +86,9 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Newsletter Section */}
+        <NewsletterSection />
+        
         {/* Contact Section */}
         <section id="contato" className="py-20 bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20">
           <div className="container mx-auto px-4">
@@ -120,7 +124,7 @@ const Index = () => {
                         <div>
                           <h3 className="text-2xl font-diogenes font-bold text-foreground">
                             @plataocarnivoro
-                          </h3>
+                </h3>
                           <p className="text-brand-green-gray/70 font-body">
                             Filosofia, carne e tradição
                           </p>
@@ -168,7 +172,7 @@ const Index = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                         </div>
-                      </button>
+                  </button>
                     </div>
                   </div>
 

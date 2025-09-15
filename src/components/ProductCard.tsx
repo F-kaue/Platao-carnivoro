@@ -131,7 +131,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         {/* Discount Badge - More elegant */}
         {discountPercentage > 0 && (
           <Badge 
-            className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-augustus font-bold border-none shadow-xl backdrop-blur-sm px-3 py-1"
+            className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-augustus font-bold border-none shadow-xl backdrop-blur-sm px-2 py-1 text-xs"
           >
             -{discountPercentage}%
           </Badge>
@@ -140,15 +140,15 @@ export function ProductCard({ product, className }: ProductCardProps) {
         {/* Amazon Badge - Elegant design */}
         <Badge 
           className={cn(
-            "absolute top-3 left-3 text-white font-augustus font-bold border-none shadow-xl backdrop-blur-sm px-3 py-1",
+            "absolute top-2 left-2 text-white font-augustus font-bold border-none shadow-xl backdrop-blur-sm px-2 py-1",
             getAmazonBadgeStyle()
           )}
         >
-          <div className="flex items-center gap-1.5">
-            <div className="w-4 h-4 bg-white rounded-sm flex items-center justify-center">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 bg-white rounded-sm flex items-center justify-center">
               <span className="text-orange-600 text-xs font-bold">A</span>
             </div>
-            <span className="text-sm">AMAZON</span>
+            <span className="text-xs">AMAZON</span>
           </div>
         </Badge>
         
@@ -158,31 +158,31 @@ export function ProductCard({ product, className }: ProductCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/90 hover:bg-background border border-brand-gray-rose/30 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm"
+              className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background/90 hover:bg-background border border-brand-gray-rose/30 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm"
               onClick={prevImage}
             >
-              <ChevronLeft className="h-4 w-4 text-foreground" />
+              <ChevronLeft className="h-3 w-3 text-foreground" />
               <span className="sr-only">Imagem anterior</span>
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/90 hover:bg-background border border-brand-gray-rose/30 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm"
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background/90 hover:bg-background border border-brand-gray-rose/30 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm"
               onClick={nextImage}
             >
-              <ChevronRight className="h-4 w-4 text-foreground" />
+              <ChevronRight className="h-3 w-3 text-foreground" />
               <span className="sr-only">Próxima imagem</span>
             </Button>
             
             {/* Carousel Indicators */}
-            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+            <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
               {product.images.map((_, index) => (
                 <div 
                   key={index}
                   className={cn(
-                    "w-2 h-2 rounded-full transition-all duration-300 shadow-lg",
+                    "w-1.5 h-1.5 rounded-full transition-all duration-300 shadow-lg",
                     index === currentImageIndex 
-                      ? "bg-white w-6 shadow-xl" 
+                      ? "bg-white w-4 shadow-xl" 
                       : "bg-white/60 border border-white/30"
                   )}
                 />
@@ -193,21 +193,21 @@ export function ProductCard({ product, className }: ProductCardProps) {
       </div>
       
       {/* Product Details */}
-      <CardContent className="p-6 flex-grow flex flex-col">
+      <CardContent className="p-3 sm:p-4 flex-grow flex flex-col">
         <div className="flex-grow">
-          <h3 className="font-augustus font-semibold line-clamp-2 h-12 text-foreground leading-tight">
+          <h3 className="font-augustus font-semibold line-clamp-2 h-8 sm:h-10 text-foreground leading-tight text-sm sm:text-base">
             {product.title}
           </h3>
           
-          <div className="mt-4 space-y-2">
+          <div className="mt-2 sm:mt-3 space-y-1 sm:space-y-2">
             {/* Original Price (crossed out) */}
-            <p className="text-sm text-muted-foreground line-through font-body">
+            <p className="text-xs sm:text-sm text-muted-foreground line-through font-body">
               De {formatPrice(product.originalPrice)}
             </p>
             
             {/* Sale Price */}
-            <div className="flex items-baseline gap-2">
-              <p className="text-2xl font-bold text-primary font-augustus">
+            <div className="flex items-baseline gap-1 sm:gap-2">
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-primary font-augustus">
                 {formatPrice(product.salePrice)}
               </p>
               <span className="text-xs text-muted-foreground font-body">
@@ -216,7 +216,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             </div>
             
             {/* Economy Badge */}
-            <div className="text-sm text-brand-green-gray font-body">
+            <div className="text-xs sm:text-sm text-brand-green-gray font-body">
               Economia de {formatPrice(product.originalPrice - product.salePrice)}
             </div>
           </div>
@@ -227,11 +227,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
           onClick={handleClick}
           type="button"
           variant="carnivoro"
-          className="mt-6 w-full shadow-md hover:shadow-lg transition-all duration-300 font-augustus font-semibold group relative overflow-hidden"
+          className="mt-3 sm:mt-4 w-full shadow-md hover:shadow-lg transition-all duration-300 font-augustus font-semibold group relative overflow-hidden text-xs sm:text-sm py-2 sm:py-3"
         >
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
             <span>Ver na Amazon</span>
-            <ExternalLink className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" />
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-orange-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </Button>

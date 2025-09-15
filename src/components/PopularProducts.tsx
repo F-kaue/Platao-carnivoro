@@ -25,13 +25,13 @@ export function PopularProducts() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex flex-col gap-3 p-6 bg-card rounded-xl border">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} className="flex flex-col gap-2 p-3 bg-card rounded-xl border">
             <Skeleton className="aspect-square rounded-lg" />
-            <Skeleton className="h-4 w-2/3" />
-            <Skeleton className="h-4 w-1/2" />
-            <Skeleton className="h-8 w-full mt-3" />
+            <Skeleton className="h-3 w-2/3" />
+            <Skeleton className="h-3 w-1/2" />
+            <Skeleton className="h-5 w-full mt-2" />
           </div>
         ))}
       </div>
@@ -71,21 +71,21 @@ export function PopularProducts() {
       
       <div className="relative">        
         {/* Products grid with premium styling */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
           {curatedProducts.map((product, index) => (
             <div key={product.id} className={`group relative ${index === 0 ? 'md:col-span-2 lg:col-span-1' : ''}`}>
               {/* Premium Quality Badge for first 3 items */}
               {index < 3 && (
-                <div className="absolute -top-4 -right-4 z-10">
-                  <div className={`px-4 py-2 rounded-2xl shadow-xl flex items-center ${
+                <div className="absolute -top-2 -right-2 z-10">
+                  <div className={`px-2 py-1 rounded-lg shadow-lg flex items-center ${
                     index === 0 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
                     index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-500' :
                     'bg-gradient-to-r from-orange-500 to-orange-600'
                   }`}>
-                    {index === 0 ? <Crown className="w-4 h-4 mr-2 text-white" /> : 
-                     index === 1 ? <Award className="w-4 h-4 mr-2 text-white" /> : 
-                     <Star className="w-4 h-4 mr-2 text-white" />}
-                    <span className="font-augustus font-bold text-sm text-white">
+                    {index === 0 ? <Crown className="w-3 h-3 mr-1 text-white" /> : 
+                     index === 1 ? <Award className="w-3 h-3 mr-1 text-white" /> : 
+                     <Star className="w-3 h-3 mr-1 text-white" />}
+                    <span className="font-augustus font-bold text-xs text-white">
                       TOP {index + 1}
                     </span>
                   </div>
@@ -93,7 +93,7 @@ export function PopularProducts() {
               )}
               
               {/* Enhanced Product Card */}
-              <div className={`backdrop-blur-md rounded-3xl border p-6 shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-[1.03] ${
+              <div className={`backdrop-blur-md rounded-xl border p-3 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] ${
                 index === 0 
                   ? 'bg-gradient-to-br from-yellow-50/20 to-yellow-100/10 border-yellow-300/50 group-hover:border-yellow-400/70 group-hover:bg-gradient-to-br group-hover:from-yellow-50/30 group-hover:to-yellow-100/20' 
                   : 'bg-gradient-to-br from-background/95 to-brand-lilac/5 border-brand-gray-rose/30 group-hover:border-brand-brown/50 group-hover:bg-gradient-to-br group-hover:from-background/98 group-hover:to-brand-brown/10'

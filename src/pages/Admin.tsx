@@ -243,7 +243,7 @@ const Admin = () => {
 
   // Get unique categories from products
   const availableCategories = Array.from(new Set(products.map(product => product.category))).sort();
-  
+
   // Category and marketplace options
   const categories: Category[] = availableCategories;
   
@@ -463,8 +463,8 @@ const Admin = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-3xl font-diogenes font-bold text-brand-brown">
-                        {stats.averageClicksPerProduct.toFixed(1)}
-                      </span>
+                      {stats.averageClicksPerProduct.toFixed(1)}
+                    </span>
                       <p className="text-sm text-brand-green-gray/70 font-body mt-1">Cliques por produto</p>
                     </div>
                     <div className="w-12 h-12 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-2xl flex items-center justify-center">
@@ -548,17 +548,17 @@ const Admin = () => {
                       {/* Product Image */}
                       <div className="w-12 h-12 rounded-lg overflow-hidden mr-4 bg-muted flex-shrink-0">
                         {product.images.length > 0 ? (
-                          <img 
-                            src={product.images[0]} 
-                            alt={product.title} 
-                            className="w-full h-full object-cover"
-                          />
+                                <img 
+                                  src={product.images[0]} 
+                                  alt={product.title} 
+                                  className="w-full h-full object-cover"
+                                />
                         ) : (
                           <div className="w-full h-full bg-brand-lilac/20 flex items-center justify-center">
                             <Package className="w-6 h-6 text-brand-green-gray/50" />
                           </div>
-                        )}
-                      </div>
+                              )}
+                            </div>
                       
                       {/* Product Info */}
                       <div className="flex-1 min-w-0">
@@ -570,10 +570,10 @@ const Admin = () => {
                             {product.marketplace}
                           </span>
                           <span className="text-sm font-augustus text-brand-brown">
-                            {product.salePrice.toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
+                          {product.salePrice.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
                           </span>
                         </div>
                       </div>
@@ -761,14 +761,14 @@ const Admin = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Categoria</FormLabel>
-                      <FormControl>
+                        <FormControl>
                         <CategorySelector
                           value={field.value}
                           onChange={field.onChange}
                           categories={categories}
                           placeholder="Selecionar categoria"
                         />
-                      </FormControl>
+                        </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -905,14 +905,14 @@ const Admin = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Categoria</FormLabel>
-                      <FormControl>
+                        <FormControl>
                         <CategorySelector
                           value={field.value}
                           onChange={field.onChange}
                           categories={categories}
                           placeholder="Selecionar categoria"
                         />
-                      </FormControl>
+                        </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

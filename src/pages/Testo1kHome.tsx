@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CollaborationSection } from "@/components/CollaborationSection";
 import { 
   ArrowRight, 
   Zap, 
@@ -77,6 +78,9 @@ const Testo1kHome = () => {
           </div>
         </div>
       </section>
+
+      {/* Collaboration Section */}
+      <CollaborationSection />
 
       {/* Quick Benefits */}
       <section className="py-20 bg-background">
