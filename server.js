@@ -117,10 +117,16 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor proxy rodando na porta ${PORT}`);
-  console.log(`📡 API Key configurada: ${BEEHIIV_API_KEY.substring(0, 10)}...`);
-  console.log(`📋 Publication ID: ${PUBLICATION_ID}`);
-  console.log(`🌐 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📧 Subscribe endpoint: http://localhost:${PORT}/api/beehiiv-subscribe`);
-});
+// Para Vercel, exportar o app como handler
+export default app;
+
+// Para desenvolvimento local, iniciar o servidor
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor proxy rodando na porta ${PORT}`);
+    console.log(`📡 API Key configurada: ${BEEHIIV_API_KEY.substring(0, 10)}...`);
+    console.log(`📋 Publication ID: ${PUBLICATION_ID}`);
+    console.log(`🌐 Health check: http://localhost:${PORT}/api/health`);
+    console.log(`📧 Subscribe endpoint: http://localhost:${PORT}/api/beehiiv-subscribe`);
+  });
+}
