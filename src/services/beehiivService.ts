@@ -43,7 +43,7 @@ export class BeehiivService {
 
       // URL da API (local ou produção)
       const apiUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://achadinhosdakaq.vercel.app/api/beehiiv-subscribe'
+        ? 'https://platao-carnivoro.vercel.app/api/beehiiv-subscribe'
         : 'http://localhost:3001/api/beehiiv-subscribe';
       
       console.log('📍 URL da API:', apiUrl);

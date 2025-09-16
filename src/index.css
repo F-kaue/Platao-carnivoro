@@ -17,7 +17,7 @@
   animation: float 6s ease-in-out infinite;
 }
 
-/* Font Face Declarations */
+/* Font Face Declarations - Fallback para Google Fonts */
 @font-face {
   font-family: 'Diogenes';
   src: url('/fonts/DIOGENES.ttf') format('truetype');
@@ -32,6 +32,15 @@
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+}
+
+/* Fallback fonts caso as fontes locais falhem */
+.font-diogenes {
+  font-family: 'Diogenes', 'Cinzel', 'Playfair Display', serif;
+}
+
+.font-augustus {
+  font-family: 'Augustus', 'Cinzel', 'Playfair Display', serif;
 }
 
 @layer base {
