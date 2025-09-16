@@ -28,7 +28,7 @@
 
 @font-face {
   font-family: 'Augustus';
-  src: url('/fonts/AUGUSTUS.woff2') format('woff2');
+  src: url('/fonts/AUGUSTUS.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

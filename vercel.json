@@ -11,11 +11,15 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/pages/api/$1"
+    },
+    {
       "src": "/fonts/(.*)",
       "dest": "/public/fonts/$1",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable",
-        "Content-Type": "font/woff2"
+        "Content-Type": "font/woff"
       }
     },
     {
