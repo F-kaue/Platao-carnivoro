@@ -5,7 +5,7 @@
 ### **🔧 Estrutura Corrigida:**
 1. **📁 API**: Movida para `pages/api/beehiiv-subscribe.js`
 2. **⚙️ Vercel.json**: Configurado para reconhecer `pages/api/`
-3. **📝 Fontes**: Convertidas para WOFF (formato válido)
+3. **📝 Fontes**: Convertidas para WOFF (formato aválido)
 4. **🔗 Routes**: Configurado para `/api/*` → `/pages/api/*`
 
 ---
