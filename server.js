@@ -108,8 +108,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Servir arquivos estáticos do Vite (para produção)
-if (process.env.NODE_ENV === 'production') {
+// Servir arquivos estáticos do Vite (apenas para desenvolvimento local)
+if (process.env.NODE_ENV !== 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
   
   app.get('*', (req, res) => {
