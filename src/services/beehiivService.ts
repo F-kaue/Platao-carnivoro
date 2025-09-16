@@ -41,8 +41,10 @@ export class BeehiivService {
         throw new Error('Email inválido');
       }
 
-      // URL do servidor proxy local
-      const proxyUrl = 'http://localhost:3001/api/beehiiv-subscribe';
+      // URL do servidor proxy (local ou produção)
+      const proxyUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://achadinhosdakaq.vercel.app/api/beehiiv-subscribe'
+        : 'http://localhost:3001/api/beehiiv-subscribe';
       
       console.log('📍 URL do proxy:', proxyUrl);
       console.log('📦 Payload:', { email: email.trim() });
