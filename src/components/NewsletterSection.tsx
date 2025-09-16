@@ -14,19 +14,35 @@ import {
   Heart,
   Target,
   Award,
-  Crown
+  Crown,
+  ExternalLink
 } from "lucide-react";
+import { useBeehiiv } from "@/hooks/useBeehiiv";
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const { subscribe, isLoading, error } = useBeehiiv();
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setIsSubscribed(true);
-      // Aqui você pode integrar com seu serviço de email
-      console.log("Email cadastrado:", email);
+    if (!email) return;
+
+    try {
+      // Usar o hook do Beehiiv para inscrição via API
+      const result = await subscribe(email, 'api');
+      
+      if (result.success) {
+        // Mostra mensagem de sucesso por 3 segundos
+        setIsSubscribed(true);
+        setTimeout(() => {
+          setIsSubscribed(false);
+          setEmail(''); // Limpa o campo
+        }, 3000);
+      }
+      
+    } catch (error) {
+      console.error('Erro ao inscrever:', error);
     }
   };
 
@@ -168,17 +184,40 @@ export function NewsletterSection() {
                         <Button
                           type="submit"
                           size="lg"
-                          className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white py-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-lg"
+                          disabled={isLoading}
+                          className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white py-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <Zap className="w-5 h-5 mr-2" />
-                          Conectar com as Raízes
-                          <ArrowRight className="ml-2 w-5 h-5" />
+                          {isLoading ? (
+                            <>
+                              <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              Conectando...
+                            </>
+                          ) : (
+                            <>
+                              <Zap className="w-5 h-5 mr-2" />
+                              Conectar com as Raízes
+                              <ArrowRight className="ml-2 w-5 h-5" />
+                            </>
+                          )}
                         </Button>
                       </form>
 
                       <p className="text-xs text-brand-green-gray/60 font-body mt-4">
                         Ao se inscrever, você concorda em receber conteúdo exclusivo do Platão Carnívoro
                       </p>
+
+                      {/* Beehiiv Integration Info */}
+                      <div className="mt-6 p-4 bg-gradient-to-r from-brand-brown/5 to-brand-green-gray/5 rounded-xl border border-brand-gray-rose/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <ExternalLink className="w-4 h-4 text-brand-brown" />
+                          <span className="text-sm font-augustus font-semibold text-brand-green-gray">
+                            Powered by Beehiiv
+                          </span>
+                        </div>
+                        <p className="text-xs text-brand-green-gray/70 font-body">
+                          Newsletter profissional com analytics avançados e design premium
+                        </p>
+                      </div>
                     </div>
                   ) : (
                     <div className="text-center">
@@ -187,17 +226,17 @@ export function NewsletterSection() {
                       </div>
                       
                       <h3 className="text-2xl sm:text-3xl font-diogenes font-bold mb-4 text-foreground">
-                        Bem-vindo à Revolução!
+                        Inscrição Realizada com Sucesso!
                       </h3>
-                      
+
                       <p className="text-brand-green-gray/70 font-body mb-6 leading-relaxed">
-                        Sua conexão com a sabedoria ancestral foi estabelecida. Em breve você receberá conteúdo exclusivo.
+                        Você foi inscrito com sucesso no newsletter do Platão Carnívoro! Em breve receberá um email de confirmação e conteúdo exclusivo diretamente no seu email.
                       </p>
 
                       <div className="flex items-center justify-center gap-2 text-brand-brown">
-                        <Star className="w-5 h-5 fill-current" />
-                        <span className="font-augustus font-bold">Você agora faz parte da elite</span>
-                        <Star className="w-5 h-5 fill-current" />
+                        <CheckCircle className="w-5 h-5" />
+                        <span className="font-augustus font-bold">Bem-vindo à revolução!</span>
+                        <CheckCircle className="w-5 h-5" />
                       </div>
                     </div>
                   )}
