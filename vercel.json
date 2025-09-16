@@ -9,13 +9,18 @@
       }
     }
   ],
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "routes": [
     {
       "src": "/fonts/(.*)",
       "dest": "/public/fonts/$1",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable",
-        "Content-Type": "font/woff"
+        "Content-Type": "font/woff2"
       }
     },
     {

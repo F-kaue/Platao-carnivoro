@@ -12,6 +12,7 @@ export default function handler(req, res) {
     success: true, 
     message: 'API funcionando!',
     timestamp: new Date().toISOString(),
-    method: req.method
+    method: req.method,
+    url: req.url
   });
 }
