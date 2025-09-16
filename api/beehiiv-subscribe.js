@@ -1,4 +1,4 @@
-// pages/api/beehiiv-subscribe.js
+// api/beehiiv-subscribe.js - Vercel Serverless Function
 export default async function handler(req, res) {
   // 🔓 Configura CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
