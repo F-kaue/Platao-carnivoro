@@ -13,11 +13,13 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
+      "source": "/api/(.*)",
+      "destination": "/server.js"
+    }
+  ],
+  "routes": [
     {
       "src": "/fonts/(.*)",
       "dest": "/public/fonts/$1",
