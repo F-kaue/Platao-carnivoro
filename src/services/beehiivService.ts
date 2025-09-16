@@ -41,10 +41,8 @@ export class BeehiivService {
         throw new Error('Email inválido');
       }
 
-      // URL da API (local ou produção)
-      const apiUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://platao-carnivoro.vercel.app/api/beehiiv-subscribe'
-        : 'http://localhost:3001/api/beehiiv-subscribe';
+      // URL da API (mesmo domínio - sem CORS)
+      const apiUrl = '/api/beehiiv-subscribe';
       
       console.log('📍 URL da API:', apiUrl);
       console.log('📦 Payload:', { email: email.trim() });
