@@ -41,16 +41,16 @@ export class BeehiivService {
         throw new Error('Email inválido');
       }
 
-      // URL do servidor proxy (local ou produção)
-      const proxyUrl = process.env.NODE_ENV === 'production' 
+      // URL da API (local ou produção)
+      const apiUrl = process.env.NODE_ENV === 'production' 
         ? 'https://achadinhosdakaq.vercel.app/api/beehiiv-subscribe'
         : 'http://localhost:3001/api/beehiiv-subscribe';
       
-      console.log('📍 URL do proxy:', proxyUrl);
+      console.log('📍 URL da API:', apiUrl);
       console.log('📦 Payload:', { email: email.trim() });
 
-      // Fazer requisição para o servidor proxy local
-      const response = await fetch(proxyUrl, {
+      // Fazer requisição para a API
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,13 +61,13 @@ export class BeehiivService {
         })
       });
 
-      console.log('📊 Resposta do proxy:', response.status, response.statusText);
+      console.log('📊 Resposta da API:', response.status, response.statusText);
 
       const data = await response.json();
       console.log('📦 Dados recebidos:', data);
 
       if (!response.ok) {
-        console.error('❌ Erro do proxy:', data);
+        console.error('❌ Erro da API:', data);
         return {
           success: false,
           error: data.error || `Erro ${response.status}: ${response.statusText}`,
@@ -75,7 +75,7 @@ export class BeehiivService {
         };
       }
 
-      console.log('✅ Inscrição realizada com sucesso via proxy!');
+      console.log('✅ Inscrição realizada com sucesso via API!');
 
       return {
         success: true,
@@ -83,17 +83,17 @@ export class BeehiivService {
         data: {
           email,
           publication_id: this.publicationId,
-          method: 'proxy_server',
-          proxy_response: data
+          method: 'vercel_api',
+          api_response: data
         }
       };
 
     } catch (error) {
-      console.error('💥 Erro na integração Beehiiv via proxy:', error);
+      console.error('💥 Erro na integração Beehiiv via API:', error);
       
-      // Se o proxy local não estiver rodando, tentar método alternativo
+      // Se a API não estiver disponível, tentar método alternativo
       if (error instanceof Error && error.message.includes('fetch')) {
-        console.log('🔄 Proxy local não disponível, tentando método alternativo...');
+        console.log('🔄 API não disponível, tentando método alternativo...');
         return await this.subscribeAlternative(email, options);
       }
       

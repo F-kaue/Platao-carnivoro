@@ -2,10 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
-      "use": "@vercel/node"
-    },
-    {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -14,10 +10,6 @@
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
     {
       "src": "/fonts/(.*)",
       "dest": "/public/fonts/$1",
@@ -29,9 +21,5 @@
       "src": "/(.*)",
       "dest": "/dist/$1"
     }
-  ],
-  "env": {
-    "BEEHIIV_API_KEY": "@beehiiv_api_key",
-    "PUBLICATION_ID": "@publication_id"
-  }
+  ]
 }
