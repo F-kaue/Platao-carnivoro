@@ -11,6 +11,22 @@
     {
       "src": "api/beehiiv-subscribe.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/site-settings.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/navigation.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/content-blocks.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/newsletter-benefits.js",
+      "use": "@vercel/node"
     }
   ],
   "rewrites": [
