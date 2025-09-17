@@ -57,7 +57,7 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
   }, [selectedElement, content]);
 
   const handlePropChange = (key: string, value: any) => {
-    if (selectedElement && selectedElementData) {
+    if (selectedElement && selectedElementData && selectedElementData.props) {
       onUpdateElement(selectedElement, {
         props: {
           ...selectedElementData.props,

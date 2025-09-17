@@ -20,6 +20,7 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({
 }) => {
   // Verificar se element existe e tem props
   if (!element || !element.props || typeof element.props !== 'object') {
+    console.error('ElementRenderer: Elemento inválido recebido:', element);
     return (
       <div className="p-4 border-2 border-dashed border-red-300 rounded-lg text-center text-red-500">
         <p>Elemento não encontrado ou inválido</p>
@@ -28,6 +29,16 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({
   }
 
   const { type, props } = element;
+  
+  // Garantir que props seja sempre um objeto válido
+  if (!props || typeof props !== 'object') {
+    console.error('ElementRenderer: Props inválidas:', props);
+    return (
+      <div className="p-4 border-2 border-dashed border-red-300 rounded-lg text-center text-red-500">
+        <p>Props inválidas</p>
+      </div>
+    );
+  }
 
   const handleTextChange = (newText: string) => {
     onUpdate({

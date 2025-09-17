@@ -103,7 +103,12 @@ export const usePageBuilder = (initialContent?: PageContent) => {
     const updateInElements = (elements: PageElement[]): PageElement[] => {
       return elements.map(el => {
         if (el.id === elementId) {
-          return { ...el, ...updates };
+          // Garantir que props seja sempre um objeto válido
+          const safeUpdates = { ...updates };
+          if (safeUpdates.props && typeof safeUpdates.props === 'object') {
+            safeUpdates.props = { ...el.props, ...safeUpdates.props };
+          }
+          return { ...el, ...safeUpdates };
         }
         if (el.children) {
           return {

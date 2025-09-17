@@ -162,15 +162,17 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
           ) : (
             <div className="space-y-4">
-              {content.elements.map((element) => (
-                <ElementRenderer
-                  key={element.id}
-                  element={element}
-                  onUpdate={() => {}} // Não permitir edição no preview
-                  isSelected={false}
-                  deviceView={deviceView}
-                />
-              ))}
+              {content.elements
+                .filter((element) => element && element.props && typeof element.props === 'object')
+                .map((element) => (
+                  <ElementRenderer
+                    key={element.id}
+                    element={element}
+                    onUpdate={() => {}} // Não permitir edição no preview
+                    isSelected={false}
+                    deviceView={deviceView}
+                  />
+                ))}
             </div>
           )}
         </div>

@@ -221,9 +221,11 @@ export const VisualEditor: React.FC<VisualEditorProps> = ({
         </div>
       ) : (
         <div className="space-y-4">
-          {content.elements.map((element: PageElement, index: number) => 
-            renderElement(element, index)
-          )}
+          {content.elements
+            .filter((element: PageElement) => element && element.props && typeof element.props === 'object')
+            .map((element: PageElement, index: number) => 
+              renderElement(element, index)
+            )}
         </div>
       )}
 
