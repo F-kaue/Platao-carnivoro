@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CollaborationSection } from "@/components/CollaborationSection";
-import { getTesto1kProductUrl } from "@/services/publicLinksService";
+import { usePublicLinks } from "@/hooks/usePublicLinks";
 import { 
   CheckCircle, 
   Star, 
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 const Testo1k = () => {
+  const { getTesto1kProductUrl } = usePublicLinks();
   const [timeLeft, setTimeLeft] = useState({
     hours: 23,
     minutes: 59,

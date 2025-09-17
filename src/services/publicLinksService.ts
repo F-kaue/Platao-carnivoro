@@ -47,10 +47,13 @@ class PublicLinksService {
   private loadLinks(): void {
     try {
       const savedLinks = localStorage.getItem('public-links');
+      console.log('Loading links from localStorage:', savedLinks);
       if (savedLinks) {
         this.links = JSON.parse(savedLinks);
+        console.log('Loaded links:', this.links);
       } else {
         this.links = [...this.defaultLinks];
+        console.log('Using default links:', this.links);
         this.saveLinks();
       }
     } catch (error) {
@@ -119,7 +122,9 @@ class PublicLinksService {
 
 
   public getTesto1kProductUrl(): string {
-    return this.getUrl('testo1k-product');
+    const url = this.getUrl('testo1k-product');
+    console.log('getTesto1kProductUrl called, returning:', url);
+    return url;
   }
 }
 

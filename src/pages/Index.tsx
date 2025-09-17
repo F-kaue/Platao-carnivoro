@@ -6,9 +6,11 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { FilterSection } from "@/components/FilterSection";
 import { PopularProducts } from "@/components/PopularProducts";
 import { NewsletterSection } from "@/components/NewsletterSection";
-import { getInstagramUrl } from "@/services/publicLinksService";
+import { usePublicLinks } from "@/hooks/usePublicLinks";
 
 const Index = () => {
+  const { getInstagramUrl } = usePublicLinks();
+  
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
