@@ -1,3 +1,10 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  "https://ylkitmkjcmvtkgzxapcs.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlsa2l0bWtqY212dGtnenhhcGNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDg1MjYsImV4cCI6MjA3MjkyNDUyNn0.ofHoaODiDXVli1tf7UvIM_GmdfJ1vY6XNyt_uHlAie4"
+);
+
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,73 +18,36 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      // Dados mockados para funcionar sem banco
-      const mockData = [
-        {
-          id: '1',
-          key: 'testo1k_title',
-          title: 'Testo1k - O Guia Completo',
-          content: 'Descubra os segredos do carnívorismo e transforme sua vida',
-          type: 'text',
-          page: 'testo1k',
-          order: 1,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '2',
-          key: 'testo1k_subtitle',
-          title: 'Subtítulo Testo1k',
-          content: 'Um guia completo sobre carnívorismo e filosofia de vida',
-          type: 'text',
-          page: 'testo1k',
-          order: 2,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '3',
-          key: 'testo1k_price',
-          title: 'Preço Testo1k',
-          content: 'R$ 97,00',
-          type: 'price',
-          page: 'testo1k',
-          order: 3,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '4',
-          key: 'landing_title',
-          title: 'Título Landing',
-          content: 'Transforme sua vida com o Testo1k',
-          type: 'text',
-          page: 'testo1k/landing',
-          order: 1,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '5',
-          key: 'landing_description',
-          title: 'Descrição Landing',
-          content: 'Descubra como o carnívorismo pode revolucionar sua saúde e bem-estar',
-          type: 'text',
-          page: 'testo1k/landing',
-          order: 2,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      ];
+      const { page, type, is_active } = req.query;
+
+      let query = supabase.from('content_blocks').select('*');
+
+      if (page) {
+        query = query.eq('page', page);
+      }
+
+      if (type) {
+        query = query.eq('type', type);
+      }
+
+      if (is_active !== undefined) {
+        query = query.eq('is_active', is_active === 'true');
+      }
+
+      const { data, error } = await query.order('order');
+
+      if (error) {
+        console.error('Erro ao buscar blocos:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao buscar blocos',
+          details: error.message 
+        });
+      }
 
       return res.status(200).json({ 
         success: true, 
-        data: mockData 
+        data: data || [] 
       });
     }
 
@@ -91,23 +61,33 @@ export default async function handler(req, res) {
         });
       }
 
-      // Simular criação
-      const newItem = {
-        id: Date.now().toString(),
-        key,
-        title,
-        content,
-        type: type || 'text',
-        page: page || 'general',
-        order: order || 1,
-        is_active: is_active !== undefined ? is_active : true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      const { data, error } = await supabase
+        .from('content_blocks')
+        .insert([{
+          key,
+          title,
+          content,
+          type: type || 'text',
+          page: page || 'general',
+          order: order || 1,
+          is_active: is_active !== undefined ? is_active : true
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Erro ao criar bloco:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao criar bloco',
+          details: error.message 
+        });
+      }
 
       return res.status(201).json({ 
         success: true, 
-        data: newItem 
+        data,
+        message: 'Bloco criado com sucesso' 
       });
     }
 
@@ -121,23 +101,35 @@ export default async function handler(req, res) {
         });
       }
 
-      // Simular atualização
-      const updatedItem = {
-        id,
-        key: key || 'content_block',
-        title: title || 'Bloco de Conteúdo',
-        content: content || 'Conteúdo do bloco',
-        type: type || 'text',
-        page: page || 'general',
-        order: order || 1,
-        is_active: is_active !== undefined ? is_active : true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      const updateData = {};
+      if (key) updateData.key = key;
+      if (title) updateData.title = title;
+      if (content) updateData.content = content;
+      if (type) updateData.type = type;
+      if (page) updateData.page = page;
+      if (order !== undefined) updateData.order = order;
+      if (is_active !== undefined) updateData.is_active = is_active;
+
+      const { data, error } = await supabase
+        .from('content_blocks')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Erro ao atualizar bloco:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao atualizar bloco',
+          details: error.message 
+        });
+      }
 
       return res.status(200).json({ 
         success: true, 
-        data: updatedItem 
+        data,
+        message: 'Bloco atualizado com sucesso' 
       });
     }
 
@@ -151,9 +143,23 @@ export default async function handler(req, res) {
         });
       }
 
+      const { error } = await supabase
+        .from('content_blocks')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Erro ao deletar bloco:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao deletar bloco',
+          details: error.message 
+        });
+      }
+
       return res.status(200).json({ 
         success: true, 
-        message: 'Bloco de conteúdo deletado com sucesso' 
+        message: 'Bloco deletado com sucesso' 
       });
     }
 

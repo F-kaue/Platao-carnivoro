@@ -50,9 +50,8 @@ interface NewsletterBenefit {
 
 // Função genérica para fazer requisições
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const baseUrl = import.meta.env.PROD 
-    ? 'https://platao-carnivoro-kb0qiv5tc-f-kaues-projects.vercel.app'
-    : 'http://localhost:8080';
+  // Usar a URL atual do site para evitar problemas de CORS
+  const baseUrl = window.location.origin;
   
   const response = await fetch(`${baseUrl}/api/${endpoint}`, {
     headers: {

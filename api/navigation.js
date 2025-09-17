@@ -1,3 +1,10 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  "https://ylkitmkjcmvtkgzxapcs.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlsa2l0bWtqY212dGtnenhhcGNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDg1MjYsImV4cCI6MjA3MjkyNDUyNn0.ofHoaODiDXVli1tf7UvIM_GmdfJ1vY6XNyt_uHlAie4"
+);
+
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,68 +18,32 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      // Dados mockados para funcionar sem banco
-      const mockData = [
-        {
-          id: '1',
-          title: 'Início',
-          url: '/',
-          icon: 'Home',
-          position: 'header',
-          order: 1,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '2',
-          title: 'Testo1k',
-          url: '/testo1k',
-          icon: 'Book',
-          position: 'header',
-          order: 2,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '3',
-          title: 'Admin',
-          url: '/admin',
-          icon: 'Settings',
-          position: 'header',
-          order: 3,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '4',
-          title: 'Instagram',
-          url: 'https://instagram.com/plataocarnivoro',
-          icon: 'Instagram',
-          position: 'social',
-          order: 1,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '5',
-          title: 'YouTube',
-          url: 'https://youtube.com/@plataocarnivoro',
-          icon: 'Youtube',
-          position: 'social',
-          order: 2,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      ];
+      const { position, is_active } = req.query;
+
+      let query = supabase.from('navigation_links').select('*');
+
+      if (position) {
+        query = query.eq('position', position);
+      }
+
+      if (is_active !== undefined) {
+        query = query.eq('is_active', is_active === 'true');
+      }
+
+      const { data, error } = await query.order('order');
+
+      if (error) {
+        console.error('Erro ao buscar links:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao buscar links',
+          details: error.message 
+        });
+      }
 
       return res.status(200).json({ 
         success: true, 
-        data: mockData 
+        data: data || [] 
       });
     }
 
@@ -86,22 +57,32 @@ export default async function handler(req, res) {
         });
       }
 
-      // Simular criação
-      const newItem = {
-        id: Date.now().toString(),
-        title,
-        url,
-        icon: icon || 'Link',
-        position: position || 'header',
-        order: order || 1,
-        is_active: is_active !== undefined ? is_active : true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      const { data, error } = await supabase
+        .from('navigation_links')
+        .insert([{
+          title,
+          url,
+          icon: icon || 'Link',
+          position: position || 'header',
+          order: order || 1,
+          is_active: is_active !== undefined ? is_active : true
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Erro ao criar link:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao criar link',
+          details: error.message 
+        });
+      }
 
       return res.status(201).json({ 
         success: true, 
-        data: newItem 
+        data,
+        message: 'Link criado com sucesso' 
       });
     }
 
@@ -115,22 +96,34 @@ export default async function handler(req, res) {
         });
       }
 
-      // Simular atualização
-      const updatedItem = {
-        id,
-        title: title || 'Link',
-        url: url || '/',
-        icon: icon || 'Link',
-        position: position || 'header',
-        order: order || 1,
-        is_active: is_active !== undefined ? is_active : true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      const updateData = {};
+      if (title) updateData.title = title;
+      if (url) updateData.url = url;
+      if (icon) updateData.icon = icon;
+      if (position) updateData.position = position;
+      if (order !== undefined) updateData.order = order;
+      if (is_active !== undefined) updateData.is_active = is_active;
+
+      const { data, error } = await supabase
+        .from('navigation_links')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Erro ao atualizar link:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao atualizar link',
+          details: error.message 
+        });
+      }
 
       return res.status(200).json({ 
         success: true, 
-        data: updatedItem 
+        data,
+        message: 'Link atualizado com sucesso' 
       });
     }
 
@@ -141,6 +134,20 @@ export default async function handler(req, res) {
         return res.status(400).json({ 
           success: false, 
           error: 'ID é obrigatório' 
+        });
+      }
+
+      const { error } = await supabase
+        .from('navigation_links')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Erro ao deletar link:', error);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Erro ao deletar link',
+          details: error.message 
         });
       }
 
