@@ -7,9 +7,17 @@
       "config": {
         "distDir": "dist"
       }
+    },
+    {
+      "src": "api/beehiiv-subscribe.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/api/beehiiv-subscribe",
+      "dest": "/api/beehiiv-subscribe.js"
+    },
     {
       "src": "/fonts/(.*\\.woff2)$",
       "dest": "/public/fonts/$1",
