@@ -155,11 +155,13 @@ export const PageBuilderPage: React.FC<PageBuilderPageProps> = ({ pageId }) => {
           </TabsList>
 
           <TabsContent value="builder" className="h-full">
-            <PageBuilder
-              pageId={pageId || paramPageId || 'home'}
-              initialContent={currentPage}
-              onSave={handleSave}
-            />
+            {currentPage && (
+              <PageBuilder
+                pageId={pageId || paramPageId || 'home'}
+                initialContent={currentPage}
+                onSave={handleSave}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="settings" className="p-6">
@@ -241,11 +243,13 @@ export const PageBuilderPage: React.FC<PageBuilderPageProps> = ({ pageId }) => {
 
           <TabsContent value="preview" className="h-full">
             <div className="h-full">
-              <PageBuilder
-                pageId={pageId || paramPageId || 'home'}
-                initialContent={currentPage}
-                onSave={handleSave}
-              />
+              {currentPage && (
+                <PageBuilder
+                  pageId={pageId || paramPageId || 'home'}
+                  initialContent={currentPage}
+                  onSave={handleSave}
+                />
+              )}
             </div>
           </TabsContent>
         </Tabs>

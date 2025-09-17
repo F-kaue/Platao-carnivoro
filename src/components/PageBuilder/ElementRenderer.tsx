@@ -18,6 +18,15 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({
   isSelected,
   deviceView
 }) => {
+  // Verificar se element existe
+  if (!element) {
+    return (
+      <div className="p-4 border-2 border-dashed border-red-300 rounded-lg text-center text-red-500">
+        <p>Elemento não encontrado</p>
+      </div>
+    );
+  }
+
   const { type, props } = element;
 
   const handleTextChange = (newText: string) => {
