@@ -717,19 +717,37 @@ const Admin = () => {
                 <CardDescription>
                   Crie e edite páginas com interface visual intuitiva, similar ao Hostinger
                 </CardDescription>
-                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h4 className="font-semibold text-blue-800 mb-2">🚀 Versão Simplificada (Recomendada)</h4>
-                  <p className="text-sm text-blue-700 mb-3">
-                    Use a versão simplificada para uma experiência mais estável e sem erros.
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => navigate('/admin/simple-pagebuilder/home')}
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      <Layout className="w-4 h-4 mr-2" />
-                      Page Builder Simples
-                    </Button>
+                <div className="mt-4 space-y-4">
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <h4 className="font-semibold text-green-800 mb-2">🎯 Real Page Builder (Recomendado)</h4>
+                    <p className="text-sm text-green-700 mb-3">
+                      Edite o conteúdo real das páginas existentes com elementos extraídos diretamente do site.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => navigate('/admin/real-pagebuilder/home')}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        <Layout className="w-4 h-4 mr-2" />
+                        Real Page Builder
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h4 className="font-semibold text-blue-800 mb-2">🚀 Versão Simplificada</h4>
+                    <p className="text-sm text-blue-700 mb-3">
+                      Use a versão simplificada para uma experiência mais básica e estável.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => navigate('/admin/simple-pagebuilder/home')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Layout className="w-4 h-4 mr-2" />
+                        Page Builder Simples
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
