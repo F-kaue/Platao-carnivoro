@@ -41,11 +41,17 @@ export const VisualEditor: React.FC<VisualEditorProps> = ({
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'component',
     drop: (item: any) => {
+      // Verificar se item e item.type existem
+      if (!item || !item.type) {
+        console.error('Item inválido recebido:', item);
+        return;
+      }
+
       // Adicionar novo elemento
       const newElement: PageElement = {
         id: `element-${Date.now()}`,
         type: item.type,
-        props: getDefaultProps(item.type)
+        props: getDefaultProps(item.type) || {}
       };
       
       // Aqui você chamaria onAddElement se tivesse acesso

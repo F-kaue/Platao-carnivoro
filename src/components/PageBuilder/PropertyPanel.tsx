@@ -68,7 +68,7 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
   };
 
   const renderElementProperties = () => {
-    if (!selectedElementData) return null;
+    if (!selectedElementData || !selectedElementData.props) return null;
 
     const { type, props } = selectedElementData;
 

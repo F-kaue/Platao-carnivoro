@@ -18,11 +18,11 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({
   isSelected,
   deviceView
 }) => {
-  // Verificar se element existe
-  if (!element) {
+  // Verificar se element existe e tem props
+  if (!element || !element.props || typeof element.props !== 'object') {
     return (
       <div className="p-4 border-2 border-dashed border-red-300 rounded-lg text-center text-red-500">
-        <p>Elemento não encontrado</p>
+        <p>Elemento não encontrado ou inválido</p>
       </div>
     );
   }
