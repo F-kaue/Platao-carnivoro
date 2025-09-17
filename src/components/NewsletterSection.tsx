@@ -250,10 +250,6 @@ export function NewsletterSection() {
               <div className="hidden sm:block absolute -top-4 -right-4 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-brand-brown to-brand-green-gray rounded-full flex items-center justify-center shadow-xl animate-pulse">
                 <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              
-              <div className="hidden sm:block absolute -bottom-4 -left-4 w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-brand-green-gray to-brand-brown rounded-full flex items-center justify-center shadow-xl animate-bounce">
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
             </div>
           </div>
 
