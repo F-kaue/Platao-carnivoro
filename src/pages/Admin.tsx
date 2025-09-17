@@ -9,7 +9,8 @@ import { CategorySelector } from "@/components/CategorySelector";
 import { Button } from "@/components/ui/button";
 import { 
   Package, Users, BarChart, LogOut, Plus, Trash2, Edit, 
-  ShoppingBag, RefreshCw, Image, Link as LinkIcon, ExternalLink, Upload, X, TrendingUp, ChevronDown
+  ShoppingBag, RefreshCw, Image, Link as LinkIcon, ExternalLink, Upload, X, TrendingUp, ChevronDown,
+  Layout, Palette, Code
 } from "lucide-react";
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -410,9 +411,10 @@ const Admin = () => {
         </div>
         
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid grid-cols-6 w-full max-w-3xl mx-auto">
+          <TabsList className="grid grid-cols-7 w-full max-w-4xl mx-auto">
             <TabsTrigger value="overview" className="text-xs sm:text-sm">Visão Geral</TabsTrigger>
             <TabsTrigger value="products" className="text-xs sm:text-sm">Produtos</TabsTrigger>
+            <TabsTrigger value="pagebuilder" className="text-xs sm:text-sm">Page Builder</TabsTrigger>
             <TabsTrigger value="settings" className="text-xs sm:text-sm">Configurações</TabsTrigger>
             <TabsTrigger value="navigation" className="text-xs sm:text-sm">Navegação</TabsTrigger>
             <TabsTrigger value="newsletter" className="text-xs sm:text-sm">Newsletter</TabsTrigger>
@@ -699,6 +701,163 @@ const Admin = () => {
                       ))}
                     </TableBody>
                   </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          {/* Page Builder Tab */}
+          <TabsContent value="pagebuilder" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Layout className="w-5 h-5 text-brand-brown" />
+                  Page Builder Visual
+                </CardTitle>
+                <CardDescription>
+                  Crie e edite páginas com interface visual intuitiva, similar ao Hostinger
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Página Inicial */}
+                  <Card className="border-brand-gray-rose/30 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-lg flex items-center justify-center">
+                          <Layout className="w-5 h-5 text-white" />
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate('/admin/pagebuilder/home')}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <h3 className="font-augustus font-semibold text-foreground mb-2">Página Inicial</h3>
+                      <p className="text-sm text-brand-green-gray/70 font-body mb-4">
+                        Hero section, newsletter e seções principais
+                      </p>
+                      <Button
+                        onClick={() => navigate('/admin/pagebuilder/home')}
+                        className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white"
+                      >
+                        <Layout className="w-4 h-4 mr-2" />
+                        Editar Página
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Testo1k */}
+                  <Card className="border-brand-gray-rose/30 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 bg-gradient-to-br from-brand-green-gray to-brand-brown rounded-lg flex items-center justify-center">
+                          <Palette className="w-5 h-5 text-white" />
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate('/admin/pagebuilder/testo1k')}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <h3 className="font-augustus font-semibold text-foreground mb-2">Testo1k</h3>
+                      <p className="text-sm text-brand-green-gray/70 font-body mb-4">
+                        Página de produto com preços e benefícios
+                      </p>
+                      <Button
+                        onClick={() => navigate('/admin/pagebuilder/testo1k')}
+                        className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white"
+                      >
+                        <Palette className="w-4 h-4 mr-2" />
+                        Editar Página
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* Landing Page */}
+                  <Card className="border-brand-gray-rose/30 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 bg-gradient-to-br from-brand-lilac to-brand-brown rounded-lg flex items-center justify-center">
+                          <Code className="w-5 h-5 text-white" />
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate('/admin/pagebuilder/landing')}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <h3 className="font-augustus font-semibold text-foreground mb-2">Landing Page</h3>
+                      <p className="text-sm text-brand-green-gray/70 font-body mb-4">
+                        Página de conversão com formulários e CTAs
+                      </p>
+                      <Button
+                        onClick={() => navigate('/admin/pagebuilder/landing')}
+                        className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white"
+                      >
+                        <Code className="w-4 h-4 mr-2" />
+                        Editar Página
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Features */}
+                <div className="mt-8 p-6 bg-gradient-to-r from-brand-lilac/10 to-brand-gray-rose/10 rounded-lg">
+                  <h3 className="font-augustus font-semibold text-brand-green-gray mb-4">Recursos do Page Builder</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-brand-brown/20 rounded-lg flex items-center justify-center">
+                        <Layout className="w-4 h-4 text-brand-brown" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Drag & Drop</p>
+                        <p className="text-xs text-brand-green-gray/70">Arraste componentes</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-brand-brown/20 rounded-lg flex items-center justify-center">
+                        <Palette className="w-4 h-4 text-brand-brown" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Preview em Tempo Real</p>
+                        <p className="text-xs text-brand-green-gray/70">Veja mudanças instantaneamente</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-brand-brown/20 rounded-lg flex items-center justify-center">
+                        <Code className="w-4 h-4 text-brand-brown" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Responsivo</p>
+                        <p className="text-xs text-brand-green-gray/70">Mobile, tablet e desktop</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-brand-brown/20 rounded-lg flex items-center justify-center">
+                        <ExternalLink className="w-4 h-4 text-brand-brown" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Edição Inline</p>
+                        <p className="text-xs text-brand-green-gray/70">Clique e edite diretamente</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
