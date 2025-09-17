@@ -9,13 +9,30 @@
       }
     }
   ],
+  "functions": {
+    "api/beehiiv-subscribe.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "routes": [
     {
-      "src": "/api/beehiiv-subscribe",
-      "dest": "/api/beehiiv-subscribe.js"
+      "src": "/fonts/(.*\\.woff2)$",
+      "dest": "/public/fonts/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Type": "font/woff2"
+      }
     },
     {
-      "src": "/fonts/(.*)",
+      "src": "/fonts/(.*\\.woff)$",
+      "dest": "/public/fonts/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Type": "font/woff"
+      }
+    },
+    {
+      "src": "/fonts/(.*\\.ttf)$",
       "dest": "/public/fonts/$1",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable",
