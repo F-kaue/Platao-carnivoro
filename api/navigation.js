@@ -1,4 +1,9 @@
-import { supabase } from '../src/integrations/supabase/client.js';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  "https://ylkitmkjcmvtkgzxapcs.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlsa2l0bWtqY212dGtnenhhcGNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczNDg1MjYsImV4cCI6MjA3MjkyNDUyNn0.ofHoaODiDXVli1tf7UvIM_GmdfJ1vY6XNyt_uHlAie4"
+);
 
 export default async function handler(req, res) {
   // CORS headers
