@@ -6,6 +6,7 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { FilterSection } from "@/components/FilterSection";
 import { PopularProducts } from "@/components/PopularProducts";
 import { NewsletterSection } from "@/components/NewsletterSection";
+import { getInstagramUrl } from "@/services/publicLinksService";
 
 const Index = () => {
   return (
@@ -158,7 +159,7 @@ const Index = () => {
 
                       {/* CTA Button */}
                       <button 
-                        onClick={() => window.open("https://www.instagram.com/plataocarnivoro/", "_blank")}
+                        onClick={() => window.open(getInstagramUrl(), "_blank")}
                         className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-8 py-4 rounded-2xl font-augustus font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl group"
                       >
                         <div className="flex items-center justify-center gap-3">
