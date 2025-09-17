@@ -1,388 +1,413 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
-// Tipos para o CMS
-export interface SiteSetting {
+// Tipos
+interface SiteSetting {
   id: string;
   key: string;
   value: string;
-  description?: string;
+  description: string;
   category: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface NavigationLink {
+interface NavigationLink {
   id: string;
   title: string;
   url: string;
-  icon?: string;
-  position: number;
-  location: 'header' | 'footer' | 'social';
+  icon: string;
+  position: string;
+  order: number;
   is_active: boolean;
-  target_blank: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface ContentBlock {
+interface ContentBlock {
   id: string;
   key: string;
-  title?: string;
+  title: string;
   content: string;
-  type: 'text' | 'html' | 'markdown';
-  section: string;
+  type: string;
+  page: string;
+  order: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface NewsletterBenefit {
+interface NewsletterBenefit {
   id: string;
   title: string;
   description: string;
   icon: string;
-  position: number;
+  order: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
+// Função genérica para fazer requisições
+async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const baseUrl = import.meta.env.PROD 
+    ? 'https://platao-carnivoro-kb0qiv5tc-f-kaues-projects.vercel.app'
+    : 'http://localhost:8080';
+  
+  const response = await fetch(`${baseUrl}/api/${endpoint}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+
 // Hook para configurações do site
-export function useSiteSettings(category?: string) {
-  const [settings, setSettings] = useState<SiteSetting[]>([]);
+export function useSiteSettings() {
+  const [data, setData] = useState<SiteSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchSettings();
-  }, [category]);
-
-  const fetchSettings = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const url = category 
-        ? `/api/site-settings?category=${category}`
-        : '/api/site-settings';
-      
-      const response = await fetch(url);
-      const result = await response.json();
-
-      if (result.success) {
-        setSettings(result.data);
-        setError(null);
-      } else {
-        setError(result.error || 'Erro ao carregar configurações');
-      }
+      setError(null);
+      const response = await apiRequest<{ success: boolean; data: SiteSetting[] }>('site-settings');
+      setData(response.data);
     } catch (err) {
-      setError('Erro de conexão');
+      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
       console.error('Erro ao buscar configurações:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getSetting = (key: string): string => {
-    const setting = settings.find(s => s.key === key);
-    return setting?.value || '';
-  };
-
-  const updateSetting = async (id: string, data: Partial<SiteSetting>) => {
+  const updateSetting = async (id: string, updates: Partial<SiteSetting>) => {
     try {
-      const response = await fetch('/api/site-settings', {
+      const response = await apiRequest<{ success: boolean; data: SiteSetting }>('site-settings', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, ...data })
+        body: JSON.stringify({ id, ...updates }),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchSettings(); // Recarregar dados
-        return { success: true, data: result.data };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => prev.map(item => 
+        item.id === id ? { ...item, ...response.data } : item
+      ));
+
+      return response.data;
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao atualizar configuração:', err);
+      throw err;
     }
   };
 
+  const createSetting = async (setting: Omit<SiteSetting, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const response = await apiRequest<{ success: boolean; data: SiteSetting }>('site-settings', {
+        method: 'POST',
+        body: JSON.stringify(setting),
+      });
+
+      setData(prev => [...prev, response.data]);
+      return response.data;
+    } catch (err) {
+      console.error('Erro ao criar configuração:', err);
+      throw err;
+    }
+  };
+
+  const deleteSetting = async (id: string) => {
+    try {
+      await apiRequest('site-settings', {
+        method: 'DELETE',
+        body: JSON.stringify({ id }),
+      });
+
+      setData(prev => prev.filter(item => item.id !== id));
+    } catch (err) {
+      console.error('Erro ao deletar configuração:', err);
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return {
-    settings,
+    data,
     loading,
     error,
-    getSetting,
+    refetch: fetchData,
     updateSetting,
-    refetch: fetchSettings
+    createSetting,
+    deleteSetting,
   };
 }
 
 // Hook para links de navegação
-export function useNavigation(location?: string) {
-  const [links, setLinks] = useState<NavigationLink[]>([]);
+export function useNavigationLinks() {
+  const [data, setData] = useState<NavigationLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchLinks();
-  }, [location]);
-
-  const fetchLinks = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const url = location 
-        ? `/api/navigation?location=${location}&is_active=true`
-        : '/api/navigation?is_active=true';
-      
-      const response = await fetch(url);
-      const result = await response.json();
-
-      if (result.success) {
-        setLinks(result.data);
-        setError(null);
-      } else {
-        setError(result.error || 'Erro ao carregar links');
-      }
+      setError(null);
+      const response = await apiRequest<{ success: boolean; data: NavigationLink[] }>('navigation');
+      setData(response.data);
     } catch (err) {
-      setError('Erro de conexão');
+      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
       console.error('Erro ao buscar links:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const createLink = async (data: Omit<NavigationLink, 'id' | 'created_at' | 'updated_at'>) => {
+  const updateLink = async (id: string, updates: Partial<NavigationLink>) => {
     try {
-      const response = await fetch('/api/navigation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      const response = await apiRequest<{ success: boolean; data: NavigationLink }>('navigation', {
+        method: 'PUT',
+        body: JSON.stringify({ id, ...updates }),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchLinks(); // Recarregar dados
-        return { success: true, data: result.data };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => prev.map(item => 
+        item.id === id ? { ...item, ...response.data } : item
+      ));
+
+      return response.data;
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao atualizar link:', err);
+      throw err;
     }
   };
 
-  const updateLink = async (id: string, data: Partial<NavigationLink>) => {
+  const createLink = async (link: Omit<NavigationLink, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const response = await fetch('/api/navigation', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, ...data })
+      const response = await apiRequest<{ success: boolean; data: NavigationLink }>('navigation', {
+        method: 'POST',
+        body: JSON.stringify(link),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchLinks(); // Recarregar dados
-        return { success: true, data: result.data };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => [...prev, response.data]);
+      return response.data;
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao criar link:', err);
+      throw err;
     }
   };
 
   const deleteLink = async (id: string) => {
     try {
-      const response = await fetch(`/api/navigation?id=${id}`, {
-        method: 'DELETE'
+      await apiRequest('navigation', {
+        method: 'DELETE',
+        body: JSON.stringify({ id }),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchLinks(); // Recarregar dados
-        return { success: true };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => prev.filter(item => item.id !== id));
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao deletar link:', err);
+      throw err;
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return {
-    links,
+    data,
     loading,
     error,
-    createLink,
+    refetch: fetchData,
     updateLink,
+    createLink,
     deleteLink,
-    refetch: fetchLinks
   };
 }
 
 // Hook para blocos de conteúdo
-export function useContentBlocks(section?: string) {
-  const [blocks, setBlocks] = useState<ContentBlock[]>([]);
+export function useContentBlocks() {
+  const [data, setData] = useState<ContentBlock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchBlocks();
-  }, [section]);
-
-  const fetchBlocks = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const url = section 
-        ? `/api/content-blocks?section=${section}&is_active=true`
-        : '/api/content-blocks?is_active=true';
-      
-      const response = await fetch(url);
-      const result = await response.json();
-
-      if (result.success) {
-        setBlocks(result.data);
-        setError(null);
-      } else {
-        setError(result.error || 'Erro ao carregar blocos de conteúdo');
-      }
+      setError(null);
+      const response = await apiRequest<{ success: boolean; data: ContentBlock[] }>('content-blocks');
+      setData(response.data);
     } catch (err) {
-      setError('Erro de conexão');
-      console.error('Erro ao buscar blocos de conteúdo:', err);
+      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
+      console.error('Erro ao buscar blocos:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getContent = (key: string): string => {
-    const block = blocks.find(b => b.key === key);
-    return block?.content || '';
-  };
-
-  const updateContent = async (id: string, data: Partial<ContentBlock>) => {
+  const updateBlock = async (id: string, updates: Partial<ContentBlock>) => {
     try {
-      const response = await fetch('/api/content-blocks', {
+      const response = await apiRequest<{ success: boolean; data: ContentBlock }>('content-blocks', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, ...data })
+        body: JSON.stringify({ id, ...updates }),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchBlocks(); // Recarregar dados
-        return { success: true, data: result.data };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => prev.map(item => 
+        item.id === id ? { ...item, ...response.data } : item
+      ));
+
+      return response.data;
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao atualizar bloco:', err);
+      throw err;
     }
   };
 
+  const createBlock = async (block: Omit<ContentBlock, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const response = await apiRequest<{ success: boolean; data: ContentBlock }>('content-blocks', {
+        method: 'POST',
+        body: JSON.stringify(block),
+      });
+
+      setData(prev => [...prev, response.data]);
+      return response.data;
+    } catch (err) {
+      console.error('Erro ao criar bloco:', err);
+      throw err;
+    }
+  };
+
+  const deleteBlock = async (id: string) => {
+    try {
+      await apiRequest('content-blocks', {
+        method: 'DELETE',
+        body: JSON.stringify({ id }),
+      });
+
+      setData(prev => prev.filter(item => item.id !== id));
+    } catch (err) {
+      console.error('Erro ao deletar bloco:', err);
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return {
-    blocks,
+    data,
     loading,
     error,
-    getContent,
-    updateContent,
-    refetch: fetchBlocks
+    refetch: fetchData,
+    updateBlock,
+    createBlock,
+    deleteBlock,
   };
 }
 
 // Hook para benefícios do newsletter
 export function useNewsletterBenefits() {
-  const [benefits, setBenefits] = useState<NewsletterBenefit[]>([]);
+  const [data, setData] = useState<NewsletterBenefit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchBenefits();
-  }, []);
-
-  const fetchBenefits = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/newsletter-benefits?is_active=true');
-      const result = await response.json();
-
-      if (result.success) {
-        setBenefits(result.data);
-        setError(null);
-      } else {
-        setError(result.error || 'Erro ao carregar benefícios');
-      }
+      setError(null);
+      const response = await apiRequest<{ success: boolean; data: NewsletterBenefit[] }>('newsletter-benefits');
+      setData(response.data);
     } catch (err) {
-      setError('Erro de conexão');
+      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
       console.error('Erro ao buscar benefícios:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const createBenefit = async (data: Omit<NewsletterBenefit, 'id' | 'created_at' | 'updated_at'>) => {
+  const updateBenefit = async (id: string, updates: Partial<NewsletterBenefit>) => {
     try {
-      const response = await fetch('/api/newsletter-benefits', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      const response = await apiRequest<{ success: boolean; data: NewsletterBenefit }>('newsletter-benefits', {
+        method: 'PUT',
+        body: JSON.stringify({ id, ...updates }),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchBenefits(); // Recarregar dados
-        return { success: true, data: result.data };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => prev.map(item => 
+        item.id === id ? { ...item, ...response.data } : item
+      ));
+
+      return response.data;
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao atualizar benefício:', err);
+      throw err;
     }
   };
 
-  const updateBenefit = async (id: string, data: Partial<NewsletterBenefit>) => {
+  const createBenefit = async (benefit: Omit<NewsletterBenefit, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const response = await fetch('/api/newsletter-benefits', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, ...data })
+      const response = await apiRequest<{ success: boolean; data: NewsletterBenefit }>('newsletter-benefits', {
+        method: 'POST',
+        body: JSON.stringify(benefit),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchBenefits(); // Recarregar dados
-        return { success: true, data: result.data };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => [...prev, response.data]);
+      return response.data;
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao criar benefício:', err);
+      throw err;
     }
   };
 
   const deleteBenefit = async (id: string) => {
     try {
-      const response = await fetch(`/api/newsletter-benefits?id=${id}`, {
-        method: 'DELETE'
+      await apiRequest('newsletter-benefits', {
+        method: 'DELETE',
+        body: JSON.stringify({ id }),
       });
 
-      const result = await response.json();
-      if (result.success) {
-        await fetchBenefits(); // Recarregar dados
-        return { success: true };
-      } else {
-        return { success: false, error: result.error };
-      }
+      setData(prev => prev.filter(item => item.id !== id));
     } catch (err) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro ao deletar benefício:', err);
+      throw err;
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return {
-    benefits,
+    data,
     loading,
     error,
-    createBenefit,
+    refetch: fetchData,
     updateBenefit,
+    createBenefit,
     deleteBenefit,
-    refetch: fetchBenefits
+  };
+}
+
+// Hook para conteúdo específico do Testo1k
+export function useTesto1kContent() {
+  const { data: contentBlocks, ...rest } = useContentBlocks();
+  
+  const testo1kContent = contentBlocks?.filter(block => 
+    block.page === 'testo1k' || block.page === 'testo1k/landing'
+  ) || [];
+
+  return {
+    data: testo1kContent,
+    ...rest,
   };
 }
