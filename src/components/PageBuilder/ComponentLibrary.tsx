@@ -477,7 +477,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({ onAddElement
         },
         {
           type: 'share',
-          icon: <Share className="w-5 h-5" />,
+          icon: <ExternalLink className="w-5 h-5" />,
           label: 'Compartilhar',
           description: 'Botões de compartilhamento'
         }
