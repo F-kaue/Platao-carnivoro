@@ -115,9 +115,9 @@ export function NewsletterSection() {
                 {benefits.map((benefit, index) => (
                   <Card key={index} className="bg-background/80 backdrop-blur-sm border-brand-gray-rose/30 hover:shadow-lg transition-all duration-300 hover:scale-105">
                     <CardContent className="p-3 sm:p-4 md:p-6">
-                      <div className="flex items-start gap-2 sm:gap-3">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-lg flex items-center justify-center text-white flex-shrink-0">
-                          <div className="w-4 h-4 sm:w-6 sm:h-6">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 bg-gradient-to-br from-brand-brown to-brand-green-gray rounded-lg flex items-center justify-center text-white flex-shrink-0">
+                          <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6">
                             {benefit.icon}
                           </div>
                         </div>
