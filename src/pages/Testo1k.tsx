@@ -102,9 +102,9 @@ const Testo1k = () => {
         >
           <Button 
             size="lg"
-            className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-augustus font-bold text-sm sm:text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105"
+            className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-3 sm:px-8 py-2 sm:py-4 rounded-xl sm:rounded-2xl font-augustus font-bold text-xs sm:text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105"
           >
-            <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+            <Zap className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
             <span className="hidden sm:inline">Garantir Agora</span>
             <span className="sm:hidden">Garantir</span>
           </Button>
@@ -162,9 +162,10 @@ const Testo1k = () => {
                 >
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-3 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-xs sm:text-sm lg:text-base w-full sm:w-auto"
+                    className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-2 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-xs sm:text-sm lg:text-base w-full sm:w-auto"
                   >
-                    Quero aumentar minha testosterona agora
+                    <span className="hidden sm:inline">Quero aumentar minha testosterona agora</span>
+                    <span className="sm:hidden">Aumentar testosterona</span>
                     <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
                   </Button>
                 </a>
@@ -362,10 +363,11 @@ const Testo1k = () => {
                   >
                     <Button 
                       size="lg"
-                      className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-8 py-6 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-xl"
+                      className="w-full bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-4 sm:px-8 py-4 sm:py-6 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-augustus font-bold text-sm sm:text-xl"
                     >
-                      <Zap className="w-6 h-6 mr-3" />
-                      Quero garantir agora
+                      <Zap className="w-4 h-4 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                      <span className="hidden sm:inline">Quero garantir agora</span>
+                      <span className="sm:hidden">Garantir agora</span>
                     </Button>
                   </a>
 
