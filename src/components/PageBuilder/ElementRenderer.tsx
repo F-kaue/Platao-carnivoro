@@ -348,6 +348,117 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({
           />
         );
 
+      case 'list':
+        const ListTag = props.type === 'ordered' ? 'ol' : 'ul';
+        return (
+          <ListTag
+            style={{
+              color: props.color || '#666666',
+              fontSize: props.fontSize || '1rem',
+              margin: '1rem 0',
+              paddingLeft: '1.5rem'
+            }}
+          >
+            {props.items?.map((item: string, index: number) => (
+              <li key={index} style={{ margin: '0.5rem 0' }}>
+                {isSelected ? (
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) => {
+                      const newItems = [...(props.items || [])];
+                      newItems[index] = e.target.value;
+                      handlePropChange('items', newItems);
+                    }}
+                    className="bg-transparent border-none outline-none"
+                    style={{ width: '100%' }}
+                  />
+                ) : (
+                  item
+                )}
+              </li>
+            ))}
+          </ListTag>
+        );
+
+      case 'testimonial':
+        return (
+          <div
+            style={{
+              padding: '2rem',
+              backgroundColor: props.backgroundColor || '#f8f9fa',
+              borderRadius: '12px',
+              textAlign: 'center',
+              margin: '2rem 0',
+              ...(props.customCSS ? {} : {})
+            }}
+            className={props.customCSS ? '' : 'testimonial-default'}
+          >
+            <blockquote
+              style={{
+                fontSize: '1.2rem',
+                fontStyle: 'italic',
+                color: props.quoteColor || '#333',
+                margin: '0 0 1rem 0',
+                lineHeight: '1.6'
+              }}
+            >
+              "{isSelected ? (
+                <textarea
+                  value={props.quote || ''}
+                  onChange={(e) => handlePropChange('quote', e.target.value)}
+                  className="w-full bg-transparent border-none outline-none resize-none"
+                  rows={3}
+                />
+              ) : (
+                props.quote || 'Depoimento do cliente'
+              )}"
+            </blockquote>
+            <div style={{ marginTop: '1rem' }}>
+              <div
+                style={{
+                  fontWeight: 'bold',
+                  color: props.authorColor || '#666',
+                  fontSize: '1rem'
+                }}
+              >
+                {isSelected ? (
+                  <input
+                    type="text"
+                    value={props.author || ''}
+                    onChange={(e) => handlePropChange('author', e.target.value)}
+                    className="bg-transparent border-none outline-none text-center"
+                    placeholder="Nome do autor"
+                  />
+                ) : (
+                  props.author || 'Nome do Cliente'
+                )}
+              </div>
+              {props.role && (
+                <div
+                  style={{
+                    color: props.roleColor || '#999',
+                    fontSize: '0.9rem',
+                    marginTop: '0.25rem'
+                  }}
+                >
+                  {isSelected ? (
+                    <input
+                      type="text"
+                      value={props.role || ''}
+                      onChange={(e) => handlePropChange('role', e.target.value)}
+                      className="bg-transparent border-none outline-none text-center"
+                      placeholder="Cargo/Função"
+                    />
+                  ) : (
+                    props.role
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center text-gray-500">

@@ -19,8 +19,9 @@ import {
   Tablet,
   Monitor
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageContent } from '@/hooks/usePageBuilder';
+import { PageContentService } from '@/services/pageContentService';
 
 interface PageBuilderPageProps {
   pageId?: string;
@@ -28,208 +29,30 @@ interface PageBuilderPageProps {
 
 export const PageBuilderPage: React.FC<PageBuilderPageProps> = ({ pageId }) => {
   const navigate = useNavigate();
+  const { pageId: paramPageId } = useParams<{ pageId: string }>();
   const [currentPage, setCurrentPage] = useState<PageContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'builder' | 'settings' | 'preview'>('builder');
 
-  // Páginas pré-definidas
-  const predefinedPages = {
-    'home': {
-      elements: [
-        {
-          id: 'hero-1',
-          type: 'heading',
-          props: {
-            text: 'Bem-vindo ao Platão Carnívoro',
-            level: 1,
-            align: 'center',
-            color: '#1a1a1a',
-            fontSize: '3rem',
-            fontWeight: 'bold'
-          }
-        },
-        {
-          id: 'hero-2',
-          type: 'paragraph',
-          props: {
-            text: 'Conecte-se com a sabedoria ancestral através da filosofia e do carnívorismo. Descubra como transformar sua vida com conhecimento milenar e práticas modernas.',
-            align: 'center',
-            color: '#666666',
-            fontSize: '1.2rem',
-            lineHeight: '1.6'
-          }
-        },
-        {
-          id: 'cta-1',
-          type: 'button',
-          props: {
-            text: 'Começar Jornada',
-            variant: 'default',
-            size: 'lg',
-            href: '/testo1k'
-          }
-        }
-      ],
-      settings: {
-        title: 'Platão Carnívoro - Filosofia e Carnívorismo',
-        description: 'Conecte-se com a sabedoria ancestral através da filosofia e do carnívorismo',
-        theme: 'light'
-      }
-    },
-    'testo1k': {
-      elements: [
-        {
-          id: 'hero-testo1k',
-          type: 'heading',
-          props: {
-            text: 'Testo1k - O Guia Completo',
-            level: 1,
-            align: 'center',
-            color: '#1a1a1a',
-            fontSize: '2.5rem',
-            fontWeight: 'bold'
-          }
-        },
-        {
-          id: 'subtitle-testo1k',
-          type: 'paragraph',
-          props: {
-            text: 'Dobre sua testosterona naturalmente em 60 dias com nosso protocolo baseado em evidências científicas e sabedoria ancestral.',
-            align: 'center',
-            color: '#666666',
-            fontSize: '1.1rem',
-            lineHeight: '1.6'
-          }
-        },
-        {
-          id: 'price-testo1k',
-          type: 'heading',
-          props: {
-            text: 'R$ 97,00',
-            level: 2,
-            align: 'center',
-            color: '#059669',
-            fontSize: '2rem',
-            fontWeight: 'bold'
-          }
-        },
-        {
-          id: 'cta-testo1k',
-          type: 'button',
-          props: {
-            text: 'Adquirir Agora',
-            variant: 'default',
-            size: 'lg',
-            href: '/testo1k/landing'
-          }
-        }
-      ],
-      settings: {
-        title: 'Testo1k - O Guia Completo',
-        description: 'Dobre sua testosterona naturalmente em 60 dias',
-        theme: 'light'
-      }
-    },
-    'landing': {
-      elements: [
-        {
-          id: 'hero-landing',
-          type: 'heading',
-          props: {
-            text: 'Transforme sua vida com o Testo1k',
-            level: 1,
-            align: 'center',
-            color: '#1a1a1a',
-            fontSize: '3rem',
-            fontWeight: 'bold'
-          }
-        },
-        {
-          id: 'description-landing',
-          type: 'paragraph',
-          props: {
-            text: 'Descubra como o carnívorismo pode revolucionar sua saúde e bem-estar. Um protocolo completo baseado em evidências científicas.',
-            align: 'center',
-            color: '#666666',
-            fontSize: '1.2rem',
-            lineHeight: '1.6'
-          }
-        },
-        {
-          id: 'benefits-container',
-          type: 'container',
-          props: {
-            padding: '40px 20px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '12px'
-          },
-          children: [
-            {
-              id: 'benefit-1',
-              type: 'card',
-              props: {
-                title: 'Aumento de Testosterona',
-                content: 'Protocolo comprovado para aumentar naturalmente os níveis de testosterona.',
-                image: '/placeholder-benefit-1.jpg'
-              }
-            },
-            {
-              id: 'benefit-2',
-              type: 'card',
-              props: {
-                title: 'Melhora da Energia',
-                content: 'Sinta-se mais energizado e focado durante todo o dia.',
-                image: '/placeholder-benefit-2.jpg'
-              }
-            },
-            {
-              id: 'benefit-3',
-              type: 'card',
-              props: {
-                title: 'Ganho de Massa Muscular',
-                content: 'Construa músculos de forma mais eficiente com níveis otimizados de testosterona.',
-                image: '/placeholder-benefit-3.jpg'
-              }
-            }
-          ]
-        },
-        {
-          id: 'cta-landing',
-          type: 'button',
-          props: {
-            text: 'Quero Transformar Minha Vida',
-            variant: 'default',
-            size: 'lg',
-            href: '#checkout'
-          }
-        }
-      ],
-      settings: {
-        title: 'Testo1k - Transforme sua vida',
-        description: 'Descubra como o carnívorismo pode revolucionar sua saúde',
-        theme: 'light'
-      }
-    }
-  };
-
   useEffect(() => {
-    // Carregar página baseada no ID ou usar página padrão
-    const pageKey = pageId || 'home';
-    const pageData = predefinedPages[pageKey as keyof typeof predefinedPages] || predefinedPages.home;
+    // Carregar conteúdo real da página baseado no ID
+    const pageKey = pageId || paramPageId || 'home';
+    const pageData = PageContentService.getPageContent(pageKey);
     
     setCurrentPage(pageData);
     setIsLoading(false);
-  }, [pageId]);
+  }, [pageId, paramPageId]);
 
   const handleSave = async (content: PageContent) => {
     try {
-      // Aqui você salvaria no banco de dados
-      console.log('Salvando página:', content);
+      const pageKey = pageId || paramPageId || 'home';
+      const success = await PageContentService.savePageContent(pageKey, content);
       
-      // Simular salvamento
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert('Página salva com sucesso!');
+      if (success) {
+        alert('Página salva com sucesso!');
+      } else {
+        alert('Erro ao salvar a página');
+      }
     } catch (error) {
       console.error('Erro ao salvar:', error);
       alert('Erro ao salvar a página');
@@ -333,7 +156,7 @@ export const PageBuilderPage: React.FC<PageBuilderPageProps> = ({ pageId }) => {
 
           <TabsContent value="builder" className="h-full">
             <PageBuilder
-              pageId={pageId || 'home'}
+              pageId={pageId || paramPageId || 'home'}
               initialContent={currentPage}
               onSave={handleSave}
             />
@@ -419,7 +242,7 @@ export const PageBuilderPage: React.FC<PageBuilderPageProps> = ({ pageId }) => {
           <TabsContent value="preview" className="h-full">
             <div className="h-full">
               <PageBuilder
-                pageId={pageId || 'home'}
+                pageId={pageId || paramPageId || 'home'}
                 initialContent={currentPage}
                 onSave={handleSave}
               />
