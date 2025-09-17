@@ -19,6 +19,22 @@
       "destination": "/api/beehiiv-subscribe.js"
     },
     {
+      "source": "/api/site-settings",
+      "destination": "/api/site-settings.js"
+    },
+    {
+      "source": "/api/navigation",
+      "destination": "/api/navigation.js"
+    },
+    {
+      "source": "/api/content-blocks",
+      "destination": "/api/content-blocks.js"
+    },
+    {
+      "source": "/api/newsletter-benefits",
+      "destination": "/api/newsletter-benefits.js"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
