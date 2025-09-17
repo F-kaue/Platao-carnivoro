@@ -1,76 +1,94 @@
-// api/beehiiv-subscribe.js - Vercel Serverless Function
 export default async function handler(req, res) {
-  // 🔓 Configura CORS
+  // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método não permitido' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ success: false, error: 'Email é obrigatório' });
+      return res.status(400).json({ error: 'Email é obrigatório' });
     }
 
-    console.log('🚀 Iniciando inscrição Beehiiv:', email);
+    // Configurações do Beehiiv
+    const publicationId = process.env.BEEHIIV_PUBLICATION_ID;
+    const apiKey = process.env.BEEHIIV_API_KEY;
 
-    // 🔑 Coloque sua API_KEY da Beehiiv no Vercel (Environment Variables)
-    const API_KEY = process.env.BEEHIIV_API_KEY;
-    const PUBLICATION_ID = process.env.BEEHIIV_PUBLICATION_ID;
-
-    if (!API_KEY) {
-      console.error('❌ BEEHIIV_API_KEY não configurada');
-      return res.status(500).json({ success: false, error: 'API key não configurada' });
+    if (!publicationId || !apiKey) {
+      console.error('Variáveis de ambiente não configuradas:', {
+        publicationId: !!publicationId,
+        apiKey: !!apiKey
+      });
+      return res.status(500).json({ error: 'Configuração do servidor incompleta' });
     }
 
-    if (!PUBLICATION_ID) {
-      console.error('❌ BEEHIIV_PUBLICATION_ID não configurado');
-      return res.status(500).json({ success: false, error: 'Publication ID não configurado' });
-    }
+    // URL da API do Beehiiv
+    const beehiivUrl = `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`;
 
-    console.log('🔑 API Key configurada:', API_KEY.substring(0, 10) + '...');
-    console.log('📋 Publication ID:', PUBLICATION_ID);
+    // Payload para o Beehiiv
+    const payload = {
+      email: email,
+      send_welcome_email: true,
+      utm_source: 'platao-carnivoro',
+      utm_medium: 'website',
+      utm_campaign: 'newsletter'
+    };
 
-    const response = await fetch(`https://api.beehiiv.com/v2/publications/${PUBLICATION_ID}/subscriptions`, {
+    console.log('Enviando para Beehiiv:', {
+      url: beehiivUrl,
+      email: email,
+      publicationId: publicationId
+    });
+
+    // Fazer a requisição para o Beehiiv
+    const response = await fetch(beehiivUrl, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_KEY}`,
+        'Accept': 'application/json'
       },
-      body: JSON.stringify({
-        email,
-        reactivate_existing: false,
-        send_welcome_email: true,
-      }),
+      body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
+    const responseData = await response.json();
 
-    console.log('📊 Resposta do Beehiiv:', response.status, response.statusText);
-    console.log('📦 Dados:', data);
+    console.log('Resposta do Beehiiv:', {
+      status: response.status,
+      data: responseData
+    });
 
-    if (!response.ok) {
-      console.error('❌ Erro do Beehiiv:', data);
-      return res.status(response.status).json({ success: false, error: data });
+    if (response.ok) {
+      return res.status(200).json({
+        success: true,
+        message: 'Inscrição realizada com sucesso!',
+        data: responseData
+      });
+    } else {
+      console.error('Erro do Beehiiv:', responseData);
+      return res.status(response.status).json({
+        success: false,
+        error: responseData.message || 'Erro ao inscrever no newsletter',
+        details: responseData
+      });
     }
 
-    console.log('✅ Inscrição realizada com sucesso!');
-
-    return res.status(200).json({
-      success: true,
-      message: 'Inscrição realizada com sucesso!',
-      data,
+  } catch (error) {
+    console.error('Erro no servidor:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Erro interno do servidor',
+      details: error.message
     });
-  } catch (err) {
-    console.error('💥 Erro na inscrição:', err);
-    return res.status(500).json({ success: false, error: 'Erro interno no servidor' });
   }
 }
