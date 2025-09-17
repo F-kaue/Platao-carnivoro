@@ -17,14 +17,20 @@ import {
   TestTube
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { publicLinksService, PublicLink } from '@/services/publicLinksService';
+import { usePublicLinks } from '@/hooks/usePublicLinks';
+import { PublicLink } from '@/services/publicLinksService';
 
 // Usar a interface do serviço
 
 const PublicLinksTab: React.FC = () => {
   const { toast } = useToast();
-  const [links, setLinks] = useState<PublicLink[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { 
+    links, 
+    isLoading, 
+    updateLink, 
+    updateAllLinks, 
+    resetToDefaults 
+  } = usePublicLinks();
   const [isSaving, setIsSaving] = useState(false);
 
   // Função para obter ícone baseado no nome
@@ -36,27 +42,10 @@ const PublicLinksTab: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    loadLinks();
-  }, []);
-
-  const loadLinks = async () => {
-    setIsLoading(true);
-    try {
-      const allLinks = publicLinksService.getAllLinks();
-      setLinks(allLinks);
-    } catch (error) {
-      console.error('Erro ao carregar links:', error);
-      setLinks([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const saveLinks = async () => {
     setIsSaving(true);
     try {
-      publicLinksService.updateAllLinks(links);
+      updateAllLinks(links);
       
       toast({
         title: "Links salvos com sucesso!",
@@ -74,16 +63,18 @@ const PublicLinksTab: React.FC = () => {
     }
   };
 
-  const updateLink = (id: string, field: keyof PublicLink, value: string) => {
-    setLinks(prev => prev.map(link => 
-      link.id === id ? { ...link, [field]: value } : link
-    ));
+  const handleLinkUpdate = (id: string, field: keyof PublicLink, value: string) => {
+    const success = updateLink(id, { [field]: value });
+    if (success) {
+      toast({
+        title: "Link atualizado!",
+        description: "O link foi atualizado com sucesso.",
+      });
+    }
   };
 
-  const resetToDefaults = () => {
-    publicLinksService.resetToDefaults();
-    const defaultLinks = publicLinksService.getAllLinks();
-    setLinks(defaultLinks);
+  const handleResetToDefaults = () => {
+    resetToDefaults();
     toast({
       title: "Links resetados",
       description: "Todos os links foram restaurados para os valores padrão.",
@@ -100,21 +91,6 @@ const PublicLinksTab: React.FC = () => {
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'social': return 'bg-blue-50 border-blue-200 text-blue-800';
-      case 'product': return 'bg-green-50 border-green-200 text-green-800';
-      default: return 'bg-gray-50 border-gray-200 text-gray-800';
-    }
-  };
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'social': return <LinkIcon className="w-4 h-4" />;
-      case 'product': return <ShoppingBag className="w-4 h-4" />;
-      default: return <ExternalLink className="w-4 h-4" />;
-    }
-  };
 
   if (isLoading) {
     return (
@@ -157,7 +133,7 @@ const PublicLinksTab: React.FC = () => {
             </Button>
             <Button 
               variant="outline" 
-              onClick={resetToDefaults}
+              onClick={handleResetToDefaults}
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Restaurar Padrões
@@ -207,7 +183,7 @@ const PublicLinksTab: React.FC = () => {
                   <Input
                     id={`${link.id}-url`}
                     value={link.url}
-                    onChange={(e) => updateLink(link.id, 'url', e.target.value)}
+                    onChange={(e) => handleLinkUpdate(link.id, 'url', e.target.value)}
                     placeholder="https://..."
                     className="mt-1"
                   />
@@ -218,41 +194,6 @@ const PublicLinksTab: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Preview dos links */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Preview dos Links</CardTitle>
-          <CardDescription>
-            Visualize como os links aparecerão no site
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {links.map((link) => (
-              <div key={link.id} className="p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-1 rounded ${getCategoryColor(link.category)}`}>
-                    {getCategoryIcon(link.category)}
-                  </div>
-                  <span className="font-medium text-sm">{link.name}</span>
-                </div>
-                <p className="text-xs text-gray-600 mb-2">{link.description}</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-blue-600 truncate flex-1">{link.url}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => testLink(link.url)}
-                    className="h-6 w-6 p-0"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

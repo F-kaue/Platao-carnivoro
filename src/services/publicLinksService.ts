@@ -25,8 +25,8 @@ class PublicLinksService {
     {
       id: 'testo1k-product',
       name: 'Testo1k - Produto',
-      description: 'Link para todos os botões "QUERO GARANTIR AGORA" da landing page',
-      url: 'https://amazon.com.br/testo1k',
+      description: 'Link para TODOS os botões da landing page (/testo1k/landing)',
+      url: 'https://chk.eduzz.com/Z0BBQ1360A?a=35814376',
       icon: 'shopping-bag',
       category: 'product'
     }
