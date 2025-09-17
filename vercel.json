@@ -15,8 +15,8 @@
   ],
   "routes": [
     {
-      "src": "/api/beehiiv-subscribe",
-      "dest": "/api/beehiiv-subscribe.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     },
     {
       "src": "/fonts/(.*\\.woff2)$",
