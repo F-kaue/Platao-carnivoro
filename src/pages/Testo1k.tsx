@@ -93,6 +93,23 @@ const Testo1k = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Floating CTA Button */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+        <a 
+          href={getTesto1kProductUrl()} 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-brand-brown to-brand-green-gray hover:from-brand-green-gray hover:to-brand-brown text-white px-3 sm:px-8 py-2 sm:py-4 rounded-xl sm:rounded-2xl font-augustus font-bold text-xs sm:text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105"
+          >
+            <Zap className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Garantir Agora</span>
+            <span className="sm:hidden">Garantir</span>
+          </Button>
+        </a>
+      </div>
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-lilac/20 via-brand-gray-rose/10 to-brand-brown/20 pt-16 sm:pt-20 lg:pt-24">
@@ -181,10 +198,6 @@ const Testo1k = () => {
                 />
               </div>
               
-              {/* Floating Elements - Hidden on mobile for cleaner look */}
-              <div className="hidden sm:block absolute -top-4 -right-4 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-brand-brown to-brand-green-gray rounded-full flex items-center justify-center shadow-xl animate-pulse">
-                <Zap className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-              </div>
               
             </div>
           </div>
