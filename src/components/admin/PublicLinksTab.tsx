@@ -31,11 +31,7 @@ const PublicLinksTab: React.FC = () => {
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'instagram': return <Instagram className="w-5 h-5" />;
-      case 'youtube': return <Youtube className="w-5 h-5" />;
-      case 'facebook': return <Facebook className="w-5 h-5" />;
-      case 'twitter': return <Twitter className="w-5 h-5" />;
       case 'shopping-bag': return <ShoppingBag className="w-5 h-5" />;
-      case 'test-tube': return <TestTube className="w-5 h-5" />;
       default: return <LinkIcon className="w-5 h-5" />;
     }
   };
@@ -170,126 +166,57 @@ const PublicLinksTab: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Links por categoria */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Redes Sociais */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-800">
-              <LinkIcon className="w-5 h-5" />
-              Redes Sociais
-            </CardTitle>
-            <CardDescription>
-              Links para as redes sociais oficiais do Platão Carnívoro
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {links.filter(link => link.category === 'social').map((link) => (
-              <div key={link.id} className="p-4 border border-gray-200 rounded-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    {getIcon(link.icon)}
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor={`${link.id}-name`} className="font-medium">
-                      {link.name}
-                    </Label>
-                    <p className="text-sm text-gray-600">{link.description}</p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => testLink(link.url)}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </Button>
+      {/* Links Principais */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <LinkIcon className="w-5 h-5 text-brand-brown" />
+            Links Principais do Site
+          </CardTitle>
+          <CardDescription>
+            Gerencie os links mais importantes do site - Instagram e Testo1k
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {links.map((link) => (
+            <div key={link.id} className="p-6 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="flex items-center gap-4 mb-4">
+                <div className={`p-3 rounded-lg ${link.category === 'social' ? 'bg-blue-50' : 'bg-green-50'}`}>
+                  {getIcon(link.icon)}
                 </div>
-                
-                <div className="space-y-2">
-                  <div>
-                    <Label htmlFor={`${link.id}-url`}>URL</Label>
-                    <Input
-                      id={`${link.id}-url`}
-                      value={link.url}
-                      onChange={(e) => updateLink(link.id, 'url', e.target.value)}
-                      placeholder="https://..."
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`${link.id}-description`}>Descrição</Label>
-                    <Textarea
-                      id={`${link.id}-description`}
-                      value={link.description}
-                      onChange={(e) => updateLink(link.id, 'description', e.target.value)}
-                      rows={2}
-                      placeholder="Descrição do link..."
-                    />
-                  </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900">{link.name}</h3>
+                  <p className="text-sm text-gray-600">{link.description}</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => testLink(link.url)}
+                  className="shrink-0"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Testar
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor={`${link.id}-url`} className="text-sm font-medium">
+                    URL do Link
+                  </Label>
+                  <Input
+                    id={`${link.id}-url`}
+                    value={link.url}
+                    onChange={(e) => updateLink(link.id, 'url', e.target.value)}
+                    placeholder="https://..."
+                    className="mt-1"
+                  />
                 </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Produtos */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-800">
-              <ShoppingBag className="w-5 h-5" />
-              Produtos
-            </CardTitle>
-            <CardDescription>
-              Links para produtos e páginas de vendas
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {links.filter(link => link.category === 'product').map((link) => (
-              <div key={link.id} className="p-4 border border-gray-200 rounded-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-green-50 rounded-lg">
-                    {getIcon(link.icon)}
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor={`${link.id}-name`} className="font-medium">
-                      {link.name}
-                    </Label>
-                    <p className="text-sm text-gray-600">{link.description}</p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => testLink(link.url)}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </Button>
-                </div>
-                
-                <div className="space-y-2">
-                  <div>
-                    <Label htmlFor={`${link.id}-url`}>URL</Label>
-                    <Input
-                      id={`${link.id}-url`}
-                      value={link.url}
-                      onChange={(e) => updateLink(link.id, 'url', e.target.value)}
-                      placeholder="https://... ou /página"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`${link.id}-description`}>Descrição</Label>
-                    <Textarea
-                      id={`${link.id}-description`}
-                      value={link.description}
-                      onChange={(e) => updateLink(link.id, 'description', e.target.value)}
-                      rows={2}
-                      placeholder="Descrição do produto..."
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       {/* Preview dos links */}
       <Card>

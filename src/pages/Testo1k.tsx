@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CollaborationSection } from "@/components/CollaborationSection";
-import { getTesto1kAmazonUrl } from "@/services/publicLinksService";
+import { getTesto1kProductUrl } from "@/services/publicLinksService";
 import { 
   CheckCircle, 
   Star, 
@@ -95,7 +95,7 @@ const Testo1k = () => {
       {/* Floating CTA Button */}
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
         <a 
-          href={getTesto1kAmazonUrl()} 
+          href={getTesto1kProductUrl()} 
           target="_blank" 
           rel="noopener noreferrer"
         >
@@ -155,7 +155,7 @@ const Testo1k = () => {
               {/* CTA Button */}
               <div className="flex justify-center lg:justify-start">
                 <a 
-                  href={getTesto1kAmazonUrl()} 
+                  href={getTesto1kProductUrl()} 
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
@@ -355,7 +355,7 @@ const Testo1k = () => {
                   </div>
 
                   <a 
-                    href={getTesto1kAmazonUrl()} 
+                    href={getTesto1kProductUrl()} 
                     target="_blank" 
                     rel="noopener noreferrer"
                   >

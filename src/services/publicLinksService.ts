@@ -17,49 +17,17 @@ class PublicLinksService {
     {
       id: 'instagram',
       name: 'Instagram',
-      description: 'Siga nossa jornada de despertar e transformação no Instagram',
+      description: 'Link do botão "SEGUIR E JUNTAR-SE À REVOLUÇÃO"',
       url: 'https://www.instagram.com/plataocarnivoro/',
       icon: 'instagram',
       category: 'social'
     },
     {
-      id: 'youtube',
-      name: 'YouTube',
-      description: 'Canal oficial com vídeos sobre filosofia, carne e tradição',
-      url: 'https://www.youtube.com/@plataocarnivoro',
-      icon: 'youtube',
-      category: 'social'
-    },
-    {
-      id: 'facebook',
-      name: 'Facebook',
-      description: 'Página oficial no Facebook',
-      url: 'https://www.facebook.com/plataocarnivoro',
-      icon: 'facebook',
-      category: 'social'
-    },
-    {
-      id: 'twitter',
-      name: 'Twitter',
-      description: 'Acompanhe nossas atualizações no Twitter',
-      url: 'https://twitter.com/plataocarnivoro',
-      icon: 'twitter',
-      category: 'social'
-    },
-    {
-      id: 'testo1k-amazon',
-      name: 'Testo1k - Amazon',
-      description: 'Link direto para comprar o Testo1k na Amazon',
+      id: 'testo1k-product',
+      name: 'Testo1k - Produto',
+      description: 'Link para todos os botões "QUERO GARANTIR AGORA" da landing page',
       url: 'https://amazon.com.br/testo1k',
       icon: 'shopping-bag',
-      category: 'product'
-    },
-    {
-      id: 'testo1k-landing',
-      name: 'Testo1k - Landing Page',
-      description: 'Página de vendas do Testo1k',
-      url: '/testo1k/landing',
-      icon: 'test-tube',
       category: 'product'
     }
   ];
@@ -149,24 +117,9 @@ class PublicLinksService {
     return this.getUrl('instagram');
   }
 
-  public getYouTubeUrl(): string {
-    return this.getUrl('youtube');
-  }
 
-  public getFacebookUrl(): string {
-    return this.getUrl('facebook');
-  }
-
-  public getTwitterUrl(): string {
-    return this.getUrl('twitter');
-  }
-
-  public getTesto1kAmazonUrl(): string {
-    return this.getUrl('testo1k-amazon');
-  }
-
-  public getTesto1kLandingUrl(): string {
-    return this.getUrl('testo1k-landing');
+  public getTesto1kProductUrl(): string {
+    return this.getUrl('testo1k-product');
   }
 }
 
@@ -182,22 +135,7 @@ export const getInstagramUrl = (): string => {
   return publicLinksService.getInstagramUrl();
 };
 
-export const getYouTubeUrl = (): string => {
-  return publicLinksService.getYouTubeUrl();
-};
 
-export const getFacebookUrl = (): string => {
-  return publicLinksService.getFacebookUrl();
-};
-
-export const getTwitterUrl = (): string => {
-  return publicLinksService.getTwitterUrl();
-};
-
-export const getTesto1kAmazonUrl = (): string => {
-  return publicLinksService.getTesto1kAmazonUrl();
-};
-
-export const getTesto1kLandingUrl = (): string => {
-  return publicLinksService.getTesto1kLandingUrl();
+export const getTesto1kProductUrl = (): string => {
+  return publicLinksService.getTesto1kProductUrl();
 };
