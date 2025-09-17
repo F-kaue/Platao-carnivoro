@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { ensureElementProps, ensureElementsProps, getDefaultProps } from '@/utils/elementUtils';
 
 export interface PageElement {
   id: string;
@@ -29,7 +30,13 @@ const defaultContent: PageContent = {
 };
 
 export const usePageBuilder = (initialContent?: PageContent) => {
-  const [content, setContent] = useState<PageContent>(initialContent || defaultContent);
+  // Garantir que o conteúdo inicial tenha elementos válidos
+  const safeInitialContent = initialContent ? {
+    ...initialContent,
+    elements: ensureElementsProps(initialContent.elements)
+  } : defaultContent;
+  
+  const [content, setContent] = useState<PageContent>(safeInitialContent);
   const historyRef = useRef<PageContent[]>([]);
   const historyIndexRef = useRef(-1);
 
@@ -46,10 +53,11 @@ export const usePageBuilder = (initialContent?: PageContent) => {
   }, [content, saveToHistory]);
 
   const addElement = useCallback((element: Omit<PageElement, 'id'>, parentId?: string) => {
-    const newElement: PageElement = {
+    const newElement: PageElement = ensureElementProps({
       ...element,
-      id: uuidv4()
-    };
+      id: uuidv4(),
+      props: element.props || getDefaultProps(element.type)
+    })!;
 
     const newContent = { ...content };
     

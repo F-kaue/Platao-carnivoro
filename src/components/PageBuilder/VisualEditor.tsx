@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { PageElement } from '@/hooks/usePageBuilder';
 import { ElementRenderer } from './ElementRenderer';
+import { ensureElementsProps, isValidElement, getDefaultProps } from '@/utils/elementUtils';
 
 interface VisualEditorProps {
   content: any;
@@ -62,66 +63,7 @@ export const VisualEditor: React.FC<VisualEditorProps> = ({
     }),
   }), []);
 
-  const getDefaultProps = (type: string) => {
-    const defaultProps: Record<string, any> = {
-      heading: {
-        text: 'Novo Cabeçalho',
-        level: 1,
-        align: 'left',
-        color: '#000000',
-        fontSize: '2rem',
-        fontWeight: 'bold'
-      },
-      paragraph: {
-        text: 'Este é um novo parágrafo. Clique para editar o texto.',
-        align: 'left',
-        color: '#666666',
-        fontSize: '1rem',
-        lineHeight: '1.5'
-      },
-      button: {
-        text: 'Clique Aqui',
-        variant: 'primary',
-        size: 'medium',
-        href: '#',
-        target: '_self'
-      },
-      image: {
-        src: '/placeholder-image.jpg',
-        alt: 'Imagem',
-        width: '100%',
-        height: 'auto',
-        align: 'center'
-      },
-      container: {
-        padding: '20px',
-        margin: '0',
-        backgroundColor: 'transparent',
-        borderRadius: '0px'
-      },
-      columns: {
-        columns: 2,
-        gap: '20px',
-        responsive: true
-      },
-      card: {
-        title: 'Título do Card',
-        content: 'Conteúdo do card aqui.',
-        image: '',
-        buttonText: 'Saiba Mais',
-        buttonLink: '#'
-      },
-      newsletter: {
-        title: 'Inscreva-se em nossa Newsletter',
-        description: 'Receba as últimas novidades diretamente no seu email.',
-        placeholder: 'Seu email',
-        buttonText: 'Inscrever',
-        successMessage: 'Obrigado por se inscrever!'
-      }
-    };
-
-    return defaultProps[type] || {};
-  };
+  // Usar função utilitária para props padrão
 
   const handleElementClick = useCallback((e: React.MouseEvent, elementId: string) => {
     e.stopPropagation();
@@ -221,11 +163,9 @@ export const VisualEditor: React.FC<VisualEditorProps> = ({
         </div>
       ) : (
         <div className="space-y-4">
-          {content.elements
-            .filter((element: PageElement) => element && element.props && typeof element.props === 'object')
-            .map((element: PageElement, index: number) => 
-              renderElement(element, index)
-            )}
+          {ensureElementsProps(content.elements).map((element: PageElement, index: number) => 
+            renderElement(element, index)
+          )}
         </div>
       )}
 

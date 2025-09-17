@@ -20,6 +20,7 @@ import {
   Monitor
 } from 'lucide-react';
 import { PageElement, PageContent } from '@/hooks/usePageBuilder';
+import { ensureElementProps, isValidElement } from '@/utils/elementUtils';
 
 interface PropertyPanelProps {
   selectedElement: string | null;
@@ -50,7 +51,8 @@ export const PropertyPanel: React.FC<PropertyPanelProps> = ({
       };
 
       const element = findElement(content.elements);
-      setSelectedElementData(element);
+      const safeElement = ensureElementProps(element);
+      setSelectedElementData(safeElement);
     } else {
       setSelectedElementData(null);
     }

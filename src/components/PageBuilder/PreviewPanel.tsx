@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { PageContent } from '@/hooks/usePageBuilder';
 import { ElementRenderer } from './ElementRenderer';
+import { ensureElementsProps } from '@/utils/elementUtils';
 
 interface PreviewPanelProps {
   content: PageContent;
@@ -162,17 +163,15 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
           ) : (
             <div className="space-y-4">
-              {content.elements
-                .filter((element) => element && element.props && typeof element.props === 'object')
-                .map((element) => (
-                  <ElementRenderer
-                    key={element.id}
-                    element={element}
-                    onUpdate={() => {}} // Não permitir edição no preview
-                    isSelected={false}
-                    deviceView={deviceView}
-                  />
-                ))}
+              {ensureElementsProps(content.elements).map((element) => (
+                <ElementRenderer
+                  key={element.id}
+                  element={element}
+                  onUpdate={() => {}} // Não permitir edição no preview
+                  isSelected={false}
+                  deviceView={deviceView}
+                />
+              ))}
             </div>
           )}
         </div>

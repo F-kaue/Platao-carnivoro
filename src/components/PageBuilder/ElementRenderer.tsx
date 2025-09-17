@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { PageElement } from '@/hooks/usePageBuilder';
+import { ensureElementProps, isValidElement } from '@/utils/elementUtils';
 
 interface ElementRendererProps {
   element: PageElement;
@@ -18,8 +19,10 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({
   isSelected,
   deviceView
 }) => {
-  // Verificar se element existe e tem props
-  if (!element || !element.props || typeof element.props !== 'object') {
+  // Usar função utilitária para garantir elemento válido
+  const safeElement = ensureElementProps(element);
+  
+  if (!safeElement) {
     console.error('ElementRenderer: Elemento inválido recebido:', element);
     return (
       <div className="p-4 border-2 border-dashed border-red-300 rounded-lg text-center text-red-500">
@@ -28,17 +31,7 @@ export const ElementRenderer: React.FC<ElementRendererProps> = ({
     );
   }
 
-  const { type, props } = element;
-  
-  // Garantir que props seja sempre um objeto válido
-  if (!props || typeof props !== 'object') {
-    console.error('ElementRenderer: Props inválidas:', props);
-    return (
-      <div className="p-4 border-2 border-dashed border-red-300 rounded-lg text-center text-red-500">
-        <p>Props inválidas</p>
-      </div>
-    );
-  }
+  const { type, props } = safeElement;
 
   const handleTextChange = (newText: string) => {
     onUpdate({
