@@ -56,6 +56,11 @@ class PublicLinksService {
         console.log('Using default links:', this.links);
         this.saveLinks();
       }
+      
+      // Verificar se o link do Testo1k está correto
+      const testo1kLink = this.links.find(link => link.id === 'testo1k-product');
+      console.log('Testo1k link found:', testo1kLink);
+      
     } catch (error) {
       console.error('Erro ao carregar links:', error);
       this.links = [...this.defaultLinks];
@@ -109,10 +114,26 @@ class PublicLinksService {
     this.saveLinks();
   }
 
+  // Forçar recarga dos links (útil para debug)
+  public forceReload(): void {
+    console.log('Force reloading links...');
+    this.loadLinks();
+  }
+
+  // Limpar localStorage e recarregar
+  public clearAndReload(): void {
+    console.log('Clearing localStorage and reloading...');
+    localStorage.removeItem('public-links');
+    this.loadLinks();
+  }
+
   // Obter URL específica por ID
   public getUrl(id: string): string {
     const link = this.getLinkById(id);
-    return link ? link.url : '';
+    console.log(`getUrl called for id: ${id}, found link:`, link);
+    const url = link ? link.url : '';
+    console.log(`Returning URL: ${url}`);
+    return url;
   }
 
   // Métodos específicos para links importantes

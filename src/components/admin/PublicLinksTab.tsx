@@ -29,7 +29,9 @@ const PublicLinksTab: React.FC = () => {
     isLoading, 
     updateLink, 
     updateAllLinks, 
-    resetToDefaults 
+    resetToDefaults,
+    forceReload,
+    clearAndReload
   } = usePublicLinks();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -137,6 +139,32 @@ const PublicLinksTab: React.FC = () => {
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Restaurar Padrões
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                forceReload();
+                toast({
+                  title: "Links recarregados!",
+                  description: "Os links foram forçados a recarregar.",
+                });
+              }}
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Forçar Recarga
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                clearAndReload();
+                toast({
+                  title: "LocalStorage limpo!",
+                  description: "LocalStorage foi limpo e links recarregados.",
+                });
+              }}
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Limpar Cache
             </Button>
           </div>
         </CardContent>

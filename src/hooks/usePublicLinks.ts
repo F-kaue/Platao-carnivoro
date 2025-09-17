@@ -45,7 +45,19 @@ export const usePublicLinks = () => {
   };
 
   const getTesto1kProductUrl = (): string => {
-    return publicLinksService.getTesto1kProductUrl();
+    const url = publicLinksService.getTesto1kProductUrl();
+    console.log('usePublicLinks getTesto1kProductUrl returning:', url);
+    return url;
+  };
+
+  const forceReload = () => {
+    publicLinksService.forceReload();
+    loadLinks();
+  };
+
+  const clearAndReload = () => {
+    publicLinksService.clearAndReload();
+    loadLinks();
   };
 
   useEffect(() => {
@@ -61,6 +73,8 @@ export const usePublicLinks = () => {
     resetToDefaults,
     getLinkUrl,
     getInstagramUrl,
-    getTesto1kProductUrl
+    getTesto1kProductUrl,
+    forceReload,
+    clearAndReload
   };
 };
