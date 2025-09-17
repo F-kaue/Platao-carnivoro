@@ -13,46 +13,55 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/beehiiv-subscribe",
-      "dest": "/api/beehiiv-subscribe.js"
+      "source": "/api/beehiiv-subscribe",
+      "destination": "/api/beehiiv-subscribe.js"
     },
     {
-      "src": "/fonts/(.*\\.woff2)$",
-      "dest": "/public/fonts/$1",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable",
-        "Content-Type": "font/woff2"
-      }
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/fonts/(.*\\.woff2)$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Content-Type",
+          "value": "font/woff2"
+        }
+      ]
     },
     {
-      "src": "/fonts/(.*\\.woff)$",
-      "dest": "/public/fonts/$1",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable",
-        "Content-Type": "font/woff"
-      }
+      "source": "/fonts/(.*\\.woff)$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Content-Type",
+          "value": "font/woff"
+        }
+      ]
     },
     {
-      "src": "/fonts/(.*\\.ttf)$",
-      "dest": "/public/fonts/$1",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable",
-        "Content-Type": "font/ttf"
-      }
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/dist/assets/$1"
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "/dist/favicon.ico"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/index.html"
+      "source": "/fonts/(.*\\.ttf)$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Content-Type",
+          "value": "font/ttf"
+        }
+      ]
     }
   ]
 }
