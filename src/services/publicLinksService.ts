@@ -11,6 +11,7 @@ export interface PublicLink {
 class PublicLinksService {
   private static instance: PublicLinksService;
   private links: PublicLink[] = [];
+  private cache: { [key: string]: string } = {};
 
   // Links padrão com valores atuais do site
   private defaultLinks: PublicLink[] = [
@@ -47,20 +48,12 @@ class PublicLinksService {
   private loadLinks(): void {
     try {
       const savedLinks = localStorage.getItem('public-links');
-      console.log('Loading links from localStorage:', savedLinks);
       if (savedLinks) {
         this.links = JSON.parse(savedLinks);
-        console.log('Loaded links:', this.links);
       } else {
         this.links = [...this.defaultLinks];
-        console.log('Using default links:', this.links);
         this.saveLinks();
       }
-      
-      // Verificar se o link do Testo1k está correto
-      const testo1kLink = this.links.find(link => link.id === 'testo1k-product');
-      console.log('Testo1k link found:', testo1kLink);
-      
     } catch (error) {
       console.error('Erro ao carregar links:', error);
       this.links = [...this.defaultLinks];
@@ -116,23 +109,28 @@ class PublicLinksService {
 
   // Forçar recarga dos links (útil para debug)
   public forceReload(): void {
-    console.log('Force reloading links...');
     this.loadLinks();
   }
 
   // Limpar localStorage e recarregar
   public clearAndReload(): void {
-    console.log('Clearing localStorage and reloading...');
     localStorage.removeItem('public-links');
     this.loadLinks();
   }
 
-  // Obter URL específica por ID
+  // Obter URL específica por ID (com cache para performance)
   public getUrl(id: string): string {
+    // Verificar cache primeiro
+    if (this.cache[id]) {
+      return this.cache[id];
+    }
+
     const link = this.getLinkById(id);
-    console.log(`getUrl called for id: ${id}, found link:`, link);
     const url = link ? link.url : '';
-    console.log(`Returning URL: ${url}`);
+    
+    // Armazenar no cache
+    this.cache[id] = url;
+    
     return url;
   }
 
@@ -143,9 +141,7 @@ class PublicLinksService {
 
 
   public getTesto1kProductUrl(): string {
-    const url = this.getUrl('testo1k-product');
-    console.log('getTesto1kProductUrl called, returning:', url);
-    return url;
+    return this.getUrl('testo1k-product');
   }
 }
 

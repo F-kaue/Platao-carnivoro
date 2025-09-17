@@ -45,9 +45,7 @@ export const usePublicLinks = () => {
   };
 
   const getTesto1kProductUrl = (): string => {
-    const url = publicLinksService.getTesto1kProductUrl();
-    console.log('usePublicLinks getTesto1kProductUrl returning:', url);
-    return url;
+    return publicLinksService.getTesto1kProductUrl();
   };
 
   const forceReload = () => {

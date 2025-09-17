@@ -27,6 +27,10 @@
     {
       "src": "api/newsletter-benefits.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/public-links.js",
+      "use": "@vercel/node"
     }
   ],
   "rewrites": [
@@ -49,6 +53,10 @@
     {
       "source": "/api/newsletter-benefits",
       "destination": "/api/newsletter-benefits.js"
+    },
+    {
+      "source": "/api/public-links",
+      "destination": "/api/public-links.js"
     },
     {
       "source": "/(.*)",
