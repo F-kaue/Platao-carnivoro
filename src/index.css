@@ -226,3 +226,30 @@
   transform: translateY(-8px);
   transition: opacity 0.3s, transform 0.3s;
 }
+
+/* Ajuste dos ícones no mobile - Newsletter Cards */
+@media (max-width: 768px) {
+  .feature-box {
+    display: flex;
+    align-items: center; /* Alinha ícone e texto verticalmente */
+    gap: 10px; /* Espaço entre ícone e texto */
+    padding: 10px;
+  }
+
+  .feature-box .feature-icon {
+    width: 24px;   /* Tamanho fixo do ícone */
+    height: 24px;
+    flex-shrink: 0; /* Impede que o ícone seja esticado */
+  }
+
+  .feature-box .feature-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .feature-box .feature-content h4, 
+  .feature-box .feature-content p {
+    margin: 0;
+    line-height: 1.4;
+  }
+}
