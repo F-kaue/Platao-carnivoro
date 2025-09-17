@@ -34,6 +34,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { uploadProductImage } from "@/services/imageUpload";
 import { useToast } from "@/hooks/use-toast";
+import { SiteSettingsTab } from "@/components/admin/SiteSettingsTab";
+import { NavigationTab } from "@/components/admin/NavigationTab";
+import { NewsletterBenefitsTab } from "@/components/admin/NewsletterBenefitsTab";
+import { Testo1kContentTab } from "@/components/admin/Testo1kContentTab";
 
 // Product form schema
 const productFormSchema = z.object({
@@ -406,9 +410,13 @@ const Admin = () => {
         </div>
         
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto">
+          <TabsList className="grid grid-cols-6 w-full max-w-3xl mx-auto">
             <TabsTrigger value="overview" className="text-xs sm:text-sm">Visão Geral</TabsTrigger>
             <TabsTrigger value="products" className="text-xs sm:text-sm">Produtos</TabsTrigger>
+            <TabsTrigger value="settings" className="text-xs sm:text-sm">Configurações</TabsTrigger>
+            <TabsTrigger value="navigation" className="text-xs sm:text-sm">Navegação</TabsTrigger>
+            <TabsTrigger value="newsletter" className="text-xs sm:text-sm">Newsletter</TabsTrigger>
+            <TabsTrigger value="testo1k" className="text-xs sm:text-sm">Testo1k</TabsTrigger>
           </TabsList>
           
           {/* Overview Tab */}
@@ -694,6 +702,26 @@ const Admin = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="space-y-6">
+            <SiteSettingsTab />
+          </TabsContent>
+          
+          {/* Navigation Tab */}
+          <TabsContent value="navigation" className="space-y-6">
+            <NavigationTab />
+          </TabsContent>
+          
+          {/* Newsletter Tab */}
+          <TabsContent value="newsletter" className="space-y-6">
+            <NewsletterBenefitsTab />
+          </TabsContent>
+          
+          {/* Testo1k Tab */}
+          <TabsContent value="testo1k" className="space-y-6">
+            <Testo1kContentTab />
           </TabsContent>
         </Tabs>
       </main>

@@ -102,7 +102,19 @@ INSERT INTO content_blocks (key, title, content, section) VALUES
 ('newsletter_benefits_title', 'O que você receberá:', 'O que você receberá:', 'newsletter'),
 ('newsletter_benefits_subtitle', 'Descrição dos benefícios', 'Conteúdo exclusivo que fortalece corpo, mente e espírito através da sabedoria clássica', 'newsletter'),
 ('hero_title', 'Título Principal', 'TRANSFORMAÇÃO', 'hero'),
-('hero_subtitle', 'Subtítulo Principal', 'Descubra a sabedoria ancestral através da filosofia e tradição', 'hero');
+('hero_subtitle', 'Subtítulo Principal', 'Descubra a sabedoria ancestral através da filosofia e tradição', 'hero'),
+-- Conteúdo Testo1k - Página Principal
+('testo1k_hero_title', 'Título Principal Testo1k', 'TRANSFORMAÇÃO', 'testo1k'),
+('testo1k_hero_subtitle', 'Subtítulo Principal Testo1k', 'Descubra a sabedoria ancestral através da filosofia e tradição', 'testo1k'),
+('testo1k_benefits_title', 'Título dos Benefícios Testo1k', 'O que você receberá:', 'testo1k'),
+('testo1k_benefits_subtitle', 'Subtítulo dos Benefícios Testo1k', 'Conteúdo exclusivo que fortalece corpo, mente e espírito através da sabedoria clássica', 'testo1k'),
+-- Conteúdo Testo1k - Landing Page
+('testo1k_landing_title', 'Título da Landing Testo1k', 'Testosterona 1k', 'testo1k_landing'),
+('testo1k_landing_subtitle', 'Subtítulo da Landing Testo1k', 'Aumente sua testosterona naturalmente com métodos comprovados', 'testo1k_landing'),
+('testo1k_landing_description', 'Descrição Principal Testo1k', 'Descubra os segredos ancestrais para aumentar sua testosterona de forma natural e sustentável. Um guia completo baseado em evidências científicas e sabedoria tradicional.', 'testo1k_landing'),
+('testo1k_landing_benefits_title', 'Título dos Benefícios Landing', 'Benefícios do Testo1k', 'testo1k_landing'),
+('testo1k_landing_price', 'Preço Testo1k', 'R$ 97,00', 'testo1k_landing'),
+('testo1k_landing_original_price', 'Preço Original Testo1k', 'R$ 197,00', 'testo1k_landing');
 
 INSERT INTO newsletter_benefits (title, description, icon, position) VALUES
 ('Sabedoria Ancestral', 'Conteúdo exclusivo sobre filosofia clássica e tradições', 'BookOpen', 1),
