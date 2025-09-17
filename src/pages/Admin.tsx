@@ -717,6 +717,21 @@ const Admin = () => {
                 <CardDescription>
                   Crie e edite páginas com interface visual intuitiva, similar ao Hostinger
                 </CardDescription>
+                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="font-semibold text-blue-800 mb-2">🚀 Versão Simplificada (Recomendada)</h4>
+                  <p className="text-sm text-blue-700 mb-3">
+                    Use a versão simplificada para uma experiência mais estável e sem erros.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => navigate('/admin/simple-pagebuilder/home')}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <Layout className="w-4 h-4 mr-2" />
+                      Page Builder Simples
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
