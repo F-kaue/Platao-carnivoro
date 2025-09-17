@@ -1,22 +1,22 @@
 // Configuração do Beehiiv
 export const BEEHIIV_CONFIG = {
-  // ID da publicação do cliente no Beehiiv (testando API V1 primeiro)
-  PUBLICATION_ID: 'a719f540-5634-4fa5-96d4-527f8dcde0a3', // API V1
-  PUBLICATION_ID_V2: 'pub_a719f540-5634-4fa5-96d4-527f8dcde0a3', // API V2
+  // ID da publicação do cliente no Beehiiv (atualizado)
+  PUBLICATION_ID: '5951e46f-6568-49e6-9f88-9a882ecd001d', // Nova publicação
+  PUBLICATION_ID_V2: '5951e46f-6568-49e6-9f88-9a882ecd001d', // Nova publicação
   
   // URL base da publicação
   BASE_URL: 'https://plataocarnivoro.beehiiv.com',
   
-  // Endpoints da API do Beehiiv (testando V1 primeiro)
+  // Endpoints da API do Beehiiv (atualizados)
   API_ENDPOINTS: {
     // API V1 - mais estável
-    SUBSCRIBE_V1: '/v1/publications/a719f540-5634-4fa5-96d4-527f8dcde0a3/subscriptions',
+    SUBSCRIBE_V1: '/v1/publications/5951e46f-6568-49e6-9f88-9a882ecd001d/subscriptions',
     // API V2 - mais recente
-    SUBSCRIBE_V2: '/v2/publications/pub_a719f540-5634-4fa5-96d4-527f8dcde0a3/subscriptions',
+    SUBSCRIBE_V2: '/v2/publications/5951e46f-6568-49e6-9f88-9a882ecd001d/subscriptions',
     // Endpoints padrão
-    SUBSCRIBE: '/v1/publications/a719f540-5634-4fa5-96d4-527f8dcde0a3/subscriptions',
-    UNSUBSCRIBE: '/v1/publications/a719f540-5634-4fa5-96d4-527f8dcde0a3/subscriptions',
-    SUBSCRIBERS: '/v1/publications/a719f540-5634-4fa5-96d4-527f8dcde0a3/subscribers'
+    SUBSCRIBE: '/v1/publications/5951e46f-6568-49e6-9f88-9a882ecd001d/subscriptions',
+    UNSUBSCRIBE: '/v1/publications/5951e46f-6568-49e6-9f88-9a882ecd001d/subscriptions',
+    SUBSCRIBERS: '/v1/publications/5951e46f-6568-49e6-9f88-9a882ecd001d/subscribers'
   },
   
   // Configurações de integração
@@ -33,8 +33,8 @@ export const BEEHIIV_CONFIG = {
     
     // Configurações da API
     API: {
-      // Chave da API do Beehiiv - configure manualmente
-      API_KEY: 'TtksxgFbx1FLnqoDyuc1ydDp77lEurz2INeVITHbLw1ZQhAajBJp43LsZFYFL43h', // Nova API key
+      // Chave da API do Beehiiv - será lida das variáveis de ambiente
+      API_KEY: process.env.BEEHIIV_API_KEY || 'LF0v80f4yQNRrToqiBw7aM17eEOp7HJbhVIoXe6Tb9mupF90SI1jZv3QLXLzOR9L',
       // URL base da API
       BASE_URL: 'https://api.beehiiv.com',
       // Headers padrão

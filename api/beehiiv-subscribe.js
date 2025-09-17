@@ -20,17 +20,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email é obrigatório' });
     }
 
-    // Configurações do Beehiiv
-    const publicationId = process.env.BEEHIIV_PUBLICATION_ID;
-    const apiKey = process.env.BEEHIIV_API_KEY;
+    // Configurações do Beehiiv (atualizadas)
+    const publicationId = process.env.BEEHIIV_PUBLICATION_ID || '5951e46f-6568-49e6-9f88-9a882ecd001d';
+    const apiKey = process.env.BEEHIIV_API_KEY || 'LF0v80f4yQNRrToqiBw7aM17eEOp7HJbhVIoXe6Tb9mupF90SI1jZv3QLXLzOR9L';
 
-    if (!publicationId || !apiKey) {
-      console.error('Variáveis de ambiente não configuradas:', {
-        publicationId: !!publicationId,
-        apiKey: !!apiKey
-      });
-      return res.status(500).json({ error: 'Configuração do servidor incompleta' });
-    }
+    console.log('Configurações do Beehiiv:', {
+      publicationId: publicationId,
+      apiKeyLength: apiKey ? apiKey.length : 0,
+      hasApiKey: !!apiKey
+    });
 
     // URL da API do Beehiiv
     const beehiivUrl = `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`;
@@ -47,7 +45,8 @@ export default async function handler(req, res) {
     console.log('Enviando para Beehiiv:', {
       url: beehiivUrl,
       email: email,
-      publicationId: publicationId
+      publicationId: publicationId,
+      payload: payload
     });
 
     // Fazer a requisição para o Beehiiv
@@ -61,10 +60,18 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload)
     });
 
-    const responseData = await response.json();
+    let responseData;
+    try {
+      responseData = await response.json();
+    } catch (parseError) {
+      console.error('Erro ao fazer parse da resposta:', parseError);
+      responseData = { error: 'Resposta inválida do servidor' };
+    }
 
     console.log('Resposta do Beehiiv:', {
       status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries()),
       data: responseData
     });
 
@@ -75,11 +82,29 @@ export default async function handler(req, res) {
         data: responseData
       });
     } else {
-      console.error('Erro do Beehiiv:', responseData);
+      console.error('Erro do Beehiiv:', {
+        status: response.status,
+        statusText: response.statusText,
+        data: responseData
+      });
+      
+      // Tratar erros específicos
+      let errorMessage = 'Erro ao inscrever no newsletter';
+      if (response.status === 400) {
+        errorMessage = responseData.message || 'Dados inválidos enviados';
+      } else if (response.status === 401) {
+        errorMessage = 'Chave de API inválida';
+      } else if (response.status === 404) {
+        errorMessage = 'Publicação não encontrada';
+      } else if (response.status === 422) {
+        errorMessage = responseData.message || 'Email já está inscrito ou inválido';
+      }
+      
       return res.status(response.status).json({
         success: false,
-        error: responseData.message || 'Erro ao inscrever no newsletter',
-        details: responseData
+        error: errorMessage,
+        details: responseData,
+        status: response.status
       });
     }
 
