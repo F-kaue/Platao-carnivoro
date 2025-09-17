@@ -30,23 +30,24 @@ export default async function handler(req, res) {
       hasApiKey: !!apiKey
     });
 
-    // URL da API do Beehiiv
-    const beehiivUrl = `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`;
+    // URL da API do Beehiiv (tentando v1 primeiro)
+    const beehiivUrl = `https://api.beehiiv.com/v1/publications/${publicationId}/subscriptions`;
 
-    // Payload para o Beehiiv
+    // Payload para o Beehiiv (formato simplificado)
     const payload = {
-      email: email,
-      send_welcome_email: true,
-      utm_source: 'platao-carnivoro',
-      utm_medium: 'website',
-      utm_campaign: 'newsletter'
+      email: email
     };
 
     console.log('Enviando para Beehiiv:', {
       url: beehiivUrl,
       email: email,
       publicationId: publicationId,
-      payload: payload
+      payload: payload,
+      headers: {
+        'Authorization': `Bearer ${apiKey.substring(0, 10)}...`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
     });
 
     // Fazer a requisição para o Beehiiv
